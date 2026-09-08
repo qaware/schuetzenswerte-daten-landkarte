@@ -16,8 +16,8 @@ statt sie zu doppeln.
 
 ## Bedienung
 
-- Ziehen verschiebt die Karte, Mausrad zoomt, `+` und `-` ebenfalls
-- Herausgezoomt zeigt die Karte nur die Bereichsnamen, hineingezoomt die einzelnen Kacheln
+- Ziehen verschiebt die Karte von jeder Stelle aus, auch von einer Kachel, Mausrad zoomt, `+` und `-` ebenfalls
+- Drei Zoomstufen: ganz herausgezoomt die Inselnamen, dann die Bereichsnamen, dann die Kacheltitel
 - Klick oder Enter auf eine Kachel öffnet die Details
 - Die Suche findet Titel, Synonyme und Kacheltexte
 - „Mein Projekt“ hebt die Kacheln hervor, die für ein Vorhaben zu klären sind, und exportiert sie als Markdown-Checkliste

@@ -8,6 +8,12 @@
   --paper: #f4f0e6;
   --paper-edge: #d9d0bb;
   --muted: #6d7f86;
+
+  /* Eine klassische Textserife, nicht eine Display-Schrift: die Bereichs- und Inselnamen
+     stehen klein und müssen über Sand und Kacheln hinweg lesbar bleiben. Wer die Schrift
+     tauschen will, ändert nur diese Zeile und den Link in index.html. */
+  --font-map: Lora, Georgia, "Times New Roman", serif;
+  --font-ui: Archivo, "Helvetica Neue", Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -17,7 +23,7 @@ html, body {
   margin: 0;
   background: var(--ocean);
   color: var(--paper);
-  font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-ui);
   font-size: 15px;
   line-height: 1.5;
   overscroll-behavior: none;
@@ -40,14 +46,14 @@ html, body {
   cursor: grab;
   touch-action: none;
 }
-#map.dragging { cursor: grabbing; }
+#map.dragging, #map.dragging .tile { cursor: grabbing; }
 
 #loading {
   position: absolute;
   inset: 0;
   display: grid;
   place-content: center;
-  font-family: Fraunces, Georgia, serif;
+  font-family: var(--font-map);
   font-style: italic;
   font-size: 20px;
   color: #8fa9b2;
@@ -67,14 +73,15 @@ html, body {
 .tile:hover .hex { stroke-width: 3.5; }
 
 .tile-label {
-  font-size: 9.5px;
+  font-family: var(--font-ui);
+  font-size: 10.2px;
   font-weight: 500;
   fill: var(--ink);
   text-anchor: middle;
   pointer-events: none;
   transition: opacity .18s ease;
 }
-.tile-label.tight { font-size: 8.2px; }
+.tile-label.tight { font-size: 8.8px; }
 
 .area-ring {
   fill: none;
@@ -84,17 +91,24 @@ html, body {
 }
 
 .area-label {
-  font-family: Fraunces, Georgia, serif;
-  font-style: italic;
+  font-family: var(--font-map);
   font-size: var(--area-font, 13px);
-  fill: #6b5f45;
+  font-weight: 600;
+  fill: #5b503a;
   text-anchor: middle;
   pointer-events: none;
-  transition: font-size .18s ease, fill .18s ease;
+  transition: font-size .18s ease, fill .18s ease, opacity .18s ease;
+  /* Die Bereichstexte liegen über den Kacheln, damit sie in der Übersicht lesbar sind.
+     Die Kontur in Sandfarbe trennt sie von der Kachelfarbe darunter. Sie skaliert mit
+     der Schrift, deshalb em und nicht px. */
+  paint-order: stroke fill;
+  stroke: rgba(244, 240, 230, .9);
+  stroke-width: .3em;
+  stroke-linejoin: round;
 }
 
 .island-label {
-  font-family: Fraunces, Georgia, serif;
+  font-family: var(--font-map);
   font-style: italic;
   font-weight: 600;
   font-size: var(--island-font, 30px);
@@ -104,9 +118,13 @@ html, body {
   pointer-events: none;
 }
 
-/* Übersichtsmodus: Kacheltitel weichen den Bereichsnamen */
+/* Drei Zoomstufen. Übersicht: die Kacheltitel weichen den Bereichsnamen. Ganz
+   herausgezoomt weichen auch die Bereichsnamen, weil sie dort breiter wären als der
+   Abstand zweier Bereiche und sich gegenseitig überschreiben würden. Dann trägt nur
+   noch der Inselname. Siehe AREA_LABELS_ABOVE in app.js. */
 body.overview .tile-label { opacity: 0; }
-body.overview .area-label { fill: #4d4534; }
+body.overview .area-label { fill: #3f3728; }
+body.world .area-label { opacity: 0; }
 
 .faded { opacity: .13; transition: opacity .18s ease; }
 .tile .hex, .tile .tile-label { transition: opacity .18s ease; }
@@ -125,7 +143,7 @@ body.overview .area-label { fill: #4d4534; }
   pointer-events: none;
 }
 #titleblock h1 {
-  font-family: Fraunces, Georgia, serif;
+  font-family: var(--font-map);
   font-style: italic;
   font-weight: 600;
   font-size: 25px;
@@ -194,7 +212,7 @@ button.ghost { background: transparent; }
 }
 #project[hidden] { display: none; }
 #project h2 {
-  font-family: Fraunces, Georgia, serif;
+  font-family: var(--font-map);
   font-style: italic;
   font-weight: 600;
   font-size: 19px;
@@ -219,20 +237,27 @@ button.ghost { background: transparent; }
   font-size: 12.5px;
   cursor: pointer;
 }
-.chip:hover { border-color: #a9a08b; }
+/* Diese Regeln müssen die Spezifität von '#project .project-actions button' nicht
+   schlagen, weil jene sich nur noch an die Knöpfe unter den Fragen richtet. Die
+   Hover-Regel muss aber 'button:hover' schlagen, sonst wird der Chip im hellen
+   Feld dunkelblau. */
+.chip:hover { background: #eee9db; border-color: #a9a08b; }
 .chip[aria-pressed="true"] {
   background: var(--ink);
   border-color: var(--ink);
   color: var(--paper);
+  font-weight: 500;
 }
+.chip[aria-pressed="true"]:hover { background: #24312b; border-color: #24312b; }
+.chip[aria-pressed="true"]::before { content: "\2713\00a0"; }
 
 .project-actions { display: flex; gap: 8px; margin-top: 4px; }
-#project button {
+#project .project-actions button {
   border-color: var(--paper-edge);
   background: #fbf9f3;
   color: var(--ink);
 }
-#project button:hover { background: #eee9db; }
+#project .project-actions button:hover { background: #eee9db; }
 #export-status { margin: 10px 0 0; min-height: 1.2em; }
 
 #legend {
@@ -241,7 +266,7 @@ button.ghost { background: transparent; }
   max-width: 25ch;
 }
 #legend h2 {
-  font-family: Fraunces, Georgia, serif;
+  font-family: var(--font-map);
   font-style: italic;
   font-weight: 600;
   font-size: 15px;
@@ -328,7 +353,7 @@ button.ghost { background: transparent; }
   font-weight: 500;
 }
 #detail h2 {
-  font-family: Fraunces, Georgia, serif;
+  font-family: var(--font-map);
   font-style: italic;
   font-weight: 600;
   font-size: 27px;

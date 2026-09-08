@@ -9,11 +9,19 @@ const LATTICE = 3;             // Abstand zweier Bereichs-Mittelpunkte in Hexzel
                                // Kacheln. Wächst er auf Ring 2, ist dessen Zelle die Ring-1-
                                // Zelle des Nachbarn und die Kacheln überlappen.
                                // check-landkarte.py prüft das.
+const AREA_LABELS_ABOVE = 0.5; // ab hier passen die Bereichsnamen nebeneinander.
+                               // Abgeleitet: zwei Bereichs-Mittelpunkte liegen 239
+                               // Nutzereinheiten auseinander, die längste Zeile nach dem
+                               // Umbruch hat 15 Zeichen und ist bei 15px Bildschirmschrift
+                               // rund 117px breit. 117 / 239 ist 0.49. Darunter würden sich
+                               // die Bereichsnamen überlappen, dort stehen nur Inselnamen.
 const OVERVIEW_BELOW = 0.9;    // unterhalb dieser Skalierung nur Bereichsnamen.
                                // Abgeleitet, nicht geschätzt: die Kacheltitel stehen mit 9.5px
                                // in Nutzereinheiten, auf dem Schirm also 9.5 * scale. Bei 0.62
                                // wären das 5.9px, und 13 Zeichen Zeile bräuchten 69px in einem
                                // 57px breiten Sechseck. Ab 0.9 passt der Text und ist lesbar.
+
+const DRAG_SLOP = 4;           // Bildschirmpixel, ab denen aus einem Klick ein Ziehen wird
 
 const DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
 
@@ -24,7 +32,8 @@ const state = {
   bounds: null,
   query: '',
   filters: { branche: null, daten: new Set(), pb: false, cloud: false, ki: false, drittland: false },
-  lastFocus: null
+  lastFocus: null,
+  dragged: false     // wurde der letzte Zeigerzug zum Verschieben benutzt
 };
 
 /* ---------- Hexgeometrie (flat top, axiale Koordinaten) ---------- */
@@ -155,7 +164,7 @@ function build(data) {
       ts.textContent = ln;
       text.appendChild(ts);
     });
-    g('layer-areas').appendChild(text);
+    g('layer-area-labels').appendChild(text);
   }
 
   // Kacheln
@@ -186,7 +195,7 @@ function build(data) {
         .join(' ').toLowerCase()
     };
     state.tiles.push(entry);
-    grp.addEventListener('click', () => openDetail(entry));
+    grp.addEventListener('click', () => { if (!state.dragged) openDetail(entry); });
     grp.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(entry); }
     });
@@ -266,9 +275,9 @@ function buildProjectPanel() {
     };
 
     if (f.type === 'toggle') {
-      mk('ja', on => {
+      mk('ja', (on, b) => {
         state.filters[f.id] = on;
-        opts.querySelector('button').setAttribute('aria-pressed', String(on));
+        b.setAttribute('aria-pressed', String(on));
       });
     } else if (f.type === 'single') {
       const buttons = f.options.map(o => mk(o.label, (on, b) => {
@@ -434,9 +443,13 @@ function closeDetail() {
 function applyTransform() {
   document.getElementById('viewport')
     .setAttribute('transform', `translate(${state.tx} ${state.ty}) scale(${state.scale})`);
+  // Drei Stufen: ganz draußen nur Inselnamen, dann die Bereichsnamen, dann die Kacheltitel.
   const overview = state.scale < OVERVIEW_BELOW;
+  const world = state.scale < AREA_LABELS_ABOVE;
   document.body.classList.toggle('overview', overview);
+  document.body.classList.toggle('world', world);
   const root = document.documentElement.style;
+  // In der Übersicht behalten die Namen eine feste Bildschirmgröße, deshalb durch scale.
   root.setProperty('--area-font', overview ? (15 / state.scale).toFixed(1) + 'px' : '13px');
   root.setProperty('--island-font', overview ? (21 / state.scale).toFixed(1) + 'px' : '30px');
 }
@@ -467,24 +480,31 @@ function zoomAt(factor, cx, cy) {
 
 function wireInteraction() {
   const svg = document.getElementById('map');
-  let dragging = false, moved = false, lastX = 0, lastY = 0;
+  let dragging = false, moved = false, lastX = 0, lastY = 0, startX = 0, startY = 0;
 
+  // Verschieben geht von jeder Stelle aus, auch von einer Kachel. Als Ziehen gilt es
+  // erst ab DRAG_SLOP, und erst dann wird der Zeiger übernommen. Darunter bleibt es ein
+  // Klick und verhält sich unverändert, damit ein leichtes Zittern die Kachel noch öffnet.
   svg.addEventListener('pointerdown', e => {
-    if (e.target.closest('.tile')) return;
     dragging = true; moved = false;
-    lastX = e.clientX; lastY = e.clientY;
-    svg.classList.add('dragging');
-    svg.setPointerCapture(e.pointerId);
+    state.dragged = false;
+    startX = lastX = e.clientX; startY = lastY = e.clientY;
   });
   svg.addEventListener('pointermove', e => {
     if (!dragging) return;
-    state.tx += e.clientX - lastX;
-    state.ty += e.clientY - lastY;
+    const dx = e.clientX - lastX, dy = e.clientY - lastY;
+    if (!moved) {
+      if (Math.hypot(e.clientX - startX, e.clientY - startY) <= DRAG_SLOP) return;
+      moved = true;
+      svg.classList.add('dragging');
+      svg.setPointerCapture(e.pointerId);
+    }
+    state.tx += dx; state.ty += dy;
     lastX = e.clientX; lastY = e.clientY;
-    moved = true;
     applyTransform();
   });
-  const stop = () => { dragging = false; svg.classList.remove('dragging'); };
+  // dragged wird hier gesetzt, weil click erst nach pointerup kommt
+  const stop = () => { dragging = false; state.dragged = moved; svg.classList.remove('dragging'); };
   svg.addEventListener('pointerup', stop);
   svg.addEventListener('pointercancel', stop);
 

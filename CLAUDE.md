@@ -105,8 +105,32 @@ bleiben. Ein neuer Bereich gehört an eine Position, die an die eigene Farbregio
 in der Übersicht eine feste Bildschirmgröße haben und über `state.bounds` hinausragen. Sonst
 schneidet der Rand die Namen der Randinseln ab.
 
-`OVERVIEW_BELOW` ist abgeleitet und nicht geschätzt: unterhalb dieser Skalierung wären die
-Kacheltitel kleiner als das Sechseck, in dem sie stehen.
+## Beschriftung und Zoomstufen
+
+Es gibt drei Stufen, und beide Schwellen sind abgeleitet und nicht geschätzt.
+
+Unter `AREA_LABELS_ABOVE`, also 0.5, tragen nur die Inselnamen. Die Bereichsnamen behalten in der
+Übersicht eine feste Bildschirmgröße von 15px, ihre längste Zeile ist nach dem Umbruch 15 Zeichen
+und damit rund 117px breit. Zwei Bereichs-Mittelpunkte liegen 239 Nutzereinheiten auseinander,
+117 durch 239 ergibt 0.49. Darunter überschreiben sich die Bereichsnamen gegenseitig.
+
+Zwischen 0.5 und `OVERVIEW_BELOW`, also 0.9, tragen die Bereichsnamen. Darüber die Kacheltitel:
+bei 0.9 sind sie 9.2px groß in einem 83px breiten Sechseck, darunter passt der Text nicht mehr
+hinein.
+
+Die Bereichsnamen liegen in `layer-area-labels` **über** `layer-tiles`, sonst verdecken die
+Kacheln genau die Namen, für die die Kacheltitel ausgeblendet werden. Die gestrichelten
+Bereichsringe bleiben in `layer-areas` unter den Kacheln. Die Namen tragen eine Kontur in
+Sandfarbe, damit sie sich von der Kachelfarbe darunter lösen.
+
+`--font-map` in `assets/style.css` hält die Kartenschrift an einer Stelle. Eine klassische
+Textserife, keine Display-Schrift: die Namen stehen klein und müssen lesbar bleiben. Wer sie
+tauscht, ändert diese Variable und den Schriftlink in `index.html`.
+
+Verschieben geht von jeder Stelle aus, auch von einer Kachel. Als Ziehen gilt es erst ab
+`DRAG_SLOP`, und erst dann übernimmt die Karte den Zeiger. Darunter bleibt es ein Klick und öffnet
+die Kachel. Ohne diese Unterscheidung war die Karte an jeder Kachel unbeweglich, ohne dass sich
+dafür etwas geöffnet hätte.
 
 **Vor jedem Commit an den Daten `python3 tools/check-landkarte.py` laufen lassen.** Es prüft
 Pflichtfelder, Referenzen, die Sechs-Kachel-Grenze, doppelt belegte Zellen und Insel-Abstände.
