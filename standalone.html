@@ -19,6 +19,8 @@
   --paper: #f4f0e6;
   --paper-edge: #d9d0bb;
   --muted: #6d7f86;
+  --wave: #35657a;
+  --ship: #93aeb8;
 
   /* Eine klassische Textserife, nicht eine Display-Schrift: die Bereichs- und Inselnamen
      stehen klein und müssen über Sand und Kacheln hinweg lesbar bleiben. Wer die Schrift
@@ -75,6 +77,38 @@ html, body {
 
 .shallow { fill: var(--shallow); }
 .coast { fill: var(--coast); }
+
+/* ---------- Belebtes Wasser ---------- */
+
+/* Alles hier liegt unter der Küste und darf nie ein Ziel für Klick oder Ziehen sein. */
+#layer-sea { pointer-events: none; }
+
+/* Die Kurse tragen nur die Bewegung der Schiffe. Sie bleiben unsichtbar, weil eine
+   sichtbare Linie zwischen zwei Inseln als modellierte Beziehung gelesen würde, und
+   Beziehungen sind auf dieser Karte bewusst nicht modelliert. */
+.sea-route { fill: none; stroke: none; }
+
+.wave {
+  fill: none;
+  stroke: var(--wave);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  /* Konstante Strichstärke am Schirm, sonst verschwinden die Striche beim Herauszoomen,
+     also genau dann, wenn am meisten Wasser zu sehen ist. */
+  vector-effect: non-scaling-stroke;
+  opacity: .38;
+  animation: swell 9s ease-in-out infinite;
+}
+
+@keyframes swell {
+  0%, 100% { opacity: .26; }
+  50%      { opacity: .56; }
+}
+
+.ship {
+  fill: var(--ship);
+  opacity: .72;
+}
 
 .hex { stroke: var(--ink); stroke-width: 1.5; }
 
@@ -338,6 +372,9 @@ button.ghost { background: transparent; }
 @keyframes rise { from { transform: translateY(8px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   #detail { animation: none; }
+  /* Wellen und Schiffe bleiben sichtbar, sie bewegen sich nur nicht. Die Schiffe
+     werden dafür in buildSea ohne animateMotion gebaut, SMIL hört nicht auf CSS. */
+  .wave { animation: none; }
   * { transition: none !important; }
 }
 
@@ -408,6 +445,7 @@ button.ghost { background: transparent; }
 <main id="stage">
   <svg id="map" aria-label="Landkarte der Themen zum Umgang mit besonders schützenswerten Daten">
     <g id="viewport">
+      <g id="layer-sea"></g>
       <g id="layer-shallow"></g>
       <g id="layer-coast"></g>
       <g id="layer-areas"></g>
@@ -495,6 +533,15 @@ const OVERVIEW_BELOW = 0.9;    // unterhalb dieser Skalierung nur Bereichsnamen.
 
 const DRAG_SLOP = 4;           // Bildschirmpixel, ab denen aus einem Klick ein Ziehen wird
 
+/* Belebtes Wasser. Alles davon liegt in layer-sea, also unter der Küste, und ist
+   pointer-events: none. Die Streuung ist gesät und nicht echt zufällig, damit die Karte
+   bei jedem Laden gleich aussieht und standalone.html reproduzierbar bleibt. */
+const SEA_SEED = 20260908;
+const WAVE_STEP = 160;         // Rasterweite der Wellenstriche in Nutzereinheiten
+const WAVE_KEEP = 0.88;        // ausdünnen, sonst wird das Wasser zu dicht
+const SEA_MARGIN = 3.3;        // Abstand zur Küste in Hexradien, Flachwasser reicht bis 3.0
+const SHIP_SPEED = 6;          // Nutzereinheiten je Sekunde, daraus folgt die Fahrtdauer
+
 const DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
 
 const state = {
@@ -514,6 +561,27 @@ const center = (q, r) => ({
   x: 1.5 * R * q,
   y: Math.sqrt(3) * R * (r + q / 2)
 });
+
+// Umkehrung von center(): zu welcher Zelle gehört ein Punkt
+function cellAt(x, y) {
+  const q = x / (1.5 * R), r = y / (Math.sqrt(3) * R) - q / 2;
+  let rq = Math.round(q), rr = Math.round(r), rs = Math.round(-q - r);
+  const dq = Math.abs(rq - q), dr = Math.abs(rr - r), ds = Math.abs(rs - (-q - r));
+  if (dq > dr && dq > ds) rq = -rr - rs;
+  else if (dr > ds) rr = -rq - rs;
+  return [rq, rr];
+}
+
+// Liegt der Punkt in dem um factor vergrößerten Sechseck der Zelle?
+function inHex(px, py, q, r, factor) {
+  const c = center(q, r), inr = R * factor * Math.cos(Math.PI / 6);
+  const dx = px - c.x, dy = py - c.y;
+  for (let k = 0; k < 3; k++) {
+    const a = Math.PI / 6 + Math.PI / 3 * k;
+    if (Math.abs(dx * Math.cos(a) + dy * Math.sin(a)) > inr) return false;
+  }
+  return true;
+}
 
 function hexPath(q, r, factor = 1) {
   const c = center(q, r), rad = R * factor;
@@ -693,11 +761,150 @@ function build(data) {
     y0: Math.min(...pts.map(p => p.y)) - pad, y1: Math.max(...pts.map(p => p.y)) + pad
   };
 
+  buildSea(cellsByIsland);
   buildLegend();
   buildProjectPanel();
   fit();
   applyHighlight();
   document.getElementById('loading').hidden = true;
+}
+
+/* ---------- Belebtes Wasser ---------- */
+
+// Kleiner gesäter Zufallsgenerator (mulberry32), damit die Karte reproduzierbar bleibt
+function seeded(seed) {
+  return function () {
+    seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function buildSea(cellsByIsland) {
+  const layer = document.getElementById('layer-sea');
+  const el = (name, attrs = {}) => {
+    const n = document.createElementNS(SVG_NS, name);
+    for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+    return n;
+  };
+  const rnd = seeded(SEA_SEED);
+  const still = window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Belegte Zellen einmal in eine Menge, die Wasserprüfung fragt sie oft
+  const occupied = new Set();
+  for (const cells of Object.values(cellsByIsland)) {
+    for (const [q, r] of cells) occupied.add(q + ',' + r);
+  }
+  // Ein Punkt ist Wasser, wenn kein vergrößertes Sechseck einer belegten Zelle ihn deckt.
+  // Es reichen die Zellen im Umkreis von zwei, weiter reicht SEA_MARGIN nicht.
+  const isWater = (x, y) => {
+    const [hq, hr] = cellAt(x, y);
+    for (const [q, r] of [[hq, hr], ...ring(hq, hr, 1), ...ring(hq, hr, 2)]) {
+      if (occupied.has(q + ',' + r) && inHex(x, y, q, r, SEA_MARGIN)) return false;
+    }
+    return true;
+  };
+
+  // Wellenstriche auf einem gejitterten Raster über das offene Wasser
+  const b = state.bounds;
+  let waves = 0;
+  for (let y = b.y0; y < b.y1; y += WAVE_STEP) {
+    for (let x = b.x0; x < b.x1; x += WAVE_STEP) {
+      const px = x + (rnd() - 0.5) * WAVE_STEP * 0.7;
+      const py = y + (rnd() - 0.5) * WAVE_STEP * 0.7;
+      const keep = rnd() < WAVE_KEEP;
+      const scale = 0.75 + rnd() * 0.5;
+      const tilt = (rnd() - 0.5) * 16;
+      const delay = rnd() * 9;
+      if (!keep || !isWater(px, py)) continue;
+      const w = el('path', {
+        class: 'wave',
+        d: 'M-15 0q7.5 -5 15 0q7.5 5 15 0',
+        transform: `translate(${px.toFixed(1)} ${py.toFixed(1)}) rotate(${tilt.toFixed(1)}) scale(${scale.toFixed(2)})`
+      });
+      if (!still) w.setAttribute('style', `animation-delay:-${delay.toFixed(1)}s`);
+      layer.appendChild(w);
+      waves++;
+    }
+  }
+
+  // Schiffskurse. Ein Kurs pro Archipel, vom Kern aus. Die Endpunkte werden aus der
+  // Inselmitte heraus verschoben, bis sie im Wasser liegen, dann ein leichter Bogen.
+  const mid = {};
+  for (const [iid, cells] of Object.entries(cellsByIsland)) {
+    const pts = cells.map(([q, r]) => center(q, r));
+    mid[iid] = {
+      x: pts.reduce((s, p) => s + p.x, 0) / pts.length,
+      y: pts.reduce((s, p) => s + p.y, 0) / pts.length
+    };
+  }
+  const pushOut = (from, to) => {
+    const dx = to.x - from.x, dy = to.y - from.y, L = Math.hypot(dx, dy);
+    for (let t = 0; t < L; t += R / 3) {
+      const p = { x: from.x + dx / L * t, y: from.y + dy / L * t };
+      if (isWater(p.x, p.y)) return p;
+    }
+    return null;
+  };
+  const clear = (a, c, e) => {
+    for (let k = 0; k <= 40; k++) {
+      const t = k / 40, u = 1 - t;
+      if (!isWater(u * u * a.x + 2 * u * t * c.x + t * t * e.x,
+                    u * u * a.y + 2 * u * t * c.y + t * t * e.y)) return false;
+    }
+    return true;
+  };
+
+  let ships = 0;
+  for (const iid of Object.keys(cellsByIsland)) {
+    if (iid === 'kern' || !mid.kern) continue;
+    const a = pushOut(mid.kern, mid[iid]), e = pushOut(mid[iid], mid.kern);
+    if (!a || !e) continue;
+    const L = Math.hypot(e.x - a.x, e.y - a.y);
+    const mx = (a.x + e.x) / 2, my = (a.y + e.y) / 2;
+    const nx = -(e.y - a.y) / L, ny = (e.x - a.x) / L;
+    // Bogen probieren, sonst gerade. Findet sich nichts Freies, fährt hier kein Schiff.
+    let c = null;
+    for (const f of [0.12, -0.12, 0.05, -0.05, 0]) {
+      const cand = { x: mx + nx * L * f, y: my + ny * L * f };
+      if (clear(a, cand, e)) { c = cand; break; }
+    }
+    if (!c) continue;
+
+    const id = 'sea-route-' + iid;
+    layer.appendChild(el('path', {
+      id, class: 'sea-route',
+      d: `M${a.x.toFixed(1)} ${a.y.toFixed(1)}Q${c.x.toFixed(1)} ${c.y.toFixed(1)} ${e.x.toFixed(1)} ${e.y.toFixed(1)}`
+    }));
+
+    const ship = el('g', { class: 'ship' });
+    ship.appendChild(el('path', { d: 'M-11 2L11 2L8 6L-8 6Z' }));     // Rumpf
+    ship.appendChild(el('path', { d: 'M0 2L0-11L9-2Z' }));            // Segel
+    if (still) {
+      // Ohne Bewegung liegt das Schiff auf der Kursmitte, t = 0.5 der Kurve
+      const px = 0.25 * a.x + 0.5 * c.x + 0.25 * e.x;
+      const py = 0.25 * a.y + 0.5 * c.y + 0.25 * e.y;
+      ship.setAttribute('transform', `translate(${px.toFixed(1)} ${py.toFixed(1)})`);
+    } else {
+      // Hin und zurück, damit kein Sprung am Kursende entsteht. Eine Geschwindigkeit
+      // für alle Schiffe, die Dauer folgt aus der Kurslänge.
+      const dur = (2 * L / SHIP_SPEED).toFixed(0);
+      const move = el('animateMotion', {
+        dur: dur + 's', repeatCount: 'indefinite', rotate: 'auto',
+        keyPoints: '0;1;0', keyTimes: '0;0.5;1', calcMode: 'linear',
+        begin: '-' + (rnd() * dur).toFixed(0) + 's'
+      });
+      const mpath = el('mpath', { href: '#' + id });
+      mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + id);
+      move.appendChild(mpath);
+      ship.appendChild(move);
+    }
+    layer.appendChild(ship);
+    ships++;
+  }
+  return { waves, ships };
 }
 
 function buildLegend() {

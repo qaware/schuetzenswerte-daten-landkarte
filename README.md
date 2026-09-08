@@ -39,6 +39,7 @@ erreichbar ist, können `standalone.html` und `tools/build-standalone.py` weg.
 | `landkarte.json` | die Daten, einzige Quelle der Wahrheit |
 | `index.html` | die Seite |
 | `assets/app.js`, `assets/style.css` | der Viewer |
+| | darin `layer-sea`: Wellen und Schiffe, gesät gestreut, unter der Küste und ohne Ereignisse |
 | `tools/check-landkarte.py` | prüft die Daten, von Hand laufen lassen |
 | `tools/build-standalone.py` | erzeugt `standalone.html` |
 | `standalone.html` | generiert, nur zum Anschauen ohne Webserver |

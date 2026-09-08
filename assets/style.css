@@ -8,6 +8,8 @@
   --paper: #f4f0e6;
   --paper-edge: #d9d0bb;
   --muted: #6d7f86;
+  --wave: #35657a;
+  --ship: #93aeb8;
 
   /* Eine klassische Textserife, nicht eine Display-Schrift: die Bereichs- und Inselnamen
      stehen klein und müssen über Sand und Kacheln hinweg lesbar bleiben. Wer die Schrift
@@ -64,6 +66,38 @@ html, body {
 
 .shallow { fill: var(--shallow); }
 .coast { fill: var(--coast); }
+
+/* ---------- Belebtes Wasser ---------- */
+
+/* Alles hier liegt unter der Küste und darf nie ein Ziel für Klick oder Ziehen sein. */
+#layer-sea { pointer-events: none; }
+
+/* Die Kurse tragen nur die Bewegung der Schiffe. Sie bleiben unsichtbar, weil eine
+   sichtbare Linie zwischen zwei Inseln als modellierte Beziehung gelesen würde, und
+   Beziehungen sind auf dieser Karte bewusst nicht modelliert. */
+.sea-route { fill: none; stroke: none; }
+
+.wave {
+  fill: none;
+  stroke: var(--wave);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  /* Konstante Strichstärke am Schirm, sonst verschwinden die Striche beim Herauszoomen,
+     also genau dann, wenn am meisten Wasser zu sehen ist. */
+  vector-effect: non-scaling-stroke;
+  opacity: .38;
+  animation: swell 9s ease-in-out infinite;
+}
+
+@keyframes swell {
+  0%, 100% { opacity: .26; }
+  50%      { opacity: .56; }
+}
+
+.ship {
+  fill: var(--ship);
+  opacity: .72;
+}
 
 .hex { stroke: var(--ink); stroke-width: 1.5; }
 
@@ -327,6 +361,9 @@ button.ghost { background: transparent; }
 @keyframes rise { from { transform: translateY(8px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   #detail { animation: none; }
+  /* Wellen und Schiffe bleiben sichtbar, sie bewegen sich nur nicht. Die Schiffe
+     werden dafür in buildSea ohne animateMotion gebaut, SMIL hört nicht auf CSS. */
+  .wave { animation: none; }
   * { transition: none !important; }
 }
 

@@ -127,6 +127,36 @@ Sandfarbe, damit sie sich von der Kachelfarbe darunter lösen.
 Textserife, keine Display-Schrift: die Namen stehen klein und müssen lesbar bleiben. Wer sie
 tauscht, ändert diese Variable und den Schriftlink in `index.html`.
 
+## Belebtes Wasser
+
+`layer-sea` liegt als unterste Ebene im `#viewport` und trägt Wellenstriche und Schiffe. Zwei
+Eigenschaften sind dabei nicht verhandelbar: die Ebene liegt **unter** der Küste, damit Deko
+niemals Inhalt verdeckt, und sie ist `pointer-events: none`, damit sie Klick und Ziehen nicht
+abfängt.
+
+Die Streuung ist **gesät** und nicht echt zufällig, `SEA_SEED`. Sonst wandert die Deko bei jedem
+Laden, das wirkt unruhig, und `standalone.html` wäre nicht mehr reproduzierbar. Jede Wellenmarke
+wird verworfen, wenn sie näher als `SEA_MARGIN` an einer belegten Zelle liegt; das Flachwasser
+reicht bis 3.0, die Marken bleiben also im offenen Wasser. Dichte über `WAVE_STEP` und `WAVE_KEEP`.
+
+Die Schiffskurse werden zur Laufzeit aus den Inselmitten berechnet, nicht hinterlegt: der Endpunkt
+wird aus der Inselmitte heraus geschoben, bis er im Wasser liegt, dann wird ein leichter Bogen
+gesucht, dessen Abtastpunkte alle im Wasser liegen. Findet sich keiner, fährt dort kein Schiff.
+Damit bleiben die Kurse gültig, wenn sich Insel-Ursprünge ändern. Alle Schiffe fahren mit
+`SHIP_SPEED`, die Fahrtdauer folgt aus der Kurslänge, es gibt also keine Laufzeit von Hand.
+
+Die Kurse selbst sind unsichtbar. Eine sichtbare Linie zwischen zwei Inseln würde als modellierte
+Beziehung gelesen, und Beziehungen sind hier bewusst nicht modelliert.
+
+Bei `prefers-reduced-motion` stehen Wellen und Schiffe still, bleiben aber sichtbar. Die Wellen
+über `animation: none` in der CSS, die Schiffe müssen in `buildSea` ohne `animateMotion` gebaut
+werden, weil SMIL nicht auf CSS hört. Sie liegen dann auf der Kursmitte.
+
+Ein Fehler in `buildSea` bricht `build` ab, und der Aufruf steht nicht in einem try. Wer dort
+etwas ändert, führt den Aufbau danach aus, sonst bleibt die Karte im Fehlerfall stumm leer.
+
+## Bedienung
+
 Verschieben geht von jeder Stelle aus, auch von einer Kachel. Als Ziehen gilt es erst ab
 `DRAG_SLOP`, und erst dann übernimmt die Karte den Zeiger. Darunter bleibt es ein Klick und öffnet
 die Kachel. Ohne diese Unterscheidung war die Karte an jeder Kachel unbeweglich, ohne dass sich
