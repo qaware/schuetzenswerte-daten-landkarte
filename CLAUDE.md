@@ -178,6 +178,36 @@ werden, weil SMIL nicht auf CSS hört. Sie liegen dann auf der Kursmitte.
 Ein Fehler in `buildSea` bricht `build` ab, und der Aufruf steht nicht in einem try. Wer dort
 etwas ändert, führt den Aufbau danach aus, sonst bleibt die Karte im Fehlerfall stumm leer.
 
+## Warum das Zoomen flüssig bleibt
+
+Beim Zoomen mit dem Trackpad kommen mehr Ereignisse als es Bilder gibt, und unter
+`#viewport` hängen gut 1300 Elemente. Fünf Dinge hatten daran gedreht, alle fünf sind
+behoben und dürfen nicht zurückkommen:
+
+`.area-label` hatte einen Übergang auf `font-size`. Die Größe ist aber eine Funktion der
+Skalierung und wird beim Zoomen bei jedem Rad-Ereignis neu gesetzt. Der Übergang startete
+dann jedes Mal eine neue Interpolation, die Beschriftung hing sichtbar hinter dem Zoom her,
+und der Text musste dabei je Bild neu umbrochen werden. Auf `font-size` gehört hier kein
+Übergang.
+
+`clampPan` las `clientWidth` und der Rad-Empfänger `getBoundingClientRect`, jeweils direkt
+vor dem Schreiben der Transformation. Das erzwingt bei jedem Ereignis ein Layout. Die Maße
+stehen jetzt in `view` und werden nur in `measure()` geholt, das `fit()` aufruft.
+
+Die Wellen trugen jede eine eigene CSS-Animation. Bei gut 360 Strichen sind das 360
+Deckkräfte je Bild. Die Animation sitzt jetzt an `WAVE_BANDS` Gruppen.
+
+`applyTransform` lief bei jedem Ereignis. Zoomen und Verschieben gehen jetzt über
+`scheduleTransform`, das auf ein Bild bündelt. Das Flag wird **vor** dem Anmelden gesetzt,
+sonst käme die Zuweisung erst nach dem Callback zurück und bliebe hängen.
+
+Die Schriftvariablen wurden bei jedem Ereignis geschrieben, auch beim Verschieben, wo sich
+die Skalierung gar nicht ändert. Sie werden jetzt nur bei echter Änderung geschrieben.
+
+Dazu wertet der Rad-Empfänger `deltaMode` aus. Ohne das zoomt ein Mausrad, das drei Zeilen
+meldet, so gut wie nicht, während ein Trackpad in Pixelschritten zappelt. `WHEEL_MAX`
+begrenzt den Betrag je Ereignis, damit eine schnelle Wischbewegung nicht springt.
+
 ## Bedienung
 
 Verschieben geht von jeder Stelle aus, auch von einer Kachel. Als Ziehen gilt es erst ab

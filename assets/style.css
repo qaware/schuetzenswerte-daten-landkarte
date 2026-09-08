@@ -77,6 +77,14 @@ html, body {
    Beziehungen sind auf dieser Karte bewusst nicht modelliert. */
 .sea-route { fill: none; stroke: none; }
 
+/* Die Animation sitzt an der Gruppe, nicht am einzelnen Strich. Sonst muss der Browser
+   je Bild gut 360 Deckkräfte neu berechnen, und der Zoom ruckelt. WAVE_BANDS und
+   WAVE_PERIOD in app.js verteilen die Phasen, die Dauer hier muss dazu passen. */
+.wave-band {
+  opacity: .38;
+  animation: swell 9s ease-in-out infinite;
+}
+
 .wave {
   fill: none;
   stroke: var(--wave);
@@ -85,8 +93,6 @@ html, body {
   /* Konstante Strichstärke am Schirm, sonst verschwinden die Striche beim Herauszoomen,
      also genau dann, wenn am meisten Wasser zu sehen ist. */
   vector-effect: non-scaling-stroke;
-  opacity: .38;
-  animation: swell 9s ease-in-out infinite;
 }
 
 @keyframes swell {
@@ -130,7 +136,11 @@ html, body {
   fill: #5b503a;
   text-anchor: middle;
   pointer-events: none;
-  transition: font-size .18s ease, fill .18s ease, opacity .18s ease;
+  /* Kein Übergang auf font-size. Die Größe ist eine Funktion der Skalierung und wird
+     beim Zoomen bei jedem Rad-Ereignis neu gesetzt. Ein Übergang startet dann jedes Mal
+     eine neue Interpolation, die Beschriftung hängt sichtbar hinter dem Zoom her, und
+     der Text muss dabei je Bild neu umbrochen werden. */
+  transition: fill .18s ease, opacity .18s ease;
   /* Die Bereichstexte liegen über den Kacheln, damit sie in der Übersicht lesbar sind.
      Die Kontur in Sandfarbe trennt sie von der Kachelfarbe darunter. Sie skaliert mit
      der Schrift, deshalb em und nicht px. */
@@ -362,7 +372,7 @@ button.ghost { background: transparent; }
   #detail { animation: none; }
   /* Wellen und Schiffe bleiben sichtbar, sie bewegen sich nur nicht. Die Schiffe
      werden dafür in buildSea ohne animateMotion gebaut, SMIL hört nicht auf CSS. */
-  .wave { animation: none; }
+  .wave-band { animation: none; }
   * { transition: none !important; }
 }
 

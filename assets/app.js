@@ -22,6 +22,8 @@ const OVERVIEW_BELOW = 0.9;    // unterhalb dieser Skalierung nur Bereichsnamen.
                                // 57px breiten Sechseck. Ab 0.9 passt der Text und ist lesbar.
 
 const DRAG_SLOP = 4;           // Bildschirmpixel, ab denen aus einem Klick ein Ziehen wird
+const WHEEL_LINE = 16;         // Pixel je Zeile, wenn das Gerät deltaMode 1 meldet
+const WHEEL_MAX = 120;         // Betrag je Rad-Ereignis, begrenzt schnelle Wischbewegungen
 
 /* Belebtes Wasser. Alles davon liegt in layer-sea, also unter der Küste, und ist
    pointer-events: none. Die Streuung ist gesät und nicht echt zufällig, damit die Karte
@@ -30,6 +32,13 @@ const SEA_SEED = 20260908;
 const WAVE_STEP = 160;         // Rasterweite der Wellenstriche in Nutzereinheiten
 const WAVE_KEEP = 0.88;        // ausdünnen, sonst wird das Wasser zu dicht
 const WAVE_KEEP_OUTER = 0.22;  // draußen dünner, dort schaut man selten hin
+/* Die Wellen hängen in wenigen Gruppen, die je als Ganzes pulsieren, statt dass jeder
+   Strich seine eigene Animation trägt. Bei gut 360 Strichen wäre das ein Neuberechnen
+   von 360 Deckkräften je Bild, und der Zoom ruckelt davon. Die Zuordnung ist gelost,
+   nicht räumlich, deshalb liegen Nachbarn in verschiedenen Phasen und man sieht die
+   Gruppen nicht. */
+const WAVE_BANDS = 8;
+const WAVE_PERIOD = 9;         // Sekunden, muss zur Keyframe swell in style.css passen
 /* Das Wellenfeld muss größer sein als die Karte. Bei fit bestimmt die Höhe die
    Skalierung, waagerecht sieht man deshalb immer über die Karte hinaus: auf
    3440x1440 sind das 7047 Nutzereinheiten Breite bei 2866 Kartenbreite. Die
@@ -41,6 +50,20 @@ const SEA_MARGIN = 3.3;        // Abstand zur Küste in Hexradien, Flachwasser r
 const SHIP_SPEED = 6;          // Nutzereinheiten je Sekunde, daraus folgt die Fahrtdauer
 
 const DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+
+/* Fenstermaße gepuffert. clampPan und der Zoom brauchen sie bei jedem Rad-Ereignis;
+   ein Lesen von clientWidth erzwingt dort ein Layout, direkt gefolgt von einem Schreiben
+   der Transformation. Das ist Layout-Thrashing und der Zoom ruckelt davon. */
+const view = { w: 0, h: 0, left: 0, top: 0 };
+
+function measure() {
+  const svg = document.getElementById('map');
+  const r = svg.getBoundingClientRect ? svg.getBoundingClientRect() : { left: 0, top: 0 };
+  view.w = svg.clientWidth;
+  view.h = svg.clientHeight;
+  view.left = r.left;
+  view.top = r.top;
+}
 
 const state = {
   data: null,
@@ -312,6 +335,14 @@ function buildSea(cellsByIsland) {
     return true;
   };
 
+  const bands = [];
+  for (let i = 0; i < WAVE_BANDS; i++) {
+    const g = el('g', { class: 'wave-band' });
+    if (!still) g.setAttribute('style', `animation-delay:-${(i * WAVE_PERIOD / WAVE_BANDS).toFixed(2)}s`);
+    layer.appendChild(g);
+    bands.push(g);
+  }
+
   // Wellenstriche auf einem gejitterten Raster über das offene Wasser. Das Feld reicht
   // über die Karte hinaus, weil man bei der Gesamtansicht waagerecht darüber hinaussieht.
   const b = state.bounds, f = state.sea;
@@ -324,15 +355,13 @@ function buildSea(cellsByIsland) {
       const keep = rnd() < (inner(px, py) ? WAVE_KEEP : WAVE_KEEP_OUTER);
       const scale = 0.75 + rnd() * 0.5;
       const tilt = (rnd() - 0.5) * 16;
-      const delay = rnd() * 9;
+      const band = Math.floor(rnd() * WAVE_BANDS);
       if (!keep || !isWater(px, py)) continue;
-      const w = el('path', {
+      bands[band].appendChild(el('path', {
         class: 'wave',
         d: 'M-15 0q7.5 -5 15 0q7.5 5 15 0',
         transform: `translate(${px.toFixed(1)} ${py.toFixed(1)}) rotate(${tilt.toFixed(1)}) scale(${scale.toFixed(2)})`
-      });
-      if (!still) w.setAttribute('style', `animation-delay:-${delay.toFixed(1)}s`);
-      layer.appendChild(w);
+      }));
       waves++;
     }
   }
@@ -647,8 +676,7 @@ function closeDetail() {
 // Der sichtbare Bereich bleibt im Wellenfeld, sonst schaut man auf blanken Ozean.
 // Ist das Fenster breiter als das Feld, wird auf dieser Achse zentriert.
 function clampPan() {
-  const svg = document.getElementById('map');
-  const w = svg.clientWidth, h = svg.clientHeight, f = state.sea, s = state.scale;
+  const w = view.w, h = view.h, f = state.sea, s = state.scale;
   if (!f || !w || !h) return;
   state.tx = w / s >= f.x1 - f.x0
     ? (w - (f.x0 + f.x1) * s) / 2
@@ -657,6 +685,8 @@ function clampPan() {
     ? (h - (f.y0 + f.y1) * s) / 2
     : Math.min(-f.y0 * s, Math.max(h - f.y1 * s, state.ty));
 }
+
+let lastAreaFont = '', lastIslandFont = '';
 
 function applyTransform() {
   clampPan();
@@ -667,15 +697,41 @@ function applyTransform() {
   const world = state.scale < AREA_LABELS_ABOVE;
   document.body.classList.toggle('overview', overview);
   document.body.classList.toggle('world', world);
-  const root = document.documentElement.style;
   // In der Übersicht behalten die Namen eine feste Bildschirmgröße, deshalb durch scale.
-  root.setProperty('--area-font', overview ? (15 / state.scale).toFixed(1) + 'px' : '13px');
-  root.setProperty('--island-font', overview ? (21 / state.scale).toFixed(1) + 'px' : '30px');
+  // Nur schreiben, wenn sich der Wert ändert: beim Verschieben bleibt die Skalierung gleich,
+  // ein Schreiben würde dort die Stilberechnung aller Bereichstexte umsonst anstoßen.
+  const root = document.documentElement.style;
+  const areaFont = overview ? (15 / state.scale).toFixed(1) + 'px' : '13px';
+  const islandFont = overview ? (21 / state.scale).toFixed(1) + 'px' : '30px';
+  if (areaFont !== lastAreaFont) { root.setProperty('--area-font', lastAreaFont = areaFont); }
+  if (islandFont !== lastIslandFont) { root.setProperty('--island-font', lastIslandFont = islandFont); }
+}
+
+/* Ein Trackpad liefert mehr Rad-Ereignisse als es Bilder gibt. Ohne Bündelung wird die
+   Transformation mehrmals je Bild geschrieben und der ganze Baum unter #viewport, gut
+   1300 Elemente, jedes Mal neu gezeichnet. */
+let pending = false;
+
+// Spät nachgesehen, nicht beim Laden festgelegt: ohne requestAnimationFrame läuft es
+// unmittelbar, dann bleibt die Karte auch in einer Umgebung ohne Bildtakt bedienbar.
+function raf(fn) {
+  return typeof window !== 'undefined' && window.requestAnimationFrame
+    ? window.requestAnimationFrame(fn)
+    : (fn(), 0);
+}
+
+function scheduleTransform() {
+  if (pending) return;
+  // Das Flag wird vor dem Anmelden gesetzt. Andernfalls käme die Zuweisung erst nach
+  // dem Callback zurück, und wenn der unmittelbar läuft, bliebe das Flag hängen und
+  // alle weiteren Ereignisse würden verworfen.
+  pending = true;
+  raf(() => { pending = false; applyTransform(); });
 }
 
 function fit() {
-  const svg = document.getElementById('map');
-  const w = svg.clientWidth, h = svg.clientHeight;
+  measure();
+  const w = view.w, h = view.h;
   const b = state.bounds;
   // Die Inselnamen stehen in der Übersicht mit fester Bildschirmgröße über ihrer
   // Landmasse und ragen damit über state.bounds hinaus, das nur Zellmittelpunkte
@@ -696,7 +752,7 @@ function zoomAt(factor, cx, cy) {
   state.tx = cx - (cx - state.tx) * k;
   state.ty = cy - (cy - state.ty) * k;
   state.scale = next;
-  applyTransform();
+  scheduleTransform();
 }
 
 function wireInteraction() {
@@ -722,23 +778,27 @@ function wireInteraction() {
     }
     state.tx += dx; state.ty += dy;
     lastX = e.clientX; lastY = e.clientY;
-    applyTransform();
+    scheduleTransform();
   });
   // dragged wird hier gesetzt, weil click erst nach pointerup kommt
   const stop = () => { dragging = false; state.dragged = moved; svg.classList.remove('dragging'); };
   svg.addEventListener('pointerup', stop);
   svg.addEventListener('pointercancel', stop);
 
+  /* deltaY kommt je nach Gerät in Pixeln, Zeilen oder Seiten. Ohne Auswertung von
+     deltaMode zoomt ein Mausrad, das drei Zeilen meldet, fast gar nicht, während ein
+     Trackpad mit Pixeln in winzigen Schritten zappelt. Der Betrag wird begrenzt, sonst
+     springt eine schnelle Wischbewegung. */
   svg.addEventListener('wheel', e => {
     e.preventDefault();
-    const rect = svg.getBoundingClientRect();
-    zoomAt(Math.exp(-e.deltaY * 0.0015), e.clientX - rect.left, e.clientY - rect.top);
+    let px = e.deltaY;
+    if (e.deltaMode === 1) px *= WHEEL_LINE;
+    else if (e.deltaMode === 2) px *= view.h || WHEEL_LINE * 40;
+    px = Math.max(-WHEEL_MAX, Math.min(WHEEL_MAX, px));
+    zoomAt(Math.exp(-px * 0.0015), e.clientX - view.left, e.clientY - view.top);
   }, { passive: false });
 
-  const mid = () => {
-    const r = svg.getBoundingClientRect();
-    return [r.width / 2, r.height / 2];
-  };
+  const mid = () => [view.w / 2, view.h / 2];
   document.getElementById('btn-zoom-in').onclick = () => zoomAt(1.3, ...mid());
   document.getElementById('btn-zoom-out').onclick = () => zoomAt(1 / 1.3, ...mid());
   document.getElementById('btn-zoom-fit').onclick = fit;
@@ -782,7 +842,7 @@ function wireInteraction() {
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(fit, 150);
+    resizeTimer = setTimeout(fit, 150);   // fit() misst selbst neu
   });
 }
 
