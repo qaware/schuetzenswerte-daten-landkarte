@@ -27,7 +27,7 @@ const WHEEL_MAX = 120;         // Betrag je Rad-Ereignis, begrenzt schnelle Wisc
 
 /* Belebtes Wasser. Alles davon liegt in layer-sea, also unter der Küste, und ist
    pointer-events: none. Die Streuung ist gesät und nicht echt zufällig, damit die Karte
-   bei jedem Laden gleich aussieht und standalone.html reproduzierbar bleibt. */
+   bei jedem Laden gleich aussieht. */
 const SEA_SEED = 20260908;
 const WAVE_STEP = 160;         // Rasterweite der Wellenstriche in Nutzereinheiten
 const WAVE_KEEP = 0.88;        // ausdünnen, sonst wird das Wasser zu dicht
@@ -857,7 +857,7 @@ async function start() {
     build(await res.json());
   } catch (err) {
     document.getElementById('loading').textContent =
-      'landkarte.json konnte nicht geladen werden. Den Ordner über einen Webserver ausliefern, etwa mit python3 -m http.server, oder standalone.html öffnen.';
+      'landkarte.json konnte nicht geladen werden. Den Ordner über einen Webserver ausliefern, etwa mit python3 -m http.server.';
   }
 }
 

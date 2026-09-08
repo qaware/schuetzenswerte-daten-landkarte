@@ -1,5 +1,7 @@
 # Landkarte: Umgang mit besonders schützenswerten Daten
 
+**https://qaware.github.io/schuetzenswerte-daten-landkarte/**
+
 Eine hexagonale Landkarte zur Orientierung in Projekten, in denen besonders schützenswerte Daten
 verarbeitet werden. Sie soll einordnen helfen, nicht standardisieren: wenn es etwas gibt, das man
 kennen sollte, ist es gut, wenn es auf der Karte steht.
@@ -29,9 +31,8 @@ statt sie zu doppeln.
 python3 -m http.server 8000
 ```
 
-Dann `http://localhost:8000` öffnen. Alternativ `standalone.html` direkt im Browser öffnen,
-das ist eine generierte Einzeldatei mit eingebetteten Daten. Sobald die Seite über GitHub Pages
-erreichbar ist, können `standalone.html` und `tools/build-standalone.py` weg.
+Dann `http://localhost:8000` öffnen. Ein Webserver ist nötig, weil der Viewer
+`landkarte.json` per `fetch` holt.
 
 ## Aufbau
 
@@ -42,8 +43,6 @@ erreichbar ist, können `standalone.html` und `tools/build-standalone.py` weg.
 | `assets/app.js`, `assets/style.css` | der Viewer |
 | | darin `layer-sea`: Wellen und Schiffe, gesät gestreut, unter der Küste und ohne Ereignisse |
 | `tools/check-landkarte.py` | prüft die Daten, von Hand laufen lassen |
-| `tools/build-standalone.py` | erzeugt `standalone.html` |
-| `standalone.html` | generiert, nur zum Anschauen ohne Webserver |
 
 `index.html` und `landkarte.json` liegen absichtlich im Wurzelverzeichnis: GitHub Pages liefert
 von dort aus, und der Pfad zu den Daten ist Teil der Schnittstelle, siehe „Für Agenten". Der
@@ -89,7 +88,6 @@ in den Text, nicht in eigene Kacheln, sonst wird die Karte unlesbar.
 1. Eintrag in `tiles` ergänzen, `area` und `dimension` müssen zu vorhandenen Einträgen passen
 2. Neue Bereiche brauchen einen Eintrag in `areas` mit `island` und `lattice`
 3. `python3 tools/check-landkarte.py` laufen lassen
-4. `python3 tools/build-standalone.py` laufen lassen, wenn `standalone.html` aktuell bleiben soll
 
 Das Layout wird aus den Daten berechnet und steht nicht in der JSON. `lattice` ist die Position
 eines Bereichs im groben Raster seiner Insel, die Kacheln ordnen sich in Ringen um den Bereich an.

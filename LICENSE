@@ -20,8 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Diese Lizenz gilt für den Viewer und die Werkzeuge: index.html, style.css,
-app.js, check-landkarte.py und build-standalone.py.
+Diese Lizenz gilt für den Viewer und die Werkzeuge: index.html,
+assets/style.css, assets/app.js und tools/check-landkarte.py.
 
 Die Inhalte in landkarte.json stehen unter einer eigenen Lizenz, siehe
 LICENSE-DATA.

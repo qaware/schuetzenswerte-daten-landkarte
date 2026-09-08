@@ -135,7 +135,7 @@ niemals Inhalt verdeckt, und sie ist `pointer-events: none`, damit sie Klick und
 abfängt.
 
 Die Streuung ist **gesät** und nicht echt zufällig, `SEA_SEED`. Sonst wandert die Deko bei jedem
-Laden, das wirkt unruhig, und `standalone.html` wäre nicht mehr reproduzierbar. Jede Wellenmarke
+Laden, und das wirkt unruhig. Jede Wellenmarke
 wird verworfen, wenn sie näher als `SEA_MARGIN` an einer belegten Zelle liegt; das Flachwasser
 reicht bis 3.0, die Marken bleiben also im offenen Wasser. Dichte über `WAVE_STEP` und `WAVE_KEEP`.
 
@@ -223,8 +223,19 @@ Die Geometrie im Skript muss zu `assets/app.js` passen, `LATTICE` steht an beide
 
 `index.html` und `landkarte.json` bleiben im Wurzelverzeichnis, weil Pages von dort ausliefert und
 der Datenpfad Teil der Schnittstelle für andere Repos ist. Der Viewer liegt in `assets`, die
-Werkzeuge in `tools`. `standalone.html` ist generiert und fällt weg, sobald die Seite live ist.
-Kein `src`-Verzeichnis und kein Build-Schritt, die Seite besteht aus drei ausgelieferten Dateien.
+Werkzeuge in `tools`. Kein `src`-Verzeichnis und kein Build-Schritt, die Seite besteht aus drei
+ausgelieferten Dateien und liegt unter
+https://qaware.github.io/schuetzenswerte-daten-landkarte/ auf GitHub Pages, aus `main` und dem
+Wurzelverzeichnis.
+
+Es gab einmal ein generiertes `standalone.html` samt Bauskript, damit die Karte ohne Webserver
+anzusehen war. Beides ist mit dem Livegang entfernt worden. Ein generiertes Abbild im Repo
+veraltet still, und genau das war passiert: nach der Layout-Änderung stand dort noch die alte
+Karte. Wer so etwas wieder braucht, baut es außerhalb des Repos.
+
+Der Zweig `window.LANDKARTE_DATA` in `start()` stammt aus diesem Bau, ist aber kein Rest. Er ist
+die Naht, über die sich `app.js` ohne Browser prüfen lässt: Daten hineingeben, Aufbau laufen
+lassen, Ergebnis auslesen. Bitte stehen lassen.
 
 ## Offen und bewusst nicht gebaut
 
