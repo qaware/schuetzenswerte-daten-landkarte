@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landkarte: Umgang mit besonders schützenswerten Daten</title>
+<meta name="description" content="Hexagonale Landkarte zur Orientierung in Projekten, in denen besonders schützenswerte Daten verarbeitet werden.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ocean: #10262f;
+  --ocean-deep: #0a1a21;
+  --shallow: #1b3d4a;
+  --coast: #e8dcc0;
+  --coast-edge: #cdbd97;
+  --ink: #0c1a20;
+  --paper: #f4f0e6;
+  --paper-edge: #d9d0bb;
+  --muted: #6d7f86;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--ocean);
+  color: var(--paper);
+  font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  overscroll-behavior: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+#stage { position: fixed; inset: 0; overflow: hidden; }
+
+#map {
+  width: 100%; height: 100%;
+  display: block;
+  background:
+    radial-gradient(120% 90% at 50% 40%, #14303b 0%, var(--ocean) 55%, var(--ocean-deep) 100%);
+  cursor: grab;
+  touch-action: none;
+}
+#map.dragging { cursor: grabbing; }
+
+#loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  font-family: Fraunces, Georgia, serif;
+  font-style: italic;
+  font-size: 20px;
+  color: #8fa9b2;
+}
+#loading[hidden] { display: none; }
+
+/* ---------- Karte ---------- */
+
+.shallow { fill: var(--shallow); }
+.coast { fill: var(--coast); }
+
+.hex { stroke: var(--ink); stroke-width: 1.5; }
+
+.tile { cursor: pointer; }
+.tile:focus { outline: none; }
+.tile:focus-visible .hex,
+.tile:hover .hex { stroke-width: 3.5; }
+
+.tile-label {
+  font-size: 9.5px;
+  font-weight: 500;
+  fill: var(--ink);
+  text-anchor: middle;
+  pointer-events: none;
+  transition: opacity .18s ease;
+}
+.tile-label.tight { font-size: 8.2px; }
+
+.area-ring {
+  fill: none;
+  stroke: var(--coast-edge);
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+}
+
+.area-label {
+  font-family: Fraunces, Georgia, serif;
+  font-style: italic;
+  font-size: var(--area-font, 13px);
+  fill: #6b5f45;
+  text-anchor: middle;
+  pointer-events: none;
+  transition: font-size .18s ease, fill .18s ease;
+}
+
+.island-label {
+  font-family: Fraunces, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: var(--island-font, 30px);
+  fill: #7fa3ae;
+  text-anchor: middle;
+  letter-spacing: .01em;
+  pointer-events: none;
+}
+
+/* Übersichtsmodus: Kacheltitel weichen den Bereichsnamen */
+body.overview .tile-label { opacity: 0; }
+body.overview .area-label { fill: #4d4534; }
+
+.faded { opacity: .13; transition: opacity .18s ease; }
+.tile .hex, .tile .tile-label { transition: opacity .18s ease; }
+
+.marked .hex {
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 9px rgba(255,255,255,.65));
+}
+
+/* ---------- Panels ---------- */
+
+#titleblock {
+  position: absolute;
+  top: 22px; left: 24px;
+  max-width: 27ch;
+  pointer-events: none;
+}
+#titleblock h1 {
+  font-family: Fraunces, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 25px;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--paper);
+}
+#subtitle { margin: 6px 0 0; font-size: 13px; color: #91a8b0; }
+
+#toolbar {
+  position: absolute;
+  top: 22px; right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#search {
+  width: 260px;
+  padding: 9px 12px;
+  border: 1px solid #33545f;
+  border-radius: 3px;
+  background: #16333e;
+  color: var(--paper);
+  font: inherit;
+  font-size: 14px;
+}
+#search::placeholder { color: #6d8b95; }
+#search:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid #a8d672;
+  outline-offset: 2px;
+}
+
+button {
+  padding: 9px 14px;
+  border: 1px solid #33545f;
+  border-radius: 3px;
+  background: #16333e;
+  color: var(--paper);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+button:hover { background: #1d4250; }
+button[aria-expanded="true"] { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+button.ghost { background: transparent; }
+
+#count {
+  margin: 0;
+  min-width: 12ch;
+  font-size: 13px;
+  color: #91a8b0;
+}
+
+#project {
+  position: absolute;
+  top: 74px; right: 24px;
+  width: 330px;
+  max-height: calc(100% - 110px);
+  overflow-y: auto;
+  padding: 18px 20px 20px;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 3px;
+  box-shadow: 0 18px 44px rgba(0,0,0,.45);
+}
+#project[hidden] { display: none; }
+#project h2 {
+  font-family: Fraunces, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 19px;
+  margin: 0 0 4px;
+}
+.hint { margin: 0 0 14px; font-size: 12.5px; color: #5f6b62; line-height: 1.45; }
+
+.qgroup { margin-bottom: 16px; }
+.qgroup > p {
+  margin: 0 0 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.qopts { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-block;
+  padding: 5px 11px;
+  border: 1px solid var(--paper-edge);
+  border-radius: 999px;
+  background: #fbf9f3;
+  color: #3b4640;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.chip:hover { border-color: #a9a08b; }
+.chip[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.project-actions { display: flex; gap: 8px; margin-top: 4px; }
+#project button {
+  border-color: var(--paper-edge);
+  background: #fbf9f3;
+  color: var(--ink);
+}
+#project button:hover { background: #eee9db; }
+#export-status { margin: 10px 0 0; min-height: 1.2em; }
+
+#legend {
+  position: absolute;
+  bottom: 22px; left: 24px;
+  max-width: 25ch;
+}
+#legend h2 {
+  font-family: Fraunces, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 0 8px;
+  color: #a6bcc3;
+}
+#legend ul { list-style: none; margin: 0 0 12px; padding: 0; }
+#legend li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12.5px;
+  margin-bottom: 4px;
+  color: #cfdde1;
+}
+#legend .swatch {
+  flex: 0 0 auto;
+  width: 12px; height: 12px;
+  border: 1px solid var(--ink);
+  transform: translateY(1px);
+}
+#legend .frage { color: #7f979f; }
+#disclaimer { color: #6d868e; font-size: 11.5px; }
+
+#zoombar {
+  position: absolute;
+  bottom: 22px; right: 24px;
+  display: flex;
+  gap: 6px;
+}
+#zoombar button { min-width: 40px; padding: 8px 10px; }
+
+/* ---------- Detailkarte ---------- */
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(6,18,23,.72);
+  z-index: 20;
+}
+#overlay[hidden] { display: none; }
+
+#detail {
+  position: relative;
+  width: min(620px, 100%);
+  max-height: 84vh;
+  overflow-y: auto;
+  padding: 30px 34px 28px;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 4px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  animation: rise .16s ease-out;
+}
+@keyframes rise { from { transform: translateY(8px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  #detail { animation: none; }
+  * { transition: none !important; }
+}
+
+#detail-close {
+  position: absolute;
+  top: 14px; right: 16px;
+  width: 32px; height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #6c766f;
+  font-size: 24px;
+  line-height: 1;
+}
+#detail-close:hover { background: #e7e1d1; color: var(--ink); }
+
+#detail-dimension {
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 3px 10px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+#detail h2 {
+  font-family: Fraunces, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 27px;
+  line-height: 1.15;
+  margin: 0 0 6px;
+  max-width: 34ch;
+}
+#detail-place { margin: 0 0 22px; font-size: 13px; color: #5f6b62; }
+
+#detail-body h3 {
+  margin: 20px 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #46524b;
+}
+#detail-body p { margin: 0; max-width: 62ch; }
+#detail-body a { color: #1f5f7a; }
+
+#detail-triggers {
+  margin: 24px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--paper-edge);
+  font-size: 12px;
+  color: #6c766f;
+}
+
+@media (max-width: 900px) {
+  #titleblock { max-width: 20ch; }
+  #titleblock h1 { font-size: 19px; }
+  #toolbar { top: auto; bottom: 78px; left: 16px; right: 16px; flex-wrap: wrap; }
+  #search { width: 100%; }
+  #project { top: auto; bottom: 78px; left: 16px; right: 16px; width: auto; max-height: 60vh; }
+  #legend { display: none; }
+  #zoombar { bottom: 16px; right: 16px; }
+}
+
+</style>
+</head>
+<body>
+
+<main id="stage">
+  <svg id="map" aria-label="Landkarte der Themen zum Umgang mit besonders schützenswerten Daten">
+    <g id="viewport">
+      <g id="layer-shallow"></g>
+      <g id="layer-coast"></g>
+      <g id="layer-areas"></g>
+      <g id="layer-tiles"></g>
+      <g id="layer-islands"></g>
+    </g>
+  </svg>
+
+  <div id="loading" role="status">Landkarte wird geladen</div>
+
+  <header id="titleblock">
+    <h1>Umgang mit besonders schützenswerten Daten</h1>
+    <p id="subtitle"></p>
+  </header>
+
+  <div id="toolbar">
+    <div class="field">
+      <label for="search" class="visually-hidden">Suchen</label>
+      <input id="search" type="search" placeholder="Suchen, etwa Verschlüsselung oder DSFA" autocomplete="off" spellcheck="false">
+    </div>
+    <button id="btn-project" type="button" aria-expanded="false" aria-controls="project">Mein Projekt</button>
+    <p id="count" aria-live="polite"></p>
+  </div>
+
+  <section id="project" hidden aria-labelledby="project-heading">
+    <h2 id="project-heading">Was gilt für mein Projekt?</h2>
+    <p class="hint">Beantworte, was auf dein Vorhaben zutrifft. Die Karte hebt dann die Kacheln hervor, die du geklärt haben solltest.</p>
+    <div id="project-fields"></div>
+    <div class="project-actions">
+      <button id="btn-export" type="button">Als Checkliste kopieren</button>
+      <button id="btn-reset" type="button" class="ghost">Auswahl zurücksetzen</button>
+    </div>
+    <p class="hint" id="export-status" aria-live="polite"></p>
+  </section>
+
+  <div id="legend">
+    <h2>Fünf Dimensionen</h2>
+    <ul id="legend-list"></ul>
+    <p class="hint" id="disclaimer"></p>
+  </div>
+
+  <div id="zoombar">
+    <button id="btn-zoom-in" type="button" aria-label="Hineinzoomen">+</button>
+    <button id="btn-zoom-out" type="button" aria-label="Herauszoomen">−</button>
+    <button id="btn-zoom-fit" type="button" aria-label="Ganze Karte zeigen">Alles</button>
+  </div>
+</main>
+
+<div id="overlay" hidden>
+  <article id="detail" role="dialog" aria-modal="true" aria-labelledby="detail-title" tabindex="-1">
+    <button id="detail-close" type="button" aria-label="Schließen">×</button>
+    <p id="detail-dimension"></p>
+    <h2 id="detail-title"></h2>
+    <p id="detail-place"></p>
+    <div id="detail-body"></div>
+    <p id="detail-triggers"></p>
+  </article>
+</div>
+
+<script>window.LANDKARTE_DATA={"meta": {"title": "Landkarte: Umgang mit besonders schützenswerten Daten", "subtitle": "Orientierung für Projekte, in denen sensible Daten verarbeitet werden", "disclaimer": "Orientierungshilfe, kein Rechtsrat. Verbindliche Aussagen kommen von Datenschutzbeauftragten, Legal und den zuständigen Aufsichtsbehörden.", "version": "0.1", "verwandt": {"label": "T-Landkarte (Engineering-Kompetenzen)", "url": "https://qa-thomas-kothmayr.github.io/t-landkarte/"}}, "dimensions": {"klassifizierung": {"label": "1 Klassifizierung", "short": "Klassifizierung", "color": "#A8D672", "frage": "Welche Daten habe ich?"}, "regulatorik": {"label": "2 Regulatorik", "short": "Regulatorik", "color": "#C4C9CF", "frage": "Was gilt dafür?"}, "architektur": {"label": "3 Architektur", "short": "Architektur", "color": "#F5A25D", "frage": "Wie baue ich es sicher?"}, "betrieb": {"label": "4 Betrieb & Nachweise", "short": "Betrieb", "color": "#F5D142", "frage": "Wie halte ich es sicher und weise es nach?"}, "methodik": {"label": "5 Methodik & Quellen", "short": "Methodik", "color": "#6B9BE3", "frage": "Wie gehe ich vor und wo lese ich nach?"}}, "islands": {"kern": {"label": "Kern", "origin": [0, 0]}, "medtech": {"label": "MedTech Archipel", "origin": [8, -16]}, "public": {"label": "Public Sector Archipel", "origin": [-18, 9]}, "ki": {"label": "KI Archipel", "origin": [-7, 14]}, "finance": {"label": "Finance Archipel", "origin": [14, 0]}}, "areas": {"personenbezug": {"label": "Personenbezug", "island": "kern", "lattice": [-1, 0]}, "weitere-datenarten": {"label": "Weitere Datenarten", "island": "kern", "lattice": [-2, 0]}, "schutzbedarf": {"label": "Schutzbedarf", "island": "kern", "lattice": [-2, 1]}, "datenschutzrecht": {"island": "kern", "lattice": [0, -1], "label": "Datenschutzrecht"}, "dsgvo-pflichten": {"island": "kern", "lattice": [0, -2], "label": "Pflichten aus der DSGVO"}, "uebermittlung": {"island": "kern", "lattice": [-1, -1], "label": "Übermittlung & Drittland"}, "sicherheitsrecht": {"island": "kern", "lattice": [1, -2], "label": "Sicherheits- & Geheimnisschutzrecht"}, "normen": {"label": "Normen & Zertifizierungen", "island": "kern", "lattice": [-1, -2]}, "prinzipien": {"label": "Architektur-Prinzipien", "island": "kern", "lattice": [0, 0]}, "maskierung": {"label": "Maskierung & Transformation", "island": "kern", "lattice": [0, 1]}, "verschluesselung": {"label": "Verschlüsselung & Schlüssel", "island": "kern", "lattice": [-1, 2]}, "zugriff": {"label": "Zugriff & Berechtigungen", "island": "kern", "lattice": [-1, 1]}, "cloud": {"label": "Cloud & Souveränität", "island": "kern", "lattice": [-2, 2]}, "entwurf-nachweis": {"label": "Entwurf für Betrieb & Nachweis", "island": "kern", "lattice": [1, 0]}, "betrieb-vorfaelle": {"label": "Überwachung & Vorfälle", "island": "kern", "lattice": [1, -1]}, "lebenszyklus": {"label": "Lebenszyklus", "island": "kern", "lattice": [2, -2]}, "organisation": {"label": "Organisation & Nachweise", "island": "kern", "lattice": [2, -1]}, "verankern": {"label": "Im Projekt verankern", "island": "kern", "lattice": [2, 0]}, "bewerten": {"label": "Bewerten", "island": "kern", "lattice": [1, 1]}, "quellen": {"label": "Quellen", "island": "kern", "lattice": [0, 2]}, "medtech-daten": {"label": "Daten", "island": "medtech", "lattice": [0, 0]}, "medtech-reg-de": {"label": "Regulatorik Deutschland", "island": "medtech", "lattice": [1, 0]}, "medtech-reg-int": {"label": "Regulatorik international", "island": "medtech", "lattice": [1, -1]}, "public-daten": {"label": "Daten", "island": "public", "lattice": [0, 0]}, "public-reg": {"label": "Regulatorik", "island": "public", "lattice": [1, 0]}, "finance-daten": {"label": "Daten", "island": "finance", "lattice": [0, 0]}, "finance-reg": {"label": "Regulatorik", "island": "finance", "lattice": [1, 0]}, "ki-daten": {"label": "Daten", "island": "ki", "lattice": [0, 0]}, "ki-reg": {"label": "Regulatorik", "island": "ki", "lattice": [1, 0]}, "ki-arch": {"label": "Architektur", "island": "ki", "lattice": [0, 1]}, "ki-quellen": {"label": "Quellen", "island": "ki", "lattice": [1, 1]}}, "filters": [{"id": "branche", "label": "Branche", "type": "single", "options": [{"label": "MedTech", "tags": ["branche:medtech"]}, {"label": "Public Sector", "tags": ["branche:public"]}, {"label": "Finance", "tags": ["branche:finance"]}, {"label": "andere", "tags": []}]}, {"id": "pb", "label": "Personenbezogene Daten im Spiel?", "type": "toggle", "tags": ["pb:ja"]}, {"id": "daten", "label": "Welche Datenarten kommen vor?", "type": "multi", "options": [{"label": "Besondere Kategorien (Art. 9)", "tags": ["daten:art9"]}, {"label": "Zahlungs- & Kontodaten", "tags": ["daten:finanz"]}, {"label": "Geschäftsgeheimnisse & IP", "tags": ["daten:ip"]}, {"label": "Staatliche & kritische Daten", "tags": ["daten:staatlich"]}, {"label": "Stammdaten", "tags": ["daten:stammdaten"]}, {"label": "Logs & Observability", "tags": ["daten:logs"]}, {"label": "Analytische Daten", "tags": ["daten:analytisch"]}, {"label": "Prompts & KI-Kontext", "tags": ["daten:prompts"]}]}, {"id": "cloud", "label": "Hyperscaler-Cloud im Einsatz?", "type": "toggle", "tags": ["cloud:hyperscaler"]}, {"id": "ki", "label": "KI im Einsatz?", "type": "toggle", "tags": ["ki:ja"]}, {"id": "drittland", "label": "Datentransfer ins Drittland?", "type": "toggle", "tags": ["drittland:ja"]}], "tiles": {"pii": {"title": "Personenbezogene Daten (PII)", "area": "personenbezug", "dimension": "klassifizierung", "triggers": ["pb:ja"], "aliases": ["PII", "Personendaten", "personal data"], "what": "Alle Angaben, die sich direkt oder indirekt auf eine identifizierbare natürliche Person beziehen. Dazu gehören auch technische Kennungen wie IP-Adressen, Geräte-IDs oder Kundennummern.", "why": "Sobald personenbezogene Daten im Spiel sind, greift die DSGVO mit Rechtsgrundlage, Zweckbindung, Betroffenenrechten und Löschpflichten. Fast alles andere auf dieser Karte hängt an dieser Feststellung.", "when": "Der Begriff ist weiter, als die meisten denken. Auch ein Datensatz ohne Namen ist personenbezogen, wenn er über eine Kennung wieder einer Person zuzuordnen ist."}, "art9": {"title": "Besondere Kategorien (Art. 9 DSGVO)", "area": "personenbezug", "dimension": "klassifizierung", "triggers": ["daten:art9"], "aliases": ["Art. 9", "sensible Daten", "special categories"], "what": "Gesundheitsdaten, genetische und biometrische Daten, rassische oder ethnische Herkunft, politische Meinungen, religiöse oder philosophische Überzeugungen, Gewerkschaftszugehörigkeit sowie Daten zum Sexualleben.", "why": "Für diese Kategorien gilt ein grundsätzliches Verarbeitungsverbot mit engen Ausnahmen. Wer sie verarbeitet, braucht eine tragfähige Ausnahme und deutlich strengere Schutzmaßnahmen.", "when": "Achtung bei Ableitbarkeit: eine Medikamentenliste, ein Fitness-Datensatz oder eine Vereinsmitgliedschaft können Art. 9 auslösen, ohne dass irgendwo Diagnose steht."}, "biometrie": {"title": "Biometrische Daten", "area": "personenbezug", "dimension": "klassifizierung", "triggers": ["daten:art9"], "aliases": ["Biometrie", "Fingerabdruck", "Gesichtserkennung"], "what": "Merkmale wie Fingerabdruck, Gesichtsgeometrie, Iris oder Stimmprofil, die zur eindeutigen Identifizierung einer Person verarbeitet werden.", "why": "Biometrie ist nicht widerrufbar. Ein geleaktes Passwort tauscht man aus, ein geleaktes Gesichtsmerkmal nicht. Das verschiebt die Risikobewertung deutlich.", "when": "Nur die Verarbeitung zur eindeutigen Identifizierung fällt unter Art. 9. Ein Foto allein ist noch keine biometrische Verarbeitung."}, "personenbezug-pseudonym": {"title": "Personenbezug nach Pseudonymisierung", "area": "personenbezug", "dimension": "klassifizierung", "triggers": ["pb:ja"], "aliases": ["noch personenbezogen", "Re-Identifikation", "Rückschlüsse"], "what": "Die Frage, ob ein Datensatz nach der Bearbeitung noch personenbezogen ist. Pseudonymisierte Daten sind es weiterhin, anonymisierte nicht mehr.", "why": "Hier passiert der häufigste Denkfehler in Projekten. Nach dem Entfernen von Namen gilt der Datensatz oft als unkritisch, obwohl er über Quasi-Identifikatoren wie Postleitzahl, Geburtsdatum und Zeitstempel wieder zuordenbar ist.", "when": "Immer prüfen, bevor Daten in Analytics, Testumgebungen oder zu Dritten wandern."}, "ip-geheimnisse": {"title": "Geschäftsgeheimnisse & IP", "area": "weitere-datenarten", "dimension": "klassifizierung", "triggers": ["daten:ip"], "aliases": ["Quellcode", "Algorithmen", "Betriebsgeheimnis", "trade secrets"], "what": "Quellcode, Modelle und Algorithmen, Preis- und Kalkulationslogik, unveröffentlichte Zahlen, Konstruktionsdaten und Kundenlisten.", "why": "Schützenswert heißt nicht automatisch personenbezogen. Diese Daten stehen nicht unter Datenschutzrecht, ihr Verlust ist aber oft der wirtschaftlich größere Schaden und trifft direkt den Kunden.", "when": "Besonders relevant bei KI-Nutzung, externen Dienstleistern und Repository-Zugriffen."}, "stammdaten": {"title": "Stammdaten & Mandantendaten", "area": "weitere-datenarten", "dimension": "klassifizierung", "triggers": ["daten:stammdaten"], "aliases": ["Master Data", "Mandanten", "Lieferanten", "Metadaten"], "what": "Daten, die das System zum Funktionieren braucht: Mandanten, Standorte, Lieferanten, Artikel, Organisationsstrukturen samt zugehöriger Metadaten.", "why": "Sie sind selten besonders schützenswert und genau deshalb wichtig auf dieser Karte. Sie liefern den Vergleichsmaßstab, an dem man erkennt, was tatsächlich Schutzbedarf hat.", "when": "Aufpassen, wenn Stammdaten Personen enthalten, etwa Ansprechpartner beim Lieferanten. Dann kippt die Einordnung."}, "konfigurationsdaten": {"title": "Konfigurationsdaten & Secrets", "area": "weitere-datenarten", "dimension": "klassifizierung", "triggers": ["immer"], "aliases": ["Config", "Umgebungsvariablen", "Zugangsdaten"], "what": "Konfiguration, Verbindungsparameter, Zertifikate, API-Schlüssel und Passwörter, die eine Anwendung zum Betrieb braucht.", "why": "Ein geleaktes Secret hebelt jede andere Schutzmaßnahme aus. Der Schutzbedarf ergibt sich nicht aus dem Inhalt, sondern aus dem Zugang, den er eröffnet.", "when": "Immer relevant, besonders in Repositories, CI-Logs und Fehlermeldungen."}, "logdaten": {"title": "Logs & Observability-Daten", "area": "weitere-datenarten", "dimension": "klassifizierung", "triggers": ["daten:logs", "immer"], "aliases": ["Logs", "Traces", "Metriken", "Telemetrie"], "what": "Anwendungs- und Zugriffslogs, Traces, Metriken und Fehlermeldungen samt allem, was unbeabsichtigt darin landet.", "why": "Logs sind der klassische Nebenausgang für sensible Daten. Ein Stacktrace mit dem vollständigen Request-Payload kopiert Gesundheitsdaten in ein System, das oft breiter zugänglich ist als die Datenbank selbst.", "when": "Immer prüfen, sobald externe Log-Backends, längere Aufbewahrung oder weite Leserechte im Spiel sind."}, "analytische-daten": {"title": "Analytische & Reporting-Daten", "area": "weitere-datenarten", "dimension": "klassifizierung", "triggers": ["daten:analytisch"], "aliases": ["BI", "Data Warehouse", "Auswertungen", "Kennzahlen"], "what": "Aggregierte und historisierte Daten für Berichte, Kennzahlen und Auswertungen, meist in einem separaten Warehouse oder Lakehouse.", "why": "Aggregation entschärft nicht automatisch. Bei kleinen Fallzahlen oder feiner Gruppierung lassen sich Einzelpersonen aus Kennzahlen rekonstruieren, und der Analysezweck deckt sich selten mit dem Erhebungszweck.", "when": "Relevant bei jedem Datenabzug aus der Produktion in ein Auswertungssystem."}, "schutzziele": {"title": "Schutzziele (Vertraulichkeit, Integrität, Verfügbarkeit)", "area": "schutzbedarf", "dimension": "klassifizierung", "triggers": ["immer"], "aliases": ["CIA", "Schutzziel", "Vertraulichkeit", "Integrität", "Verfügbarkeit"], "what": "Die drei Grundfragen jeder Schutzbedarfsbetrachtung: Wer darf es sehen, wer darf es verändern, und wann muss es verfügbar sein.", "why": "Diskussionen über sensible Daten drehen sich fast nur um Vertraulichkeit. Bei Behandlungsdaten kann eine unbemerkte Verfälschung oder ein Ausfall im Notfall den größeren Schaden anrichten.", "when": "Am Anfang jeder Klassifizierung, für jede Datenart getrennt bewerten."}, "schutzbedarfsstufen": {"title": "Schutzbedarfsstufen", "area": "schutzbedarf", "dimension": "klassifizierung", "triggers": ["immer"], "aliases": ["normal hoch sehr hoch", "Kritikalität", "Einstufung"], "what": "Eine abgestufte Einstufung des Schadens bei Verletzung eines Schutzziels, üblicherweise in drei Stufen wie im BSI-Vorgehen.", "why": "Ohne Stufen wird alles gleich behandelt, und in der Praxis heißt das entweder überall Maximalschutz oder nirgends. Die Abstufung macht Aufwand verhandelbar und begründbar.", "when": "Sinnvoll, sobald ein System mehrere Datenarten mit unterschiedlichem Risiko enthält."}, "dsgvo": {"title": "DSGVO", "area": "datenschutzrecht", "dimension": "regulatorik", "triggers": ["immer"], "aliases": ["GDPR", "Datenschutzgrundverordnung"], "what": "Die europäische Grundverordnung für die Verarbeitung personenbezogener Daten, mit Grundsätzen wie Rechtmäßigkeit, Zweckbindung, Datenminimierung, Speicherbegrenzung und Rechenschaftspflicht.", "why": "Sie ist der gemeinsame Bezugsrahmen für fast alles auf dieser Karte. Wer die Grundsätze aus Art. 5 kennt, kann die meisten Detailfragen selbst einordnen.", "when": "Sobald personenbezogene Daten verarbeitet werden, unabhängig von Branche und Unternehmensgröße."}, "bdsg": {"title": "BDSG", "area": "datenschutzrecht", "dimension": "regulatorik", "triggers": ["pb:ja"], "aliases": ["Bundesdatenschutzgesetz"], "what": "Die deutsche Ergänzung zur DSGVO, unter anderem zu Beschäftigtendaten, Videoüberwachung, Datenschutzbeauftragten und einzelnen Verarbeitungsbefugnissen.", "why": "Die DSGVO lässt nationale Spielräume. Bei Beschäftigtendaten oder Aufsichtsfragen steht die relevante Regel oft erst hier.", "when": "Relevant bei deutschem Verantwortlichen, besonders bei Mitarbeiterdaten."}, "betroffenenrechte": {"title": "Betroffenenrechte (Art. 15–22)", "area": "datenschutzrecht", "dimension": "regulatorik", "triggers": ["pb:ja"], "aliases": ["DSAR", "Auskunft", "Löschung", "Datenportabilität", "Widerspruch"], "what": "Die Ansprüche auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit, Widerspruch und auf Nichtunterwerfung unter rein automatisierte Entscheidungen.", "why": "Das ist die Stelle, an der Recht am direktesten zu Architektur wird. Eine Auskunft über alle Daten einer Person quer über Microservices, Backups und Logs ist eine Systemanforderung, kein Formularthema.", "when": "Früh klären, wie eine Person und all ihre Daten systemweit gefunden werden. Nachträglich ist das teuer."}, "avv": {"title": "Auftragsverarbeitung (AVV, Art. 28)", "area": "dsgvo-pflichten", "dimension": "regulatorik", "triggers": ["immer"], "aliases": ["AVV", "DPA", "Auftragsverarbeiter", "Subunternehmer"], "what": "Der Vertrag zwischen Verantwortlichem und Dienstleister, der Zweck, Umfang, Weisungsbindung, Subunternehmer und Sicherheitsmaßnahmen der Verarbeitung festlegt.", "why": "Für Beratungsprojekte ist das der eigene Rollenrahmen. Jeder eingesetzte Cloud-Dienst, Monitoring-Anbieter oder KI-Endpunkt ist ein Auftragsverarbeiter oder Subunternehmer und muss abgedeckt sein.", "when": "Vor jedem neuen Dienst im Datenpfad prüfen, ob er vertraglich abgedeckt ist."}, "tom": {"title": "Technische & organisatorische Maßnahmen (Art. 32)", "area": "dsgvo-pflichten", "dimension": "regulatorik", "triggers": ["immer"], "aliases": ["TOM", "TOMs", "Sicherheit der Verarbeitung"], "what": "Die Pflicht, dem Risiko angemessene Schutzmaßnahmen umzusetzen, ausdrücklich genannt sind Pseudonymisierung, Verschlüsselung, Verfügbarkeit und regelmäßige Überprüfung.", "why": "Das ist das Scharnier zwischen Dimension 2 und 3. Art. 32 verlangt keine konkrete Technik, sondern Angemessenheit, und genau diese Begründung liefert die Architektur.", "when": "Immer. Die TOM-Liste ist häufig auch das Dokument, das der Kunde im Audit vorlegen muss."}, "vvt": {"title": "Verarbeitungsverzeichnis (Art. 30)", "area": "dsgvo-pflichten", "dimension": "regulatorik", "triggers": ["pb:ja"], "aliases": ["VVT", "Verzeichnis von Verarbeitungstätigkeiten", "ROPA"], "what": "Ein Verzeichnis aller Verarbeitungstätigkeiten mit Zweck, Datenkategorien, Empfängern, Fristen und Drittlandtransfers.", "why": "Es ist oft die einzige vollständige Übersicht, welche Daten wohin fließen, und damit für Entwicklungsteams eine überraschend nützliche Informationsquelle.", "when": "Beim Projektstart nach dem bestehenden Verzeichnis fragen, statt die Datenflüsse neu zu erheben."}, "meldepflichten": {"title": "Meldepflichten bei Datenschutzverletzung (Art. 33/34)", "area": "dsgvo-pflichten", "dimension": "regulatorik", "triggers": ["pb:ja"], "aliases": ["Data Breach", "72 Stunden", "Meldung Aufsichtsbehörde"], "what": "Die Pflicht, eine Verletzung des Schutzes personenbezogener Daten unverzüglich und möglichst innerhalb von 72 Stunden der Aufsichtsbehörde zu melden, bei hohem Risiko zusätzlich die Betroffenen zu informieren.", "why": "Die Frist zwingt zu Vorbereitung. Wer im Vorfall erst herausfinden muss, welche Datensätze betroffen sind, hält 72 Stunden nicht ein.", "when": "Die Pflicht steht hier, der Prozess dazu liegt in Dimension 4 unter Incident Response."}, "drittlandtransfer": {"title": "Drittlandtransfer (Schrems II, SCC)", "area": "uebermittlung", "dimension": "regulatorik", "triggers": ["drittland:ja"], "aliases": ["Schrems II", "SCC", "Standardvertragsklauseln", "TIA", "Angemessenheitsbeschluss"], "what": "Die Regeln für die Übermittlung personenbezogener Daten in Länder außerhalb der EU, über Angemessenheitsbeschluss, Standardvertragsklauseln oder andere Garantien samt Prüfung des Zielrechts.", "why": "Transfer beginnt nicht erst beim Datenexport. Auch ein Zugriff aus einem Drittland auf europäisch gespeicherte Daten ist eine Übermittlung, etwa im Support oder in der Rufbereitschaft.", "when": "Bei jedem Dienstleister, Modellanbieter oder Support-Team außerhalb der EU."}, "cloud-act": {"title": "US CLOUD Act", "area": "uebermittlung", "dimension": "regulatorik", "triggers": ["cloud:hyperscaler", "drittland:ja"], "aliases": ["CLOUD Act", "Zugriff US-Behörden", "FISA"], "what": "US-Recht, das US-Anbieter zur Herausgabe von Daten verpflichten kann, auch wenn diese in europäischen Rechenzentren liegen.", "why": "Es ist der Grund, warum ein EU-Rechenzentrum allein die Diskussion um Souveränität nicht beendet. Die Frage ist nicht nur der Speicherort, sondern wer rechtlich Zugriff erzwingen kann.", "when": "Bei US-Anbietern und ihren europäischen Töchtern, unabhängig von der Region."}, "sozialdaten": {"title": "Sozialdaten (SGB)", "area": "datenschutzrecht", "dimension": "regulatorik", "triggers": ["branche:medtech", "branche:public"], "aliases": ["Sozialgeheimnis", "SGB X", "Sozialdatenschutz"], "what": "Der besondere Schutz von Daten bei Sozialleistungsträgern, geregelt im Sozialgesetzbuch, insbesondere das Sozialgeheimnis.", "why": "Bei Krankenkassen, Renten- und Sozialversicherungsträgern gilt zusätzlich zur DSGVO ein eigenes Regime, das Übermittlungen deutlich enger fasst als der allgemeine Datenschutz.", "when": "Sobald ein Sozialleistungsträger Verantwortlicher ist oder dessen Daten verarbeitet werden."}, "nis2": {"title": "NIS-2", "area": "sicherheitsrecht", "dimension": "regulatorik", "triggers": ["immer"], "aliases": ["NIS2", "Netzwerk- und Informationssicherheit", "NIS2UmsuCG"], "what": "Die europäische Richtlinie zur Cybersicherheit, die für betroffene Einrichtungen Risikomanagement, Meldepflichten bei Sicherheitsvorfällen und Verantwortung der Leitungsebene vorschreibt.", "why": "Sie erweitert den Kreis der betroffenen Unternehmen deutlich über die klassischen kritischen Infrastrukturen hinaus, und viele Kunden wissen selbst nicht, ob sie darunter fallen.", "when": "Betroffenheit früh mit dem Kunden klären. Die nationale Umsetzung und deren Zeitplan bitte aktuell prüfen."}, "cra": {"title": "Cyber Resilience Act", "area": "sicherheitsrecht", "dimension": "regulatorik", "triggers": ["immer"], "aliases": ["CRA", "Produkte mit digitalen Elementen"], "what": "Die EU-Verordnung mit Sicherheitsanforderungen an Produkte mit digitalen Elementen, unter anderem zu sicheren Voreinstellungen, Schwachstellenbehandlung und Updateversorgung über den Lebenszyklus.", "why": "Sie trifft Software als Produkt und macht Themen wie SBOM und Schwachstellenmeldung zur Pflicht statt zur guten Praxis.", "when": "Relevant, wenn Software in Verkehr gebracht wird, nicht nur intern betrieben. Zeitplan bitte aktuell prüfen."}, "geschgehg": {"title": "Geschäftsgeheimnisgesetz", "area": "sicherheitsrecht", "dimension": "regulatorik", "triggers": ["daten:ip"], "aliases": ["GeschGehG", "Know-how-Schutz"], "what": "Das Gesetz zum Schutz von Geschäftsgeheimnissen, das rechtlichen Schutz nur gewährt, wenn angemessene Geheimhaltungsmaßnahmen nachweisbar getroffen wurden.", "why": "Ohne dokumentierte Schutzmaßnahmen ist ein Geheimnis rechtlich kein Geheimnis. Das macht Zugriffsbeschränkung und Vertraulichkeitsvereinbarungen zur Voraussetzung des Schutzes, nicht zur Kür.", "when": "Sobald Kunden-Know-how, Quellcode oder Kalkulationen im Projekt liegen."}, "tdddg": {"title": "TDDDG (Telemetrie & Einwilligung)", "area": "datenschutzrecht", "dimension": "regulatorik", "triggers": ["pb:ja"], "aliases": ["TTDSG", "Cookies", "Einwilligung", "Consent"], "what": "Die deutschen Regeln zum Zugriff auf Informationen in Endgeräten, also Cookies, lokale Speicher und vergleichbare Techniken, mit grundsätzlicher Einwilligungspflicht.", "why": "Die Einwilligungspflicht knüpft am Zugriff auf das Endgerät an, nicht am Personenbezug. Auch technisch harmlose Telemetrie und Produktanalytik fallen darunter.", "when": "Bei Web- und App-Frontends, Analytics und Crash-Reporting."}, "iso27001": {"title": "ISO/IEC 27001 & ISMS", "area": "normen", "dimension": "regulatorik", "triggers": ["immer"], "aliases": ["ISO 27001", "ISMS", "Informationssicherheitsmanagement"], "what": "Die Norm für ein Managementsystem für Informationssicherheit, also den Rahmen, in dem Risiken erfasst, Maßnahmen beschlossen, dokumentiert und regelmäßig überprüft werden.", "why": "Sie ist der Ort, an dem Regeln und Vorgaben eines Unternehmens überhaupt festgehalten werden. Für einzelne Projekte ist sie selten zentral, sie erklärt aber, warum der Kunde bestimmte Nachweise verlangt.", "when": "Relevant, wenn der Kunde zertifiziert ist oder es werden will. Dann kommen Nachweispflichten ins Projekt."}, "iso27701": {"title": "ISO/IEC 27701", "area": "normen", "dimension": "regulatorik", "triggers": ["pb:ja"], "aliases": ["27701", "PIMS", "Datenschutzmanagement"], "what": "Die Erweiterung von ISO/IEC 27001 und 27002 auf den Schutz personenbezogener Daten, mit getrennten Anforderungen für Verantwortliche und Auftragsverarbeiter.", "why": "Sie übersetzt Datenschutzpflichten in die Sprache eines Managementsystems und ist damit die Brücke zwischen Datenschutzrecht und bestehender Sicherheitsorganisation.", "when": "Nützlich, wenn ein Kunde ISO 27001 schon lebt und Datenschutz sauber anschließen will."}, "bsi-c5": {"title": "BSI C5", "area": "normen", "dimension": "regulatorik", "triggers": ["cloud:hyperscaler"], "aliases": ["C5", "Cloud Computing Compliance Criteria Catalogue"], "what": "Der Kriterienkatalog des BSI für Cloud-Dienste, gegen den Anbieter sich prüfen lassen und darüber einen Testatbericht vorlegen.", "why": "Er gibt eine belastbare Antwort auf die Frage, was ein Cloud-Anbieter tatsächlich zusichert, und ersetzt Marketingaussagen durch prüfbare Kriterien.", "when": "Bei der Auswahl von Cloud-Diensten für sensible Daten den C5-Bericht anfordern und die Zuständigkeitsgrenzen darin lesen."}, "datenminimierung": {"title": "Datenminimierung", "area": "prinzipien", "dimension": "architektur", "triggers": ["immer"], "aliases": ["Data Minimization", "Sparsamkeit", "Zweckbindung"], "what": "Nur die Daten erheben, verarbeiten und speichern, die für den konkreten Zweck erforderlich sind, und zwar nur so lange wie nötig.", "why": "Es ist die wirksamste Maßnahme überhaupt, weil sie das Risiko entfernt statt es zu verwalten. Daten, die nicht da sind, müssen nicht verschlüsselt, überwacht oder gelöscht werden.", "when": "Bei jedem neuen Feld, jeder Schnittstelle und jedem Datenabzug die Frage stellen, wer diese Angabe tatsächlich braucht."}, "privacy-by-design": {"title": "Privacy by Design & by Default", "area": "prinzipien", "dimension": "architektur", "triggers": ["immer"], "aliases": ["Privacy by Design", "Privacy by Default", "Datenschutz durch Technikgestaltung", "Art. 25"], "what": "Datenschutz von Anfang an in den Entwurf einbauen und die datenschutzfreundlichste Einstellung zur Voreinstellung machen.", "why": "Nachträglich eingebauter Datenschutz ist teuer und lückenhaft. Als Voreinstellung wirkt er auch dann, wenn niemand aktiv etwas konfiguriert, und das ist der Normalfall.", "when": "Die Kachel liegt bewusst in der Architektur, nicht in der Methodik, weil sie sich in konkreten Entwurfsentscheidungen niederschlägt."}, "least-privilege": {"title": "Least Privilege & Need-to-Know", "area": "prinzipien", "dimension": "architektur", "triggers": ["immer"], "aliases": ["Least Privilege", "geringste Rechte", "Need to Know"], "what": "Jeder Mensch und jeder Dienst erhält genau die Rechte, die für die Aufgabe nötig sind, und nur für die Dauer der Aufgabe.", "why": "Es begrenzt den Schaden, wenn ein Zugang missbraucht wird, und ist gleichzeitig die Maßnahme, die im Projektalltag am schnellsten erodiert, weil Rechte großzügig vergeben und nie zurückgenommen werden.", "when": "Gilt für Menschen, technische Nutzer, CI-Pipelines und Agenten gleichermaßen."}, "datentrennung": {"title": "Datentrennung & Mandantentrennung", "area": "prinzipien", "dimension": "architektur", "triggers": ["immer"], "aliases": ["Data Segregation", "Multitenancy", "Mandantentrennung", "Isolation"], "what": "Die bewusste Trennung von Datenbeständen nach Mandant, Schutzbedarf oder Zweck, von getrennten Schemata bis zu getrennten Laufzeitumgebungen.", "why": "Die Trennung entscheidet über den Radius eines Fehlers. Sie hält außerdem hochregulierte Teile klein, damit nicht das gesamte System dem strengsten Regime unterliegt.", "when": "Früh entscheiden. Eine nachträgliche Trennung ist meist eine Migration, keine Anpassung."}, "anonymisierung": {"title": "Anonymisierung", "area": "maskierung", "dimension": "architektur", "triggers": ["pb:ja"], "aliases": ["Anonymisierung", "anonymization", "k-Anonymität"], "what": "Die irreversible Entfernung des Personenbezugs, sodass eine Zuordnung zu einer Person auch mit Zusatzwissen nicht mehr möglich ist.", "why": "Erfolgreich anonymisierte Daten fallen aus dem Datenschutzrecht heraus. Das ist der größte erreichbare Vorteil und gleichzeitig eine hohe Hürde, weil die Messlatte die Zuordenbarkeit mit allen verfügbaren Mitteln ist.", "when": "Für Analytik, Forschung und Demodaten anstreben. Ergebnis kritisch prüfen, echte Anonymität ist selten."}, "pseudonymisierung": {"title": "Pseudonymisierung", "area": "maskierung", "dimension": "architektur", "triggers": ["pb:ja"], "aliases": ["Pseudonymisierung", "pseudonymization", "Ersetzen von Kennungen"], "what": "Das Ersetzen identifizierender Merkmale durch ein Pseudonym, wobei die Zuordnungsregel getrennt und geschützt aufbewahrt wird.", "why": "Sie ist in Art. 32 ausdrücklich als Maßnahme genannt und in der Praxis der beste Kompromiss zwischen Nutzbarkeit und Schutz. Die Daten bleiben personenbezogen, das Risiko sinkt aber deutlich.", "when": "Der Schutz steht und fällt mit der Trennung der Zuordnungstabelle. Liegt sie in derselben Datenbank, ist wenig gewonnen."}, "tokenisierung": {"title": "Tokenisierung", "area": "maskierung", "dimension": "architektur", "triggers": ["daten:finanz", "pb:ja"], "aliases": ["Tokenization", "Token", "Vault"], "what": "Der Ersatz eines sensiblen Werts durch einen bedeutungslosen Stellvertreter, wobei nur ein abgeschotteter Dienst die Rückauflösung kennt.", "why": "Damit lässt sich der Kreis der Systeme, die den echten Wert überhaupt sehen, drastisch verkleinern. Im Zahlungsumfeld ist das der übliche Weg, den Prüfumfang klein zu halten.", "when": "Sinnvoll, wenn viele Systeme mit einer Kennung arbeiten müssen, aber kaum eines den Klartext braucht."}, "data-masking": {"title": "Data Masking", "area": "maskierung", "dimension": "architektur", "triggers": ["pb:ja"], "aliases": ["Maskierung", "statisches Masking", "dynamisches Masking", "Redaction"], "what": "Das Überschreiben oder Verkürzen sensibler Werte, entweder dauerhaft beim Kopieren eines Datenbestands oder erst bei der Abfrage je nach Rolle.", "why": "Es löst den häufigen Fall, dass ein Support- oder Analyseteam mit Datensätzen arbeiten muss, den Klartext einzelner Felder aber nicht braucht.", "when": "Statisch für Kopien in Test und Analyse, dynamisch für rollenabhängige Sichten in der Produktion."}, "testdaten": {"title": "Testdaten & synthetische Daten", "area": "maskierung", "dimension": "architektur", "triggers": ["immer"], "aliases": ["Testdaten", "synthetische Daten", "Faker", "Produktionsabzug"], "what": "Erzeugte oder abgeleitete Datenbestände für Entwicklung, Test und Last, die realistisch genug sind, ohne echte Personendaten zu enthalten.", "why": "Der Produktionsabzug in die Testumgebung ist der häufigste Datenschutzverstoß in Softwareprojekten und passiert fast immer aus Bequemlichkeit, nicht aus Absicht.", "when": "Steht hier als Maßnahme, nicht als Datenart. Die Verfügbarkeit brauchbarer Testdaten entscheidet, ob das Verbot des Prod-Abzugs eingehalten wird."}, "log-sanitization": {"title": "Log-Sanitization", "area": "maskierung", "dimension": "architektur", "triggers": ["daten:logs", "immer"], "aliases": ["Log Masking", "Logfilter", "Stacktrace", "Redaction"], "what": "Das Verhindern und Maskieren sensibler Inhalte in Logs, Traces und Fehlermeldungen, möglichst zentral in der Logging-Schicht statt an jeder Aufrufstelle.", "why": "Der gefährlichste Pfad ist der Fehlerfall. Ein unbehandelter Fehler schreibt gern den vollständigen Request samt Nutzdaten in ein System mit weiten Leserechten.", "when": "Als Entwurfsentscheidung behandeln, nicht als Betriebsthema. Wer erst im Betrieb filtert, hat die Daten schon geschrieben."}, "verschl-at-rest": {"title": "Verschlüsselung at Rest", "area": "verschluesselung", "dimension": "architektur", "triggers": ["immer"], "aliases": ["at rest", "Festplattenverschlüsselung", "TDE"], "what": "Die Verschlüsselung gespeicherter Daten auf Datenträger-, Datenbank- oder Feldebene.", "why": "Sie schützt gegen den Verlust des Mediums und ist regulatorisch fast überall erwartet. Gegen einen kompromittierten Anwendungszugang hilft sie nicht, was oft überschätzt wird.", "when": "Standard. Interessant wird erst die Frage, auf welcher Ebene verschlüsselt wird und wer den Schlüssel hält.", "tlandkarte": "Verschlüsselung"}, "verschl-in-transit": {"title": "Verschlüsselung in Transit", "area": "verschluesselung", "dimension": "architektur", "triggers": ["immer"], "aliases": ["in transit", "TLS", "mTLS", "HTTPS"], "what": "Die Absicherung der Übertragung zwischen Komponenten, außen wie innen, in der Regel über TLS, bei Dienst-zu-Dienst-Verkehr auch gegenseitig authentifiziert.", "why": "Außen ist das selbstverständlich, innen häufig nicht. Unverschlüsselter Verkehr im Cluster ist der Punkt, an dem Zero-Trust-Ansprüche meist scheitern.", "when": "Nach außen ohnehin gesetzt. Zu entscheiden ist, ob der Verkehr zwischen den eigenen Diensten mitverschlüsselt wird und ob dafür gegenseitige Authentifizierung nötig ist.", "tlandkarte": "TLS/PKI & HTTPS"}, "confidential-computing": {"title": "Confidential Computing (in Use)", "area": "verschluesselung", "dimension": "architektur", "triggers": ["daten:art9", "cloud:hyperscaler"], "aliases": ["Enclaves", "TEE", "in use", "Confidential VM"], "what": "Die Verarbeitung von Daten in einer hardwaregeschützten Umgebung, sodass selbst der Betreiber der Infrastruktur den Klartext im Speicher nicht einsehen kann.", "why": "Es schließt die letzte Lücke der klassischen Verschlüsselung, nämlich den Moment der Verarbeitung, und ist ein ernstes Argument in Souveränitätsdiskussionen.", "when": "Erwägen bei sehr hohem Schutzbedarf in fremder Infrastruktur. Aufwand und Einschränkungen sind erheblich."}, "schluesselverwaltung": {"title": "Schlüsselverwaltung (KMS, BYOK, HYOK)", "area": "verschluesselung", "dimension": "architektur", "triggers": ["immer"], "aliases": ["KMS", "BYOK", "HYOK", "Key Management", "HSM"], "what": "Erzeugung, Aufbewahrung, Verteilung und Entzug kryptografischer Schlüssel, einschließlich der Frage, ob der Kunde eigene Schlüssel einbringt oder außerhalb der Cloud behält.", "why": "Verschlüsselung verlagert das Problem auf den Schlüssel. Wer ihn hält, entscheidet über Zugriff, und genau das ist die eigentliche Frage bei Cloud und Souveränität.", "when": "Vor der Entscheidung über Verschlüsselung klären, nicht danach."}, "access-control": {"title": "Access Control (RBAC, ABAC, Need-to-Know)", "area": "zugriff", "dimension": "architektur", "triggers": ["immer"], "aliases": ["RBAC", "ABAC", "Autorisierung", "Berechtigungen", "IAM", "Rollen"], "what": "Das Modell, nach dem Zugriffsentscheidungen getroffen werden, über Rollen, über Attribute wie Mandant und Fallbezug, oder als Kombination.", "why": "Bei sensiblen Daten reicht die Rolle allein oft nicht. Eine Ärztin darf Behandlungsdaten sehen, aber nicht die jedes Patienten, und dieser Fallbezug ist eine Attributentscheidung.", "when": "Früh festlegen. Ein nachträglicher Wechsel von Rollen auf Attribute betrifft jede Abfrage.", "tlandkarte": "Identity- & Access-Management"}, "zero-trust": {"title": "Zero Trust & Mikrosegmentierung", "area": "zugriff", "dimension": "architektur", "triggers": ["immer"], "aliases": ["Zero Trust", "Mikrosegmentierung", "Netzsegmentierung", "Zugriff von außen minimieren", "Angriffsfläche"], "what": "Der Verzicht auf implizites Vertrauen innerhalb des Netzes, verbunden mit kleinteiliger Segmentierung und der Minimierung von außen erreichbarer Endpunkte.", "why": "Das klassische Modell mit hartem Rand und weichem Inneren bedeutet, dass ein einziger kompromittierter Dienst alles erreicht. Segmentierung begrenzt den Radius und hält besonders sensible Teile klein.", "when": "Besonders wertvoll, wenn ein stark regulierter Teil vom Rest getrennt werden soll."}, "dlp": {"title": "Data Loss Prevention", "area": "zugriff", "dimension": "architektur", "triggers": ["daten:ip", "pb:ja"], "aliases": ["DLP", "Datenabfluss", "Exfiltration"], "what": "Technische Kontrollen, die den ungewollten Abfluss von Daten erkennen oder verhindern, an Übergängen wie Export, Mail, Uploads und Schnittstellen.", "why": "Die meisten Datenabflüsse sind keine Angriffe, sondern Bequemlichkeit. Ein Export nach Excel, ein Upload in ein fremdes Werkzeug, ein Screenshot im Chat.", "when": "Relevant überall, wo Menschen legitimen Zugriff haben und Daten das System verlassen können."}, "hyperscaler": {"title": "Umgang mit Hyperscalern", "area": "cloud", "dimension": "architektur", "triggers": ["cloud:hyperscaler"], "aliases": ["AWS", "Azure", "GCP", "Public Cloud", "Shared Responsibility"], "what": "Die Nutzung großer Cloud-Anbieter für sensible Daten, inklusive Verantwortungsteilung, Regionenwahl, Zugriffsprotokollierung und vertraglicher Absicherung.", "why": "Die Frage ist selten Cloud oder nicht, sondern welcher Dienst mit welchen Daten und unter welchen Zusatzmaßnahmen. Die Verantwortungsteilung wird dabei regelmäßig falsch eingeschätzt.", "when": "Pro Dienst entscheiden, nicht pro Anbieter. Managed-Datenbank und Managed-KI-Endpunkt sind völlig verschiedene Diskussionen."}, "souveraene-cloud": {"title": "Souveräne Clouds & Datenlokalisierung", "area": "cloud", "dimension": "architektur", "triggers": ["cloud:hyperscaler", "drittland:ja"], "aliases": ["Souveränität", "Datenlokalisierung", "EU Cloud", "Sovereign Cloud"], "what": "Betriebsmodelle, die Speicherort, Betriebspersonal und rechtliche Kontrolle innerhalb der EU halten, von EU-Regionen über treuhänderische Modelle bis zu europäischen Anbietern.", "why": "Datenlokalisierung allein löst die Zugriffsfrage nicht, weil Betrieb und Support ebenso zählen. Souveränität ist eine Skala mit Kostenfolgen, keine Ja-Nein-Eigenschaft.", "when": "Aufkommend, sobald der Kunde nach CLOUD Act oder Drittlandzugriff fragt."}, "audit-logging": {"title": "Audit Logging & Nachvollziehbarkeit", "area": "entwurf-nachweis", "dimension": "architektur", "triggers": ["immer"], "aliases": ["Audit Trail", "Protokollierung", "Nachvollziehbarkeit", "Auditability"], "what": "Die manipulationssichere Protokollierung sicherheits- und datenschutzrelevanter Ereignisse, insbesondere wer wann auf welche sensiblen Daten zugegriffen hat.", "why": "Ohne Zugriffsprotokoll lässt sich nach einem Vorfall nicht sagen, welche Datensätze betroffen waren, und dann ist die Meldung nach Art. 33 nicht belastbar.", "when": "Entwurfsentscheidung, nicht Betriebsthema. Was nicht protokolliert wird, ist im Nachhinein nicht rekonstruierbar.", "tlandkarte": "Auditability"}, "loeschkonzept": {"title": "Löschkonzept & technische Umsetzung", "area": "entwurf-nachweis", "dimension": "architektur", "triggers": ["pb:ja"], "aliases": ["Löschkonzept", "Löschung", "Erasure", "Backups"], "what": "Die systematische Festlegung, welche Daten wann verschwinden müssen, und die technische Fähigkeit, das tatsächlich zu tun, einschließlich Kopien, Caches, Suchindizes und Backups.", "why": "Löschen ist architektonisch schwerer als Speichern. Verteilte Systeme, Event-Logs und unveränderliche Backups machen aus einer einfachen Anforderung ein Entwurfsproblem.", "when": "Vor der Wahl von Speichertechnologien klären. Ein Append-only-Log und eine Löschpflicht passen schlecht zusammen."}, "dsar-technisch": {"title": "Betroffenenrechte technisch umsetzen", "area": "entwurf-nachweis", "dimension": "architektur", "triggers": ["pb:ja"], "aliases": ["DSAR", "Auskunftsschnittstelle", "Datenexport", "Portabilität"], "what": "Die technischen Fähigkeiten, alle Daten einer Person systemweit zu finden, auszugeben, zu korrigieren, einzuschränken und zu löschen.", "why": "Die rechtliche Frist ist kurz, und die Antwort muss vollständig sein. Wenn jeder Dienst seine eigene Kennung führt, wird jede Auskunft zur Handarbeit mit Lückenrisiko.", "when": "Braucht eine durchgängige Personenkennung oder ein Register, welches System welche Daten zu einer Person hält."}, "monitoring-datenfluesse": {"title": "Monitoring sensibler Datenflüsse", "area": "betrieb-vorfaelle", "dimension": "betrieb", "triggers": ["immer"], "aliases": ["Monitoring", "Tracing", "Observability", "Zugriffsüberwachung"], "what": "Die laufende Beobachtung, wo sensible Daten fließen und wer darauf zugreift, inklusive Auffälligkeiten wie Massenexporten oder untypischen Abfragen.", "why": "Zugriffsrechte sagen, was erlaubt ist, das Monitoring sagt, was tatsächlich passiert. Missbrauch legitimer Zugänge lässt sich nur so entdecken.", "when": "Achtung auf die Rückkopplung: das Monitoring selbst darf keine neue Kopie sensibler Daten erzeugen."}, "alerting": {"title": "Alerting auf Datenschutzvorfälle", "area": "betrieb-vorfaelle", "dimension": "betrieb", "triggers": ["immer"], "aliases": ["Alerting", "Alarmierung", "Schwellwerte"], "what": "Definierte Signale, die auf einen möglichen Datenschutzvorfall hinweisen, mit klarer Zuständigkeit und Eskalationsweg.", "why": "Die 72-Stunden-Frist läuft ab Kenntnis. Ohne Alarmierung beginnt die Kenntnis oft erst mit dem Anruf eines Betroffenen, und dann ist viel Zeit verloren.", "when": "Mindestens für fehlgeschlagene Massenzugriffe, ungewöhnliche Exporte und Konfigurationsänderungen an Zugriffsrechten."}, "incident-response": {"title": "Incident Response & Data-Breach-Prozess", "area": "betrieb-vorfaelle", "dimension": "betrieb", "triggers": ["immer"], "aliases": ["Incident Response", "Data Breach", "Notfallprozess", "Eskalation"], "what": "Der geübte Ablauf von Erkennung über Eingrenzung und Bewertung bis zur Meldung und Nachbereitung, mit benannten Rollen und Erreichbarkeiten.", "why": "Der Prozess entscheidet, ob die rechtliche Pflicht aus Art. 33 einhaltbar ist. Die Bewertung, welche Datensätze betroffen sind, ist dabei der aufwendigste Schritt.", "when": "Einmal trocken durchspielen. Der Prozess gehört hierher, die Meldepflicht selbst steht in Dimension 2."}, "aufbewahrungsfristen": {"title": "Aufbewahrungs- & Löschfristen", "area": "lebenszyklus", "dimension": "betrieb", "triggers": ["pb:ja"], "aliases": ["Retention", "Fristen", "Speicherbegrenzung", "Archivierung"], "what": "Die konkreten Fristen pro Datenart, gespeist aus Zweckbindung auf der einen und handels- oder berufsrechtlichen Aufbewahrungspflichten auf der anderen Seite.", "why": "Löschpflicht und Aufbewahrungspflicht widersprechen sich regelmäßig, und die Auflösung ist eine fachliche Entscheidung, keine technische. Ohne Fristen bleibt alles für immer liegen.", "when": "Fristen kommen vom Fachbereich und von Legal. Die Umsetzung braucht das Löschkonzept aus Dimension 3."}, "schluesselrotation": {"title": "Schlüsselrotation", "area": "lebenszyklus", "dimension": "betrieb", "triggers": ["immer"], "aliases": ["Key Rotation", "Rotation", "Zertifikatserneuerung"], "what": "Der regelmäßige und der anlassbezogene Wechsel von Schlüsseln, Zertifikaten und Zugangsdaten, möglichst automatisiert.", "why": "Rotation begrenzt, wie lange ein abgeflossener Schlüssel nützlich ist. Sie muss geübt sein, denn im Verdachtsfall muss sie unter Zeitdruck funktionieren.", "when": "Wer nie rotiert hat, kann im Notfall nicht rotieren. Das ist der eigentliche Grund für den regelmäßigen Turnus."}, "rezertifizierung": {"title": "Rechte-Rezertifizierung", "area": "lebenszyklus", "dimension": "betrieb", "triggers": ["immer"], "aliases": ["Rezertifizierung", "Access Review", "Berechtigungsprüfung"], "what": "Die wiederkehrende Überprüfung, ob vergebene Berechtigungen noch erforderlich sind, bestätigt durch die fachlich verantwortliche Person.", "why": "Berechtigungen wachsen nur in eine Richtung. Nach zwei Jahren Projektlaufzeit hat typischerweise die halbe Organisation Zugriff auf die Produktionsdaten.", "when": "Besonders wichtig bei wechselnden Projektbesetzungen und externen Beteiligten."}, "nda": {"title": "Verpflichtungserklärungen (NDA)", "area": "organisation", "dimension": "betrieb", "triggers": ["daten:art9", "immer"], "aliases": ["NDA", "Verpflichtungserklärung", "Vertraulichkeit", "Schweigepflicht"], "what": "Die unterschriebene Verpflichtung einzelner Personen zur Vertraulichkeit und zur Einhaltung der einschlägigen Regeln, oft samt Belehrung über die Folgen.", "why": "Das ist keine Formalie, sondern eine Folge aus der Regulatorik und Voraussetzung dafür, dass Personen überhaupt ordentlich informiert sind. Beim Geheimnisschutz ist die dokumentierte Verpflichtung sogar Bedingung des rechtlichen Schutzes.", "when": "Vor dem ersten Zugriff auf sensible Daten, nicht nach dem Projektstart."}, "schulungsnachweise": {"title": "Schulungsnachweise", "area": "organisation", "dimension": "betrieb", "triggers": ["immer"], "aliases": ["Schulung", "Awareness", "Nachweis", "Unterweisung"], "what": "Regelmäßige Unterweisung der beteiligten Personen zu Datenschutz und Informationssicherheit samt nachvollziehbarer Dokumentation.", "why": "Im Audit ist die Frage nicht, ob geschult wurde, sondern ob es belegbar ist. Für das Projekt ist der eigentliche Wert, dass Beteiligte sensible Daten überhaupt erkennen.", "when": "Vom Kunden häufig als Nachweis für externe Projektbeteiligte verlangt."}, "schutzbedarfsfeststellung": {"title": "Schutzbedarfsfeststellung", "area": "bewerten", "dimension": "methodik", "triggers": ["immer"], "aliases": ["Schutzbedarfsanalyse", "Einordnung", "Kritikalitätsbewertung"], "what": "Ein strukturiertes Vorgehen, um für jede Datenart und jedes Verfahren den Schutzbedarf entlang der Schutzziele zu bestimmen und zu begründen.", "why": "Es ist der Einstiegspunkt in diese Karte. Ohne diese Einordnung fehlt die Grundlage für jede Verhältnismäßigkeitsentscheidung, und die Diskussion endet bei Bauchgefühl.", "when": "Ganz am Anfang, und erneut bei jeder neuen Datenquelle im Projekt."}, "dsfa": {"title": "Datenschutz-Folgeabschätzung (DSFA)", "area": "bewerten", "dimension": "methodik", "triggers": ["daten:art9", "pb:ja"], "aliases": ["DSFA", "DPIA", "PIA", "Folgeabschätzung", "Art. 35"], "what": "Eine vorherige Bewertung der Risiken für Betroffene bei voraussichtlich hohem Risiko, mit Beschreibung der Verarbeitung, Prüfung der Erforderlichkeit, Risikobewertung und geplanten Maßnahmen.", "why": "Sie liegt hier in der Methodik, weil es mehrere anerkannte Verfahren gibt, etwa nach ISO 29134, das CNIL-Vorgehen oder ein LINDDUN-gestütztes Modell. Die Pflicht selbst kommt aus Art. 35.", "when": "Pflicht insbesondere bei umfangreicher Verarbeitung besonderer Kategorien, systematischer Überwachung oder automatisierten Entscheidungen mit erheblicher Wirkung."}, "threat-modeling": {"title": "Threat Modeling (STRIDE)", "area": "bewerten", "dimension": "methodik", "triggers": ["immer"], "aliases": ["STRIDE", "Bedrohungsmodellierung", "Threat Model"], "what": "Die systematische Suche nach Bedrohungen entlang fester Kategorien wie Spoofing, Manipulation, Rechteausweitung oder Informationsabfluss, meist am Whiteboard über einem Datenflussbild.", "why": "Es lenkt die Aufmerksamkeit auf die wahrscheinlichen Angriffswege statt auf die Maßnahmen, die man ohnehin sympathisch findet.", "when": "Gut geeignet als halbtägiger Workshop beim Kunden zu Projektbeginn.", "tlandkarte": "Threat Modeling"}, "linddun": {"title": "Privacy Threat Modeling (LINDDUN)", "area": "bewerten", "dimension": "methodik", "triggers": ["pb:ja"], "aliases": ["LINDDUN", "Privacy Threats", "Verknüpfbarkeit"], "what": "Das Gegenstück zu STRIDE für Datenschutzbedrohungen, mit Kategorien wie Verknüpfbarkeit, Identifizierbarkeit, Nichtabstreitbarkeit, Erkennbarkeit, Offenlegung und Unkenntnis der Betroffenen.", "why": "STRIDE findet Sicherheitsprobleme, aber nicht die typischen Datenschutzprobleme. Verknüpfbarkeit über Datensätze hinweg ist ein Risiko, das kein Sicherheitsmodell aufdeckt.", "when": "Ergänzend zu STRIDE, wenn personenbezogene Daten im Zentrum stehen. Liefert oft direkt die Substanz für eine DSFA."}, "dfd": {"title": "Data Flow Diagrams", "area": "bewerten", "dimension": "methodik", "triggers": ["immer"], "aliases": ["DFD", "Datenflussdiagramm", "Datenflüsse", "Vertrauensgrenzen"], "what": "Eine einfache Darstellung von Datenquellen, Verarbeitungsschritten, Speichern und Vertrauensgrenzen, aus der hervorgeht, welche Daten wohin fließen.", "why": "Es ist die Grundlage für Threat Modeling, DSFA und Verarbeitungsverzeichnis gleichzeitig. Meist deckt schon das Zeichnen die überraschenden Datenpfade auf.", "when": "Der günstigste erste Schritt in jedem Projekt mit sensiblen Daten."}, "adr": {"title": "Architekturentscheidungen dokumentieren (ADR)", "area": "verankern", "dimension": "methodik", "triggers": ["immer"], "aliases": ["ADR", "Architecture Decision Record", "Entscheidungsdokumentation"], "what": "Kurze Aufzeichnungen je Entscheidung mit Kontext, betrachteten Alternativen, gewählter Option und Konsequenzen.", "why": "Bei regulatorisch getriebenen Entscheidungen ist die Begründung wertvoller als die Entscheidung. Sie ist die Antwort auf die Frage der Aufsicht oder des Nachfolgers, warum es so gebaut wurde.", "when": "Besonders bei Abweichungen und bewusst akzeptierten Restrisiken.", "tlandkarte": "Entscheidungsklarheit"}, "dsb-legal": {"title": "Zusammenarbeit mit DSB, Legal & Compliance", "area": "verankern", "dimension": "methodik", "triggers": ["immer"], "aliases": ["Datenschutzbeauftragter", "DSB", "Legal", "Compliance", "Betriebsrat"], "what": "Der praktische Umgang mit den Rollen, die verbindlich entscheiden, also Datenschutzbeauftragte, Rechtsabteilung, Informationssicherheit und je nach Thema der Betriebsrat.", "why": "Die beiden Extreme, Fahrlässigkeit und Lähmung, entstehen beide daraus, dass diese Rollen zu spät oder gar nicht eingebunden werden. Mit einem Datenflussbild in der Hand wird aus einem Nein oft ein Ja mit Bedingungen.", "when": "Früh und mit konkreter Frage. Wer eine offene Erlaubnisanfrage stellt, bekommt ein Nein."}, "ssdlc": {"title": "Secure SDLC", "area": "verankern", "dimension": "methodik", "triggers": ["immer"], "aliases": ["SSDLC", "Secure Development", "Security im Entwicklungsprozess"], "what": "Die Verankerung von Sicherheits- und Datenschutzschritten in den normalen Entwicklungsablauf, von Anforderung über Review bis Release.", "why": "Einmalige Prüfungen veralten mit dem nächsten Sprint. Verankert im Ablauf wird aus einer Prüfung eine Eigenschaft des Vorgehens.", "when": "Klein anfangen, etwa mit einer Frage zu sensiblen Daten in der Definition of Done.", "tlandkarte": "Security-by-Design"}, "pipeline-werkzeuge": {"title": "Sicherheitswerkzeuge in der Pipeline", "area": "verankern", "dimension": "methodik", "triggers": ["immer"], "aliases": ["SAST", "Secret Scanning", "SBOM", "Vault", "Dependency Scanning"], "what": "Die üblichen automatisierten Prüfungen im Build, also statische Codeanalyse, Secret Scanning, Abhängigkeitsprüfung und Erzeugung einer Stückliste, plus ein Vault für Zugangsdaten.", "why": "Diese Werkzeuge finden zuverlässig die Fehler, die Menschen im Review übersehen, besonders versehentlich eingecheckte Zugangsdaten.", "when": "Fasst SAST, Vaults und SBOM zu einer Kachel zusammen. Die Details stehen in der T-Landkarte.", "tlandkarte": "SW-Supply-Chain Security"}, "owasp-api": {"title": "OWASP Top 10 für APIs", "area": "quellen", "dimension": "methodik", "triggers": ["immer"], "aliases": ["OWASP API", "API Security Top 10"], "what": "Die Liste der häufigsten Schwachstellenklassen in Programmierschnittstellen, angeführt von fehlerhafter Autorisierung auf Objekt- und Funktionsebene.", "why": "Bei sensiblen Daten ist der Klassiker nicht der ausgefeilte Angriff, sondern eine ID in der URL, die niemand gegen den Anfragenden prüft.", "when": "Als Review-Checkliste für jede nach außen erreichbare Schnittstelle."}, "owasp-privacy": {"title": "OWASP Privacy Risks", "area": "quellen", "dimension": "methodik", "triggers": ["pb:ja"], "aliases": ["Privacy Risks", "OWASP Top 10 Privacy"], "what": "Eine Sammlung typischer Datenschutzrisiken in Webanwendungen, von Datenabfluss über zu lange Speicherung bis zu fehlender Transparenz.", "why": "Sie übersetzt Datenschutz in Fehlerbilder, die Entwicklungsteams unmittelbar verstehen, und ergänzt damit die sicherheitszentrierten Listen.", "when": "Nützlich als Gegenstück zur API-Liste, wenn Personendaten im Spiel sind."}, "nist-privacy": {"title": "NIST Privacy Framework", "area": "quellen", "dimension": "methodik", "triggers": ["pb:ja"], "aliases": ["NIST Privacy", "Privacy Framework"], "what": "Ein Rahmenwerk zur Steuerung von Datenschutzrisiken, aufgebaut in Funktionen von Identifizieren über Steuern und Kommunizieren bis Schützen.", "why": "Es ist rechtsordnungsneutral formuliert und hilft, Datenschutzrisiken losgelöst von Paragrafen zu strukturieren. Für internationale Projekte oft die gemeinsame Sprache.", "when": "Hilfreich, wenn mehrere Rechtsordnungen gleichzeitig gelten."}, "aufsichtsbehoerden": {"title": "Aufsichtsbehörden & Orientierungshilfen", "area": "quellen", "dimension": "methodik", "triggers": ["pb:ja"], "aliases": ["BfDI", "Landesdatenschutzbehörde", "DSK", "Orientierungshilfe", "EDSA"], "what": "Die Veröffentlichungen der Datenschutzaufsicht, also Orientierungshilfen, Positionspapiere und Beschlüsse von BfDI, Landesbehörden, Datenschutzkonferenz und Europäischem Datenschutzausschuss.", "why": "Diese Papiere sagen, wie die Stellen, die im Zweifel entscheiden, eine Frage sehen. Das ist praktisch belastbarer als jede allgemeine Auslegung.", "when": "Für konkrete Zweifelsfragen zuerst hier suchen, etwa zu Gesundheitsdaten, Cloud-Nutzung oder KI."}, "gesundheitsdaten": {"title": "Gesundheits- & Behandlungsdaten", "area": "medtech-daten", "dimension": "klassifizierung", "triggers": ["branche:medtech", "daten:art9"], "aliases": ["Patientendaten", "Behandlungsdaten", "Diagnosen", "Vitaldaten"], "what": "Alle Daten über den Gesundheitszustand einer Person, von Diagnose und Medikation über Vitalwerte bis zu Abrechnungsziffern, aus denen sich eine Behandlung ableiten lässt.", "why": "Sie fallen unter Art. 9 und zusätzlich unter berufsrechtliche Schweigepflicht. Die Kombination macht sie zum am strengsten geschützten Datentyp im Alltag von Softwareprojekten.", "when": "Auch Metadaten verraten viel. Der Termin bei einer Fachpraxis oder eine Abrechnungsziffer ist bereits ein Gesundheitsdatum."}, "schweigepflicht": {"title": "Ärztliche Schweigepflicht (§ 203 StGB)", "area": "medtech-reg-de", "dimension": "regulatorik", "triggers": ["branche:medtech"], "aliases": ["§ 203", "Berufsgeheimnis", "Schweigepflicht", "mitwirkende Personen"], "what": "Die strafrechtlich abgesicherte Verschwiegenheitspflicht von Berufsgeheimnisträgern, die über die Regelung zu mitwirkenden Personen auch externe Dienstleister erfasst.", "why": "Das ist der Punkt, an dem Datenschutz von Verwaltungsrecht zu Strafrecht wird. Für Dienstleister und Entwicklungsteams bedeutet es eigene Verpflichtungserklärungen und sehr enge Zugriffsgrenzen.", "when": "Sobald ein Projekt für Praxis, Klinik oder Berufsgeheimnisträger auf Patientendaten zugreift, auch nur zur Fehlersuche."}, "sgbv": {"title": "SGB V", "area": "medtech-reg-de", "dimension": "regulatorik", "triggers": ["branche:medtech"], "aliases": ["SGB V", "GKV", "gesetzliche Krankenversicherung"], "what": "Das Recht der gesetzlichen Krankenversicherung, das Leistungen, Abrechnung und den Umgang mit Versichertendaten regelt.", "why": "Es bestimmt, welche Daten zwischen Leistungserbringern, Kassen und Dritten überhaupt fließen dürfen, und ist damit oft die engere Grenze als die DSGVO selbst.", "when": "Relevant bei allem, was mit Abrechnung, Versichertenstammdaten oder Kassenkommunikation zu tun hat."}, "pdsg": {"title": "PDSG", "area": "medtech-reg-de", "dimension": "regulatorik", "triggers": ["branche:medtech"], "aliases": ["Patientendaten-Schutz-Gesetz", "ePA", "elektronische Patientenakte"], "what": "Das Patientendaten-Schutz-Gesetz, das Regeln für digitale Anwendungen im Gesundheitswesen und den Umgang mit der elektronischen Patientenakte setzt.", "why": "Es verankert Patientensouveränität technisch, also die Frage, wer welche Inhalte freischalten und einsehen darf, und wirkt damit direkt auf Berechtigungsmodelle.", "when": "Relevant bei Anbindung an die elektronische Patientenakte und digitale Versorgungsanwendungen."}, "diga": {"title": "DiGA-Anforderungen", "area": "medtech-reg-de", "dimension": "regulatorik", "triggers": ["branche:medtech"], "aliases": ["DiGA", "Digitale Gesundheitsanwendung", "BfArM", "DiGAV"], "what": "Der Anforderungskatalog für digitale Gesundheitsanwendungen auf Rezept, mit Nachweisen zu Datenschutz, Informationssicherheit, Interoperabilität und Nutzen.", "why": "Hier wird der Datenschutz zur Zulassungsvoraussetzung. Was sonst gute Praxis ist, wird zur Bedingung für die Aufnahme ins Verzeichnis und damit für das Geschäftsmodell.", "when": "Sobald eine Anwendung erstattungsfähig werden soll. Anforderungsstand bitte beim BfArM aktuell prüfen."}, "mdr": {"title": "MDR (Medizinprodukt)", "area": "medtech-reg-de", "dimension": "regulatorik", "triggers": ["branche:medtech"], "aliases": ["MDR", "Medical Device Regulation", "Medizinprodukt", "Klassifizierung", "MDCG"], "what": "Die europäische Medizinprodukteverordnung, unter die Software fällt, wenn sie einen medizinischen Zweck erfüllt, etwa Diagnose oder Therapie unterstützt.", "why": "Die Einordnung als Medizinprodukt verändert das ganze Projekt, von Konformitätsbewertung über technische Dokumentation bis zur Frage, welche Teile des Systems mitzertifiziert werden müssen.", "when": "Früh klären. Der harte Schnitt zwischen medizinischer Funktion und Rest des Systems ist eine Architekturentscheidung mit großer Kostenwirkung."}, "gematik-ti": {"title": "Telematikinfrastruktur & gematik", "area": "medtech-reg-de", "dimension": "regulatorik", "triggers": ["branche:medtech"], "aliases": ["TI", "gematik", "Konnektor", "eHealth", "Zulassung"], "what": "Das geschlossene Netz des deutschen Gesundheitswesens mit eigenen Zulassungs-, Identitäts- und Sicherheitsvorgaben der gematik.", "why": "Wer an die Telematikinfrastruktur anbindet, arbeitet nicht in einem offenen Internetkontext. Identitäten, Zertifikate und zugelassene Komponenten sind vorgegeben und nicht frei wählbar.", "when": "Relevant bei Anbindung von Praxis- oder Kliniksystemen an die zentrale Infrastruktur."}, "hipaa": {"title": "HIPAA", "area": "medtech-reg-int", "dimension": "regulatorik", "triggers": ["branche:medtech", "drittland:ja"], "aliases": ["HIPAA", "PHI", "Business Associate Agreement", "USA"], "what": "Das US-Recht zum Schutz von Gesundheitsdaten, mit eigenen Regeln zu geschützten Gesundheitsinformationen, Vertragspartnern und Meldepflichten.", "why": "Es ist nicht deckungsgleich mit der DSGVO. Wer für den US-Markt baut oder US-Dienste nutzt, braucht beide Sichten, und die Anforderung an Vertragspartner ist ein eigenes Vertragswerk.", "when": "Bei US-Marktzugang oder US-Anbietern im Datenpfad."}, "vs-nfd": {"title": "Verschlusssachen (VS-NfD)", "area": "public-daten", "dimension": "klassifizierung", "triggers": ["branche:public", "daten:staatlich"], "aliases": ["VS-NfD", "Verschlusssache", "Geheimschutz", "VSA"], "what": "Amtlich als geheimhaltungsbedürftig eingestufte Informationen, unterste Stufe ist nur für den Dienstgebrauch, mit eigenen Vorgaben für Verarbeitung, Ablage und Zulassung von Personen und Systemen.", "why": "Hier gilt kein Datenschutzregime, sondern Geheimschutz mit vorgegebenen Maßnahmen. Was zugelassen ist, entscheidet nicht die Risikoabwägung, sondern eine Freigabeliste.", "when": "Sobald eine Einstufung vorliegt, sind Werkzeugwahl, Cloud-Nutzung und Arbeitsplatzausstattung stark eingeschränkt."}, "kritis-daten": {"title": "KRITIS-relevante Systemdaten", "area": "public-daten", "dimension": "klassifizierung", "triggers": ["branche:public", "daten:staatlich"], "aliases": ["KRITIS", "kritische Infrastruktur", "Netzleitdaten", "OT"], "what": "Daten und Steuerinformationen von Anlagen, deren Ausfall die Versorgung beeinträchtigt, etwa in Energie, Wasser, Verkehr oder Gesundheitsversorgung.", "why": "Hier steht nicht Vertraulichkeit im Vordergrund, sondern Integrität und Verfügbarkeit. Ein manipulierter Messwert ist gefährlicher als ein gelesener.", "when": "Gutes Beispiel dafür, warum die Schutzziele getrennt betrachtet werden müssen."}, "it-grundschutz": {"title": "BSI IT-Grundschutz", "area": "public-reg", "dimension": "regulatorik", "triggers": ["branche:public"], "aliases": ["IT-Grundschutz", "BSI", "Bausteine", "Grundschutz-Kompendium"], "what": "Das Vorgehensmodell des BSI mit Bausteinen, Standard-Anforderungen und Schutzbedarfsfeststellung, im öffentlichen Sektor oft verbindlich.", "why": "Es liefert für viele Fragen fertige, prüfbare Anforderungen und ersetzt damit lange Diskussionen. Gleichzeitig ist der Katalog umfangreich und will gezielt gelesen werden.", "when": "Bei Bundes- und Landesbehörden meist die maßgebliche Referenz, oft anstelle von ISO 27001."}, "bsig-kritis": {"title": "BSIG & KRITIS-Pflichten", "area": "public-reg", "dimension": "regulatorik", "triggers": ["branche:public"], "aliases": ["BSIG", "KRITIS-Pflichten", "Meldepflicht BSI", "Angriffserkennung"], "what": "Die gesetzlichen Pflichten für Betreiber kritischer Infrastrukturen, unter anderem Nachweise über Sicherheitsmaßnahmen, Systeme zur Angriffserkennung und Meldung von Störungen an das BSI.", "why": "Es ist der nationale Anschluss an NIS-2 und bringt Meldepflichten, die parallel zu den datenschutzrechtlichen laufen, mit anderen Fristen und Adressaten.", "when": "Betroffenheit und aktuellen Regelungsstand mit dem Kunden prüfen, die Umsetzung ist in Bewegung."}, "zahlungsdaten": {"title": "Zahlungs- & Kontodaten", "area": "finance-daten", "dimension": "klassifizierung", "triggers": ["branche:finance", "daten:finanz"], "aliases": ["Kreditkartendaten", "PAN", "IBAN", "Kontoinformationen", "Zahlungsverkehr"], "what": "Kartennummern und Sicherheitsmerkmale, Kontoverbindungen, Transaktions- und Umsatzdaten.", "why": "Kartendaten sind unmittelbar monetarisierbar, deshalb greift hier mit PCI-DSS ein eigenes, sehr konkretes Regelwerk. Transaktionsdaten sind zusätzlich hochsensibel, weil sie Lebensumstände offenlegen.", "when": "Kartendaten möglichst nie selbst speichern. Tokenisierung und Auslagerung an einen Zahlungsdienstleister verkleinert den Prüfumfang massiv."}, "pci-dss": {"title": "PCI-DSS", "area": "finance-reg", "dimension": "regulatorik", "triggers": ["daten:finanz"], "aliases": ["PCI DSS", "Kartenzahlung", "Cardholder Data Environment", "SAQ"], "what": "Der Sicherheitsstandard der Kartenindustrie mit konkreten Anforderungen an Netzsegmentierung, Verschlüsselung, Zugriffskontrolle, Protokollierung und regelmäßige Prüfung.", "why": "Er ist untypisch präzise für ein Regelwerk und deshalb gut für Entwicklungsteams nutzbar. Der Prüfumfang richtet sich nach dem Bereich, der Kartendaten berührt, was Segmentierung wirtschaftlich sehr wertvoll macht.", "when": "Sobald Kartendaten verarbeitet, gespeichert oder übertragen werden, auch wenn nur durchgeleitet wird."}, "dora": {"title": "DORA", "area": "finance-reg", "dimension": "regulatorik", "triggers": ["branche:finance"], "aliases": ["DORA", "Digital Operational Resilience Act", "IKT-Drittparteien"], "what": "Die EU-Verordnung zur digitalen operationalen Resilienz im Finanzsektor, mit Anforderungen an IKT-Risikomanagement, Vorfallmeldung, Resilienztests und die Steuerung von Drittanbietern.", "why": "Sie richtet den Blick auf Verfügbarkeit und Beherrschbarkeit von Abhängigkeiten statt nur auf Vertraulichkeit, und sie reicht vertraglich bis zu den Dienstleistern der Dienstleister.", "when": "Relevant für Finanzunternehmen und deren IKT-Dienstleister, also häufig auch für das Beratungsprojekt selbst."}, "bait-marisk": {"title": "BAIT & MaRisk", "area": "finance-reg", "dimension": "regulatorik", "triggers": ["branche:finance"], "aliases": ["BAIT", "MaRisk", "BaFin", "Auslagerung"], "what": "Aufsichtliche Erwartungen der BaFin an IT und Risikomanagement in Banken, unter anderem zu Berechtigungsmanagement, Auslagerung, Notfallmanagement und Dokumentation.", "why": "Sie sind keine Gesetze, in der Praxis aber verbindlich, weil die Aufsicht danach prüft. Für Projekte äußert sich das vor allem in strengen Anforderungen an Berechtigungen und Nachweise.", "when": "Bei Banken und Finanzdienstleistern früh nach den internen Vorgaben fragen, die daraus abgeleitet sind."}, "prompt-daten": {"title": "Prompt- & Kontextdaten", "area": "ki-daten", "dimension": "klassifizierung", "triggers": ["ki:ja", "daten:prompts"], "aliases": ["Prompt", "Kontext", "Payload", "RAG-Kontext", "Chatverlauf"], "what": "Alles, was einem Modell übergeben wird, also Nutzereingaben, angehängte Dokumente, abgerufene Wissensausschnitte, Werkzeugergebnisse und Verlaufsdaten.", "why": "Das ist der am leichtesten übersehene Datenabfluss. Ein Dokumentenanhang oder ein Suchtreffer aus dem internen Wissensspeicher verlässt damit das System, ohne dass es wie ein Export aussieht.", "when": "Bei jeder Modellanbindung prüfen, was tatsächlich im Kontext landet, nicht nur was der Nutzer tippt."}, "trainingsdaten": {"title": "Trainings- & Feinabstimmungsdaten", "area": "ki-daten", "dimension": "klassifizierung", "triggers": ["ki:ja"], "aliases": ["Training", "Fine-Tuning", "Datensatz", "Memorization"], "what": "Datensätze, die zum Trainieren oder Nachjustieren eines Modells verwendet werden, samt Herkunft, Rechtelage und Aufbereitung.", "why": "Was ins Training geht, lässt sich nicht mehr herausnehmen. Ein Löschanspruch gegen ein Modell ist praktisch nicht erfüllbar, und Modelle können Trainingsinhalte wörtlich wiedergeben.", "when": "Vor jedem Fine-Tuning klären, ob personenbezogene oder fremde Inhalte enthalten sind. Nachträglich bleibt nur Neutraining."}, "embeddings": {"title": "Embeddings & Vektordatenbanken", "area": "ki-daten", "dimension": "klassifizierung", "triggers": ["ki:ja"], "aliases": ["Embedding", "Vektordatenbank", "Vector Store", "RAG-Index"], "what": "Die numerische Repräsentation von Texten und Dokumenten samt dem Speicher, in dem sie für die Suche liegen, meist zusammen mit dem Originalausschnitt als Metadatum.", "why": "Embeddings werden oft als anonym behandelt, sind es aber nicht. Aus ihnen lassen sich Inhalte in erheblichem Maß rekonstruieren, und der mitgespeicherte Textausschnitt ist ohnehin Klartext.", "when": "Vektorspeicher genauso einstufen und schützen wie die Quelldatenbank, inklusive Zugriffskontrolle pro Mandant."}, "ai-act": {"title": "EU AI Act", "area": "ki-reg", "dimension": "regulatorik", "triggers": ["ki:ja"], "aliases": ["AI Act", "KI-Verordnung", "KI-VO"], "what": "Die europäische Verordnung über künstliche Intelligenz, die Pflichten nach Risikoklasse staffelt und Rollen wie Anbieter und Betreiber unterscheidet.", "why": "Sie liegt hier auf dem Archipel, weil sie KI-spezifisch ist. Inhaltlich ist sie aber eine Regulierung unter vielen und wird am besten wie die übrigen behandelt, statt als eigenes Thema.", "when": "Anwendbarkeit und Fristen bitte aktuell prüfen, die Anwendung erfolgt gestaffelt."}, "ki-risikoklassen": {"title": "KI-Risikoklassen nach AI Act", "area": "ki-reg", "dimension": "regulatorik", "triggers": ["ki:ja"], "aliases": ["Hochrisiko", "verbotene Praktiken", "Risikoklasse", "Transparenzpflicht"], "what": "Die Einordnung eines Anwendungsfalls in verbotene Praktiken, Hochrisiko, Transparenzpflichten oder geringes Risiko, abhängig von Einsatzzweck und Kontext.", "why": "Die Einordnung entscheidet über den gesamten Pflichtenumfang, von Risikomanagement über Datenqualität und menschliche Aufsicht bis zur technischen Dokumentation. Sie ist eine Eigenschaft des Anwendungsfalls, nicht der Daten.", "when": "Der erste Schritt bei jedem KI-Vorhaben. Medizin, Beschäftigung und Kreditwürdigkeit landen schnell im Hochrisikobereich."}, "iso42001": {"title": "ISO/IEC 42001", "area": "ki-reg", "dimension": "regulatorik", "triggers": ["ki:ja"], "aliases": ["42001", "AIMS", "KI-Managementsystem"], "what": "Die Norm für ein Managementsystem für künstliche Intelligenz, analog zu ISO 27001, mit Anforderungen an Governance, Risikobeurteilung und Lebenszyklus von KI-Systemen.", "why": "Sie ist der organisatorische Rahmen, mit dem sich Pflichten aus dem AI Act nachweisbar erfüllen lassen, und die naheliegende Erweiterung für Kunden mit bestehendem ISMS.", "when": "Interessant für Kunden, die KI in mehreren Vorhaben einsetzen und Nachweise strukturieren müssen."}, "prompt-masking": {"title": "Prompt Masking & PII-Filter", "area": "ki-arch", "dimension": "architektur", "triggers": ["ki:ja"], "aliases": ["Prompt Masking", "PII-Filter", "Vorfilter", "Redaction"], "what": "Eine Schicht vor dem Modell, die personenbezogene und sensible Inhalte erkennt und ersetzt, bei Bedarf mit Rückersetzung in der Antwort.", "why": "Es ist der pragmatischste Weg, ein externes Modell nutzbar zu machen, ohne sensible Daten herauszugeben. Die Erkennung ist aber nie vollständig, das Restrisiko muss bewusst getragen werden.", "when": "Sinnvoll als Ergänzung, nicht als Ersatz für Datenminimierung im Kontextaufbau."}, "guardrails": {"title": "Guardrails & Output-Filter", "area": "ki-arch", "dimension": "architektur", "triggers": ["ki:ja"], "aliases": ["Guardrails", "Output-Filter", "Prompt Injection", "Leitplanken"], "what": "Kontrollen um das Modell herum, die Eingaben und Ausgaben prüfen, unerwünschte Inhalte abfangen und Angriffe über eingebettete Anweisungen erschweren.", "why": "Modelle lassen sich über Inhalte steuern, die sie verarbeiten. Ein Dokument im Kontext kann Anweisungen enthalten, und ohne Kontrollen wird daraus ein Weg, Daten abzuziehen.", "when": "Besonders wichtig, sobald das Modell Zugriff auf Werkzeuge oder interne Datenquellen hat."}, "local-llm": {"title": "Lokale & selbst gehostete Modelle", "area": "ki-arch", "dimension": "architektur", "triggers": ["ki:ja"], "aliases": ["Local LLM", "On-Premise", "Open Weights", "selbst gehostet"], "what": "Der Betrieb offener Modelle in eigener oder kundeneigener Infrastruktur, statt einen externen Dienst aufzurufen.", "why": "Es löst die Übermittlungsfrage vollständig, weil die Daten die Umgebung nicht verlassen. Der Preis sind Betriebsaufwand, Hardwarekosten und in der Regel geringere Leistungsfähigkeit.", "when": "Naheliegend, wenn die Datenklassifizierung eine Übermittlung ausschließt oder der Anwendungsfall mit einem kleineren Modell auskommt."}, "eu-modell-apis": {"title": "EU-gehostete Modell-APIs", "area": "ki-arch", "dimension": "architektur", "triggers": ["ki:ja", "drittland:ja"], "aliases": ["EU-Region", "Modell-API", "Inferenz-Endpunkt"], "what": "Die Nutzung externer Modelle über Endpunkte, die Verarbeitung und Speicherung innerhalb der EU zusichern.", "why": "Es ist der übliche Mittelweg zwischen Leistungsfähigkeit und Souveränität. Der Speicherort löst allerdings nicht die Frage nach Betreiberzugriff und Rechtsordnung des Anbieters.", "when": "Zusicherungen zu Region, Support-Zugriff und Aufbewahrung schriftlich prüfen, nicht der Produktseite entnehmen."}, "zero-data-retention": {"title": "Zero Data Retention & Trainingsausschluss", "area": "ki-arch", "dimension": "architektur", "triggers": ["ki:ja"], "aliases": ["Zero Data Retention", "ZDR", "kein Training", "Aufbewahrung"], "what": "Vertragliche und technische Zusicherungen, dass übergebene Daten nicht zum Training verwendet und nicht oder nur kurz gespeichert werden, einschließlich der Behandlung von Missbrauchsprotokollen.", "why": "Das ist die konkrete Frage, die in der Praxis über die Freigabe eines Modellanbieters entscheidet, und sie ist deutlich prüfbarer als eine allgemeine Souveränitätsdebatte.", "when": "Beim Anbieter erfragen, im Vertrag oder AVV festhalten und im Verarbeitungsverzeichnis dokumentieren."}, "agenten-zugriffe": {"title": "Agenten- & Werkzeugzugriffe absichern", "area": "ki-arch", "dimension": "architektur", "triggers": ["ki:ja"], "aliases": ["Agent", "Tool Use", "MCP", "Werkzeugzugriff", "Berechtigungen für Agenten"], "what": "Die Frage, mit welchen Rechten ein Modell Werkzeuge aufruft, auf Systeme zugreift und Aktionen ausführt, und wie diese Aufrufe begrenzt und protokolliert werden.", "why": "Ein Agent mit einem breiten technischen Zugang umgeht faktisch das Berechtigungsmodell der Anwendung. Die Rechte müssen an der handelnden Person hängen, nicht am Dienstkonto des Agenten.", "when": "Vor jeder Werkzeuganbindung klären. Least Privilege und Protokollierung gelten hier genauso wie für menschliche Zugriffe."}, "nist-ai-rmf": {"title": "NIST AI RMF", "area": "ki-quellen", "dimension": "methodik", "triggers": ["ki:ja"], "aliases": ["AI RMF", "NIST AI", "Risk Management Framework"], "what": "Ein Rahmenwerk zum Umgang mit KI-Risiken, strukturiert in Steuern, Erfassen, Messen und Behandeln, mit Kriterien für vertrauenswürdige KI-Systeme.", "why": "Es ist praxisnäher formuliert als die Verordnungen und hilft, KI-Risiken zu strukturieren, bevor man sie regulatorisch einordnet.", "when": "Gute Grundlage für einen ersten Risiko-Workshop zu einem KI-Vorhaben."}, "saif": {"title": "SAIF", "area": "ki-quellen", "dimension": "methodik", "triggers": ["ki:ja"], "aliases": ["Secure AI Framework", "SAIF"], "what": "Ein Rahmenwerk für die Sicherheit von KI-Systemen, das klassische Sicherheitskontrollen auf die Besonderheiten von Modellen, Daten und Pipelines überträgt.", "why": "Es schließt die Lücke zwischen bekannter Anwendungssicherheit und den neuen Angriffsflächen von Modellen, Trainingsdaten und Werkzeugketten.", "when": "Nützlich, wenn ein Sicherheitsteam bereits etabliert ist und KI ergänzend abdecken soll."}, "owasp-llm": {"title": "OWASP Top 10 für LLMs", "area": "ki-quellen", "dimension": "methodik", "triggers": ["ki:ja"], "aliases": ["OWASP LLM", "LLM Top 10", "Prompt Injection"], "what": "Die Liste der häufigsten Schwachstellenklassen in Anwendungen mit großen Sprachmodellen, unter anderem Prompt Injection, Offenlegung sensibler Informationen und unsichere Werkzeugnutzung.", "why": "Sie ist die konkreteste verfügbare Prüfliste für KI-Anwendungen und deckt genau die Fehler ab, die in ersten Prototypen regelmäßig entstehen.", "when": "Als Review-Checkliste, bevor ein KI-Prototyp produktiv geht."}}};</script>
+<script>
+/* Landkarte: Umgang mit besonders schützenswerten Daten
+   Layout wird aus landkarte.json berechnet, es stehen keine Koordinaten in den Daten.
+   Insel -> Ursprung im Hexraster, Bereich -> Cluster, Kacheln -> Ringe um den Bereich. */
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const R = 46;                  // Hexradius in Nutzereinheiten
+const LATTICE = 3;             // Abstand zweier Bereichs-Mittelpunkte in Hexzellen.
+                               // Bei 3 bleibt ein Bereich auf Ring 1, also höchstens sechs
+                               // Kacheln. Wächst er auf Ring 2, ist dessen Zelle die Ring-1-
+                               // Zelle des Nachbarn und die Kacheln überlappen.
+                               // check-landkarte.py prüft das.
+const OVERVIEW_BELOW = 0.9;    // unterhalb dieser Skalierung nur Bereichsnamen.
+                               // Abgeleitet, nicht geschätzt: die Kacheltitel stehen mit 9.5px
+                               // in Nutzereinheiten, auf dem Schirm also 9.5 * scale. Bei 0.62
+                               // wären das 5.9px, und 13 Zeichen Zeile bräuchten 69px in einem
+                               // 57px breiten Sechseck. Ab 0.9 passt der Text und ist lesbar.
+
+const DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+
+const state = {
+  data: null,
+  tiles: [],          // { id, tile, cell, el, hex, label, haystack }
+  scale: 1, tx: 0, ty: 0,
+  bounds: null,
+  query: '',
+  filters: { branche: null, daten: new Set(), pb: false, cloud: false, ki: false, drittland: false },
+  lastFocus: null
+};
+
+/* ---------- Hexgeometrie (flat top, axiale Koordinaten) ---------- */
+
+const center = (q, r) => ({
+  x: 1.5 * R * q,
+  y: Math.sqrt(3) * R * (r + q / 2)
+});
+
+function hexPath(q, r, factor = 1) {
+  const c = center(q, r), rad = R * factor;
+  let d = '';
+  for (let i = 0; i < 6; i++) {
+    const a = Math.PI / 3 * i;
+    d += (i ? 'L' : 'M') + (c.x + rad * Math.cos(a)).toFixed(2) + ' ' + (c.y + rad * Math.sin(a)).toFixed(2);
+  }
+  return d + 'Z';
+}
+
+function ring(q, r, radius) {
+  const out = [];
+  let cq = q + DIRS[4][0] * radius, cr = r + DIRS[4][1] * radius;
+  for (let side = 0; side < 6; side++) {
+    for (let step = 0; step < radius; step++) {
+      out.push([cq, cr]);
+      cq += DIRS[side][0];
+      cr += DIRS[side][1];
+    }
+  }
+  return out;
+}
+
+/* ---------- Textumbruch im Sechseck ---------- */
+
+function hexLabel(title) {
+  // Klammerzusätze sind für die Kachel zu lang, im Detail steht der ganze Titel
+  if (title.length > 24) {
+    const stripped = title.replace(/\s*\([^)]*\)\s*$/, '').trim();
+    if (stripped.length >= 6) return stripped;
+  }
+  return title;
+}
+
+function wrap(text, maxChars) {
+  const lines = [];
+  let line = '';
+  for (let word of text.split(/\s+/)) {
+    while (word.length > maxChars) {
+      const cut = maxChars - 1;
+      if (line) { lines.push(line); line = ''; }
+      lines.push(word.slice(0, cut) + '\u2011');
+      word = word.slice(cut);
+    }
+    const candidate = line ? line + ' ' + word : word;
+    if (candidate.length > maxChars && line) { lines.push(line); line = word; }
+    else line = candidate;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function labelFor(title) {
+  let lines = wrap(hexLabel(title), 13);
+  let tight = false;
+  if (lines.length > 4) { lines = wrap(hexLabel(title), 16); tight = true; }
+  return { lines: lines.slice(0, 5), tight };
+}
+
+/* ---------- Aufbau ---------- */
+
+function layout(data) {
+  const areaCenter = {}, cellsByIsland = {}, tilesByArea = {};
+
+  for (const [id, t] of Object.entries(data.tiles)) (tilesByArea[t.area] ||= []).push({ id, ...t });
+
+  for (const [aid, area] of Object.entries(data.areas)) {
+    const o = data.islands[area.island].origin;
+    areaCenter[aid] = [o[0] + LATTICE * area.lattice[0], o[1] + LATTICE * area.lattice[1]];
+    (cellsByIsland[area.island] ||= []).push(areaCenter[aid]);
+  }
+
+  const placed = [];
+  for (const [aid, list] of Object.entries(tilesByArea)) {
+    const [cq, cr] = areaCenter[aid];
+    const slots = [...ring(cq, cr, 1), ...ring(cq, cr, 2)];
+    list.forEach((tile, i) => {
+      const cell = slots[i];
+      placed.push({ tile, cell, area: aid });
+      cellsByIsland[data.areas[aid].island].push(cell);
+    });
+  }
+  return { areaCenter, cellsByIsland, placed };
+}
+
+function build(data) {
+  state.data = data;
+  const { areaCenter, cellsByIsland, placed } = layout(data);
+
+  document.getElementById('subtitle').textContent = data.meta.subtitle;
+  document.getElementById('disclaimer').textContent = data.meta.disclaimer;
+
+  const g = id => document.getElementById(id);
+  const el = (name, attrs = {}) => {
+    const n = document.createElementNS(SVG_NS, name);
+    for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+    return n;
+  };
+
+  // Küstenlinie: vergrößerte Sechsecke verschmelzen zu einer Landmasse.
+  // 2.15 lässt der Küste ihre Lappen, hinterlässt im Kern aber drei kleine Lücken
+  // zwischen Bereichen. Das Flachwasser reicht mit 3.0 darunter hinweg, die Lücken
+  // werden dadurch zu Seen statt zu Ozeanflecken im Land.
+  for (const cells of Object.values(cellsByIsland)) {
+    for (const [q, r] of cells) {
+      g('layer-shallow').appendChild(el('path', { d: hexPath(q, r, 3.0), class: 'shallow' }));
+      g('layer-coast').appendChild(el('path', { d: hexPath(q, r, 2.15), class: 'coast' }));
+    }
+  }
+
+  // Bereiche
+  for (const [aid, area] of Object.entries(data.areas)) {
+    const [q, r] = areaCenter[aid], c = center(q, r);
+    g('layer-areas').appendChild(el('path', { d: hexPath(q, r, 0.92), class: 'area-ring' }));
+    const lines = wrap(area.label, 15);
+    const text = el('text', { class: 'area-label', x: c.x, y: c.y - (lines.length - 1) * 7 + 4 });
+    lines.forEach((ln, i) => {
+      const ts = el('tspan', { x: c.x, dy: i ? '1.15em' : 0 });
+      ts.textContent = ln;
+      text.appendChild(ts);
+    });
+    g('layer-areas').appendChild(text);
+  }
+
+  // Kacheln
+  for (const { tile, cell, area } of placed) {
+    const [q, r] = cell, c = center(q, r);
+    const dim = data.dimensions[tile.dimension];
+    const grp = el('g', {
+      class: 'tile', tabindex: '0', role: 'button',
+      'aria-label': tile.title + ', ' + dim.short
+    });
+    const hex = el('path', { d: hexPath(q, r), class: 'hex', fill: dim.color });
+    const { lines, tight } = labelFor(tile.title);
+    const text = el('text', {
+      class: 'tile-label' + (tight ? ' tight' : ''),
+      x: c.x, y: c.y - (lines.length - 1) * (tight ? 4.6 : 5.4) + 3.4
+    });
+    lines.forEach((ln, i) => {
+      const ts = el('tspan', { x: c.x, dy: i ? '1.2em' : 0 });
+      ts.textContent = ln;
+      text.appendChild(ts);
+    });
+    grp.append(hex, text);
+    g('layer-tiles').appendChild(grp);
+
+    const entry = {
+      id: tile.id, tile, area, el: grp,
+      haystack: [tile.title, ...(tile.aliases || []), tile.what, tile.why, tile.when || '']
+        .join(' ').toLowerCase()
+    };
+    state.tiles.push(entry);
+    grp.addEventListener('click', () => openDetail(entry));
+    grp.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(entry); }
+    });
+  }
+
+  // Inselnamen über der jeweiligen Landmasse
+  for (const [iid, island] of Object.entries(data.islands)) {
+    const cells = cellsByIsland[iid] || [];
+    if (!cells.length) continue;
+    const pts = cells.map(([q, r]) => center(q, r));
+    const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+    const top = Math.min(...pts.map(p => p.y));
+    const text = el('text', { class: 'island-label', x: cx, y: top - 2.6 * R });
+    text.textContent = island.label;
+    g('layer-islands').appendChild(text);
+  }
+
+  // Bounds für das Einpassen
+  const pts = Object.values(cellsByIsland).flat().map(([q, r]) => center(q, r));
+  const pad = 3.4 * R;
+  state.bounds = {
+    x0: Math.min(...pts.map(p => p.x)) - pad, x1: Math.max(...pts.map(p => p.x)) + pad,
+    y0: Math.min(...pts.map(p => p.y)) - pad, y1: Math.max(...pts.map(p => p.y)) + pad
+  };
+
+  buildLegend();
+  buildProjectPanel();
+  fit();
+  applyHighlight();
+  document.getElementById('loading').hidden = true;
+}
+
+function buildLegend() {
+  const ul = document.getElementById('legend-list');
+  for (const d of Object.values(state.data.dimensions)) {
+    const li = document.createElement('li');
+    const sw = document.createElement('span');
+    sw.className = 'swatch';
+    sw.style.background = d.color;
+    const label = document.createElement('span');
+    label.innerHTML = '';
+    label.append(d.short, ' ');
+    const frage = document.createElement('span');
+    frage.className = 'frage';
+    frage.textContent = d.frage;
+    label.append(frage);
+    li.append(sw, label);
+    ul.appendChild(li);
+  }
+}
+
+/* ---------- Projektfilter ---------- */
+
+function buildProjectPanel() {
+  const host = document.getElementById('project-fields');
+  for (const f of state.data.filters) {
+    const group = document.createElement('div');
+    group.className = 'qgroup';
+    const q = document.createElement('p');
+    q.textContent = f.label;
+    const opts = document.createElement('div');
+    opts.className = 'qopts';
+
+    const mk = (label, onToggle, pressed = false) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.textContent = label;
+      b.setAttribute('aria-pressed', String(pressed));
+      b.addEventListener('click', () => {
+        const now = b.getAttribute('aria-pressed') !== 'true';
+        onToggle(now, b);
+        applyHighlight();
+      });
+      opts.appendChild(b);
+      return b;
+    };
+
+    if (f.type === 'toggle') {
+      mk('ja', on => {
+        state.filters[f.id] = on;
+        opts.querySelector('button').setAttribute('aria-pressed', String(on));
+      });
+    } else if (f.type === 'single') {
+      const buttons = f.options.map(o => mk(o.label, (on, b) => {
+        buttons.forEach(x => x.setAttribute('aria-pressed', 'false'));
+        b.setAttribute('aria-pressed', String(on));
+        state.filters.branche = on ? o.tags : null;
+      }));
+    } else {
+      f.options.forEach(o => mk(o.label, (on, b) => {
+        b.setAttribute('aria-pressed', String(on));
+        const set = state.filters[f.id];
+        o.tags.forEach(t => on ? set.add(t) : set.delete(t));
+      }));
+    }
+
+    group.append(q, opts);
+    host.appendChild(group);
+  }
+}
+
+function activeTags() {
+  const tags = new Set();
+  if (state.filters.branche) state.filters.branche.forEach(t => tags.add(t));
+  state.filters.daten.forEach(t => tags.add(t));
+  if (state.filters.pb) tags.add('pb:ja');
+  if (state.filters.cloud) tags.add('cloud:hyperscaler');
+  if (state.filters.ki) tags.add('ki:ja');
+  if (state.filters.drittland) tags.add('drittland:ja');
+  return tags;
+}
+
+function filterActive() {
+  const f = state.filters;
+  return f.branche !== null || f.daten.size > 0 || f.pb || f.cloud || f.ki || f.drittland;
+}
+
+function matching() {
+  const on = filterActive(), tags = activeTags();
+  if (on) tags.add('immer');
+  const q = state.query;
+  return state.tiles.filter(e => {
+    if (on && !e.tile.triggers.some(t => tags.has(t))) return false;
+    if (q && !e.haystack.includes(q)) return false;
+    return true;
+  });
+}
+
+function applyHighlight() {
+  const on = filterActive() || state.query.length > 0;
+  const set = new Set(matching().map(e => e.id));
+  for (const e of state.tiles) {
+    const hit = set.has(e.id);
+    e.el.classList.toggle('faded', on && !hit);
+    e.el.classList.toggle('marked', on && hit);
+  }
+  const count = document.getElementById('count');
+  count.textContent = on
+    ? `${set.size} von ${state.tiles.length} Kacheln`
+    : `${state.tiles.length} Kacheln`;
+}
+
+function exportChecklist() {
+  const hits = matching();
+  const status = document.getElementById('export-status');
+  if (!hits.length) { status.textContent = 'Keine Kacheln ausgewählt.'; return; }
+
+  const byDim = {};
+  for (const e of hits) (byDim[e.tile.dimension] ||= []).push(e.tile);
+
+  let md = `# Zu klärende Themen für dieses Projekt\n\n`;
+  md += `Ausgewählt: ${hits.length} von ${state.tiles.length} Kacheln der Landkarte.\n`;
+  md += `Das ist eine Orientierung, keine Vollständigkeitszusage und kein Rechtsrat.\n`;
+  for (const [key, dim] of Object.entries(state.data.dimensions)) {
+    const list = byDim[key];
+    if (!list) continue;
+    md += `\n## ${dim.label}\n\n`;
+    for (const t of list) md += `- [ ] **${t.title}** — ${t.when || t.why}\n`;
+  }
+
+  navigator.clipboard?.writeText(md).then(
+    () => status.textContent = 'In die Zwischenablage kopiert.',
+    () => status.textContent = 'Kopieren nicht möglich, bitte Datei herunterladen.'
+  );
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown' }));
+  a.download = 'checkliste-schuetzenswerte-daten.md';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ---------- Detailkarte ---------- */
+
+let TAG_LABELS = null;
+function tagLabel(tag) {
+  if (tag === 'immer') return 'jedem Projekt';
+  if (!TAG_LABELS) {
+    TAG_LABELS = {};
+    for (const f of state.data.filters) {
+      if (f.type === 'toggle') f.tags.forEach(t => TAG_LABELS[t] = f.label.replace(/\?$/, '').trim());
+      else f.options.forEach(o => o.tags.forEach(t => TAG_LABELS[t] = o.label));
+    }
+  }
+  return TAG_LABELS[tag] || tag;
+}
+
+function openDetail(entry) {
+  const t = entry.tile, d = state.data;
+  const dim = d.dimensions[t.dimension];
+  const area = d.areas[entry.area];
+
+  const chip = document.getElementById('detail-dimension');
+  chip.textContent = dim.label;
+  chip.style.background = dim.color;
+
+  document.getElementById('detail-title').textContent = t.title;
+  document.getElementById('detail-place').textContent =
+    `${d.islands[area.island].label}, Bereich ${area.label}`;
+
+  const body = document.getElementById('detail-body');
+  body.textContent = '';
+  const section = (heading, text) => {
+    if (!text) return;
+    const h = document.createElement('h3');
+    h.textContent = heading;
+    const p = document.createElement('p');
+    p.textContent = text;
+    body.append(h, p);
+  };
+  section('Was ist das?', t.what);
+  section('Warum ist das wichtig?', t.why);
+  section('Wann wird es relevant?', t.when);
+
+  if (t.tlandkarte) {
+    const h = document.createElement('h3');
+    h.textContent = 'Vertiefung';
+    const p = document.createElement('p');
+    p.append(`Allgemeines Handwerkszeug dazu steht in der T-Landkarte unter „${t.tlandkarte}“. `);
+    const a = document.createElement('a');
+    a.href = d.meta.verwandt.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = 'T-Landkarte öffnen';
+    p.appendChild(a);
+    body.append(h, p);
+  }
+
+  document.getElementById('detail-triggers').textContent =
+    'Wird relevant bei: ' + t.triggers.map(tagLabel).join(', ');
+
+  state.lastFocus = document.activeElement;
+  document.getElementById('overlay').hidden = false;
+  document.getElementById('detail').focus();
+}
+
+function closeDetail() {
+  document.getElementById('overlay').hidden = true;
+  state.lastFocus?.focus();
+}
+
+/* ---------- Pan und Zoom ---------- */
+
+function applyTransform() {
+  document.getElementById('viewport')
+    .setAttribute('transform', `translate(${state.tx} ${state.ty}) scale(${state.scale})`);
+  const overview = state.scale < OVERVIEW_BELOW;
+  document.body.classList.toggle('overview', overview);
+  const root = document.documentElement.style;
+  root.setProperty('--area-font', overview ? (15 / state.scale).toFixed(1) + 'px' : '13px');
+  root.setProperty('--island-font', overview ? (21 / state.scale).toFixed(1) + 'px' : '30px');
+}
+
+function fit() {
+  const svg = document.getElementById('map');
+  const w = svg.clientWidth, h = svg.clientHeight;
+  const b = state.bounds;
+  // Die Inselnamen stehen in der Übersicht mit fester Bildschirmgröße über ihrer
+  // Landmasse und ragen damit über state.bounds hinaus, das nur Zellmittelpunkte
+  // kennt. Der Rand wird deshalb in Bildschirmpixeln reserviert und nicht in
+  // Nutzereinheiten, sonst schneidet er die Namen der Randinseln ab.
+  const mx = Math.min(130, w / 6), my = Math.min(70, h / 8);
+  state.scale = Math.min((w - 2 * mx) / (b.x1 - b.x0), (h - 2 * my) / (b.y1 - b.y0));
+  state.tx = (w - (b.x1 + b.x0) * state.scale) / 2;
+  state.ty = (h - (b.y1 + b.y0) * state.scale) / 2;
+  applyTransform();
+}
+
+function zoomAt(factor, cx, cy) {
+  const next = Math.min(2.6, Math.max(0.1, state.scale * factor));
+  const k = next / state.scale;
+  state.tx = cx - (cx - state.tx) * k;
+  state.ty = cy - (cy - state.ty) * k;
+  state.scale = next;
+  applyTransform();
+}
+
+function wireInteraction() {
+  const svg = document.getElementById('map');
+  let dragging = false, moved = false, lastX = 0, lastY = 0;
+
+  svg.addEventListener('pointerdown', e => {
+    if (e.target.closest('.tile')) return;
+    dragging = true; moved = false;
+    lastX = e.clientX; lastY = e.clientY;
+    svg.classList.add('dragging');
+    svg.setPointerCapture(e.pointerId);
+  });
+  svg.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    state.tx += e.clientX - lastX;
+    state.ty += e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    moved = true;
+    applyTransform();
+  });
+  const stop = () => { dragging = false; svg.classList.remove('dragging'); };
+  svg.addEventListener('pointerup', stop);
+  svg.addEventListener('pointercancel', stop);
+
+  svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = svg.getBoundingClientRect();
+    zoomAt(Math.exp(-e.deltaY * 0.0015), e.clientX - rect.left, e.clientY - rect.top);
+  }, { passive: false });
+
+  const mid = () => {
+    const r = svg.getBoundingClientRect();
+    return [r.width / 2, r.height / 2];
+  };
+  document.getElementById('btn-zoom-in').onclick = () => zoomAt(1.3, ...mid());
+  document.getElementById('btn-zoom-out').onclick = () => zoomAt(1 / 1.3, ...mid());
+  document.getElementById('btn-zoom-fit').onclick = fit;
+
+  const search = document.getElementById('search');
+  search.addEventListener('input', () => {
+    state.query = search.value.trim().toLowerCase();
+    applyHighlight();
+  });
+
+  const panel = document.getElementById('project');
+  const toggle = document.getElementById('btn-project');
+  toggle.onclick = () => {
+    const open = panel.hidden;
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+  };
+
+  document.getElementById('btn-export').onclick = exportChecklist;
+  document.getElementById('btn-reset').onclick = () => {
+    state.filters = { branche: null, daten: new Set(), pb: false, cloud: false, ki: false, drittland: false };
+    panel.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    document.getElementById('export-status').textContent = '';
+    applyHighlight();
+  };
+
+  document.getElementById('detail-close').onclick = closeDetail;
+  document.getElementById('overlay').addEventListener('click', e => {
+    if (e.target.id === 'overlay') closeDetail();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (!document.getElementById('overlay').hidden) closeDetail();
+      else if (!panel.hidden) toggle.click();
+    }
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === '+') zoomAt(1.3, ...mid());
+    if (e.key === '-') zoomAt(1 / 1.3, ...mid());
+  });
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(fit, 150);
+  });
+}
+
+/* ---------- Start ---------- */
+
+async function start() {
+  wireInteraction();
+  if (window.LANDKARTE_DATA) { build(window.LANDKARTE_DATA); return; }
+  try {
+    const res = await fetch('landkarte.json');
+    if (!res.ok) throw new Error(res.status);
+    build(await res.json());
+  } catch (err) {
+    document.getElementById('loading').textContent =
+      'landkarte.json konnte nicht geladen werden. Den Ordner über einen Webserver ausliefern, etwa mit python3 -m http.server, oder standalone.html öffnen.';
+  }
+}
+
+start();
+
+</script>
+</body>
+</html>

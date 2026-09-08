@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landkarte: Umgang mit besonders schützenswerten Daten</title>
+<meta name="description" content="Hexagonale Landkarte zur Orientierung in Projekten, in denen besonders schützenswerte Daten verarbeitet werden.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<main id="stage">
+  <svg id="map" aria-label="Landkarte der Themen zum Umgang mit besonders schützenswerten Daten">
+    <g id="viewport">
+      <g id="layer-shallow"></g>
+      <g id="layer-coast"></g>
+      <g id="layer-areas"></g>
+      <g id="layer-tiles"></g>
+      <g id="layer-islands"></g>
+    </g>
+  </svg>
+
+  <div id="loading" role="status">Landkarte wird geladen</div>
+
+  <header id="titleblock">
+    <h1>Umgang mit besonders schützenswerten Daten</h1>
+    <p id="subtitle"></p>
+  </header>
+
+  <div id="toolbar">
+    <div class="field">
+      <label for="search" class="visually-hidden">Suchen</label>
+      <input id="search" type="search" placeholder="Suchen, etwa Verschlüsselung oder DSFA" autocomplete="off" spellcheck="false">
+    </div>
+    <button id="btn-project" type="button" aria-expanded="false" aria-controls="project">Mein Projekt</button>
+    <p id="count" aria-live="polite"></p>
+  </div>
+
+  <section id="project" hidden aria-labelledby="project-heading">
+    <h2 id="project-heading">Was gilt für mein Projekt?</h2>
+    <p class="hint">Beantworte, was auf dein Vorhaben zutrifft. Die Karte hebt dann die Kacheln hervor, die du geklärt haben solltest.</p>
+    <div id="project-fields"></div>
+    <div class="project-actions">
+      <button id="btn-export" type="button">Als Checkliste kopieren</button>
+      <button id="btn-reset" type="button" class="ghost">Auswahl zurücksetzen</button>
+    </div>
+    <p class="hint" id="export-status" aria-live="polite"></p>
+  </section>
+
+  <div id="legend">
+    <h2>Fünf Dimensionen</h2>
+    <ul id="legend-list"></ul>
+    <p class="hint" id="disclaimer"></p>
+  </div>
+
+  <div id="zoombar">
+    <button id="btn-zoom-in" type="button" aria-label="Hineinzoomen">+</button>
+    <button id="btn-zoom-out" type="button" aria-label="Herauszoomen">−</button>
+    <button id="btn-zoom-fit" type="button" aria-label="Ganze Karte zeigen">Alles</button>
+  </div>
+</main>
+
+<div id="overlay" hidden>
+  <article id="detail" role="dialog" aria-modal="true" aria-labelledby="detail-title" tabindex="-1">
+    <button id="detail-close" type="button" aria-label="Schließen">×</button>
+    <p id="detail-dimension"></p>
+    <h2 id="detail-title"></h2>
+    <p id="detail-place"></p>
+    <div id="detail-body"></div>
+    <p id="detail-triggers"></p>
+  </article>
+</div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

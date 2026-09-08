@@ -1,0 +1,138 @@
+# Arbeitskontext für diese Landkarte
+
+## Was das ist und was es nicht ist
+
+Eine Landkarte zur Orientierung in Projekten mit besonders schützenswerten Daten. Ziel ist
+Einordnen, Beurteilen lernen und Kompetenz aufbauen.
+
+Es ist ausdrücklich **kein** Framework, kein Prozess und keine Standardisierung. Es soll auch kein
+Regal an Artefakten werden, also keine Terraform-Blueprints, Code-Bibliotheken oder Templates
+hinter den Kacheln. Diese Idee wurde nach Feedback verworfen, weil ein wartungspflichtiges
+Artefakt hinter jeder Kachel zur Bauruine wird. Wenn ein Vorschlag in diese Richtung geht,
+widersprich.
+
+Das Repo ist öffentlich. Es enthält deshalb keine Kundennamen, keine Projektdetails und keine
+echten ADRs aus Projekten. Interne War Stories bleiben im Miro-Board und in Vorträgen.
+
+Kein Rechtsrat. Regulatorik veraltet, bei Fristen und Anwendbarkeit auf die Quelle verweisen statt
+etwas zu behaupten.
+
+## Die drei Achsen
+
+Jede Kachel wird von drei unabhängigen Achsen eingeordnet. Das ist der Kern des Modells und der
+Unterschied zur T-Landkarte, wo Insel, Kategorie und Farbe dasselbe sind.
+
+**Dimension** bestimmt die Farbe:
+
+1. Klassifizierung, welche Daten habe ich
+2. Regulatorik, was gilt dafür
+3. Architektur, wie baue ich es sicher
+4. Betrieb und Nachweise, wie halte ich es sicher und weise es nach
+5. Methodik und Quellen, wie gehe ich vor und wo lese ich nach
+
+Die Grenze zwischen 3 und 4 verläuft an einer Testfrage: Entwurfsentscheidung gehört zu 3, etwas
+das wiederkehren und nachweisbar sein muss gehört zu 4. Deshalb liegt Audit Logging in 3 und die
+Rechte-Rezertifizierung in 4. Rechtliche Pflichten liegen immer in 2, der Prozess dazu in 4, siehe
+Meldepflicht nach Art. 33 gegenüber Incident Response.
+
+Dimension 5 ist übergreifend, nicht gleichrangig. Sie liegt als Insel-Bereich auf der Karte, weil
+ein Ring um alles zu teuer war, ist in der Legende aber als Vorgehensfrage formuliert.
+
+**Insel** ist der fachliche Bereich. Der Kern ist branchenneutral, Archipele enthalten nur
+Domänenspezifisches. Was allgemein gilt, bleibt im Kern und wird von dort referenziert, statt im
+Archipel gedoppelt zu werden.
+
+**Bereich** ist die zweite Ebene innerhalb einer Insel.
+
+## Regeln für Kacheln
+
+Eine Kachel steht für einen Begriff, den jemand tatsächlich nachschlagen würde. Varianten gehören
+in den Text. Aus Access Control, RBAC, ABAC und Need-to-Know wurde deshalb eine Kachel.
+
+Keine Gruppen-Kacheln, die eine Liste verstecken. Die Hierarchie steckt in `area`, nicht in
+Ober- und Unterkacheln. Die Karte bleibt bei zwei Ebenen, Tiefe kommt in den Kacheltext.
+
+`aliases` immer füllen, das ist der Grund, warum jemand eine Kachel auch mit einem anderen Wort
+findet.
+
+`what` und `why` sind Pflicht, `when` beschreibt den konkreten Auslöser und ist das Feld, das im
+Checklisten-Export als Begründung erscheint.
+
+## Abgrenzung zur T-Landkarte
+
+https://github.com/qa-thomas-kothmayr/t-landkarte deckt allgemeines Engineering-Handwerk ab,
+einschließlich einer Insel Security und Compliance mit Threat Modeling, Verschlüsselung, Secret
+Management, IAM und Auditability.
+
+Diese Karte deckt nur ab, was durch schützenswerte Daten spezifisch wird. Bei Überschneidung wird
+über das Feld `tlandkarte` dorthin verwiesen und der eigene Text kurz gehalten. Generische
+Architekturthemen wie Resilienz, Separation of Concerns oder Defense in Depth wurden bewusst nicht
+aufgenommen.
+
+## Layout
+
+Das Layout wird zur Laufzeit aus den Daten berechnet, in `landkarte.json` stehen keine Koordinaten.
+Eine Insel hat einen Ursprung im axialen Hexraster, ein Bereich sitzt auf einem groben Raster mit
+Abstand `LATTICE` darin, die Kacheln legen sich in Ringen um ihr Bereichs-Sechseck.
+
+`LATTICE` steht auf 3, und daraus folgt die wichtigste Regel: **ein Bereich fasst sechs Kacheln.**
+Bei Abstand 3 reicht ein Bereich genau einen Ring weit. Die siebte Kachel landet im zweiten Ring,
+und deren Zelle ist die Ring-1-Zelle des Nachbarn. Ob dort tatsächlich zwei Kacheln übereinander
+liegen, hängt von der Reihenfolge in `landkarte.json` ab, fällt also nicht zuverlässig auf. Wer
+mehr als sechs Kacheln braucht, teilt den Bereich, statt `LATTICE` zu erhöhen. Genau deshalb wurde
+`Gesetze & Verordnungen` mit 14 Kacheln in Datenschutzrecht, Pflichten aus der DSGVO, Übermittlung
+und Drittland sowie Sicherheits- und Geheimnisschutzrecht aufgeteilt.
+
+Der Abstand war vorher 4 und passte nicht zum Inhalt: fast alle Bereiche haben drei bis fünf
+Kacheln und belegten damit nur Ring 1, während das Raster Platz für Ring 2 freihielt. Zwischen den
+Bereichen standen dadurch zwei leere Zellen, und der Kern wirkte als Ansammlung von Klecksen statt
+als eine Insel. Kein Küstenfaktor konnte das reparieren, weil ein kleiner Faktor Kanäle offen lässt
+und ein großer alles zur merkmalslosen Platte verschmilzt.
+
+Die Küstenlinie entsteht daraus, dass unter jeder belegten Zelle ein vergrößertes Sechseck in
+Sandfarbe liegt und diese verschmelzen. Die Faktoren stehen in `assets/app.js` in `build`, 2.15 für die
+Küste und 3.0 für das Flachwasser. Die Küste behält bei 2.15 ihre Lappen, lässt im Kern aber drei
+kleine Lücken zwischen Bereichen offen. Das Flachwasser reicht mit 3.0 darunter hinweg, damit
+erscheinen die Lücken als Seen und nicht als Ozeanflecken im Land. Das ist so gewollt, nicht
+übersehen.
+
+Die Dimensionsfarben bilden im Kern zusammenhängende Regionen: Klassifizierung im Westen,
+Regulatorik im Norden, Betrieb im Nordosten, Architektur in der Mitte und im Süden, Methodik im
+Osten. Das ergibt sich aus den `lattice`-Positionen der Bereiche und muss beim Ergänzen erhalten
+bleiben. Ein neuer Bereich gehört an eine Position, die an die eigene Farbregion angrenzt.
+
+`fit()` reserviert den Rand in Bildschirmpixeln und nicht in Nutzereinheiten, weil die Inselnamen
+in der Übersicht eine feste Bildschirmgröße haben und über `state.bounds` hinausragen. Sonst
+schneidet der Rand die Namen der Randinseln ab.
+
+`OVERVIEW_BELOW` ist abgeleitet und nicht geschätzt: unterhalb dieser Skalierung wären die
+Kacheltitel kleiner als das Sechseck, in dem sie stehen.
+
+**Vor jedem Commit an den Daten `python3 tools/check-landkarte.py` laufen lassen.** Es prüft
+Pflichtfelder, Referenzen, die Sechs-Kachel-Grenze, doppelt belegte Zellen und Insel-Abstände.
+Die Geometrie im Skript muss zu `assets/app.js` passen, `LATTICE` steht an beiden Stellen.
+
+## Struktur
+
+`index.html` und `landkarte.json` bleiben im Wurzelverzeichnis, weil Pages von dort ausliefert und
+der Datenpfad Teil der Schnittstelle für andere Repos ist. Der Viewer liegt in `assets`, die
+Werkzeuge in `tools`. `standalone.html` ist generiert und fällt weg, sobald die Seite live ist.
+Kein `src`-Verzeichnis und kein Build-Schritt, die Seite besteht aus drei ausgelieferten Dateien.
+
+## Offen und bewusst nicht gebaut
+
+Beziehungen zwischen Kacheln, also `requires` oder `mitigates`. Nachbarschaft trägt Bedeutung,
+wird aber erst modelliert, wenn klar ist, wofür.
+
+Das echte Auflösen eines Bereichs-Sechsecks in seine Kacheln beim Hineinzoomen. Aktuell blenden
+nur die Beschriftungen um. Mit berechneten Koordinaten ist der Schritt nachträglich möglich.
+
+Automotive-Archipel. Mit nur TISAX wäre er irreführend, sinnvoll wird er mit ISO/SAE 21434,
+UNECE R155 und R156 sowie Fahrzeug- und Telemetriedaten.
+
+Reifegrad und Verantwortliche pro Kachel, sobald mehrere Personen pflegen.
+
+## Ton
+
+Keine Werbephrasen und keine Catchy Titles, das war explizites Feedback. Sachlich formulieren,
+Kachelnamen nüchtern halten.
