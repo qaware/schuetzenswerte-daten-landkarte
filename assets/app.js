@@ -29,6 +29,14 @@ const DRAG_SLOP = 4;           // Bildschirmpixel, ab denen aus einem Klick ein 
 const SEA_SEED = 20260908;
 const WAVE_STEP = 160;         // Rasterweite der Wellenstriche in Nutzereinheiten
 const WAVE_KEEP = 0.88;        // ausdünnen, sonst wird das Wasser zu dicht
+const WAVE_KEEP_OUTER = 0.22;  // draußen dünner, dort schaut man selten hin
+/* Das Wellenfeld muss größer sein als die Karte. Bei fit bestimmt die Höhe die
+   Skalierung, waagerecht sieht man deshalb immer über die Karte hinaus: auf
+   3440x1440 sind das 7047 Nutzereinheiten Breite bei 2866 Kartenbreite. Die
+   Zuschläge decken jedes Fenster bis 3440 Breite ab, darüber kann am linken und
+   rechten Rand blanker Ozean auftauchen. */
+const SEA_PAD_X = 2300;
+const SEA_PAD_Y = 550;
 const SEA_MARGIN = 3.3;        // Abstand zur Küste in Hexradien, Flachwasser reicht bis 3.0
 const SHIP_SPEED = 6;          // Nutzereinheiten je Sekunde, daraus folgt die Fahrtdauer
 
@@ -38,7 +46,9 @@ const state = {
   data: null,
   tiles: [],          // { id, tile, cell, el, hex, label, haystack }
   scale: 1, tx: 0, ty: 0,
+  minScale: 0.2,      // wird in fit() auf die Skalierung der Gesamtansicht gesetzt
   bounds: null,
+  sea: null,          // Wellenfeld, größer als bounds
   query: '',
   filters: { branche: null, daten: new Set(), pb: false, cloud: false, ki: false, drittland: false },
   lastFocus: null,
@@ -251,6 +261,11 @@ function build(data) {
     y0: Math.min(...pts.map(p => p.y)) - pad, y1: Math.max(...pts.map(p => p.y)) + pad
   };
 
+  state.sea = {
+    x0: state.bounds.x0 - SEA_PAD_X, x1: state.bounds.x1 + SEA_PAD_X,
+    y0: state.bounds.y0 - SEA_PAD_Y, y1: state.bounds.y1 + SEA_PAD_Y
+  };
+
   buildSea(cellsByIsland);
   buildLegend();
   buildProjectPanel();
@@ -297,14 +312,16 @@ function buildSea(cellsByIsland) {
     return true;
   };
 
-  // Wellenstriche auf einem gejitterten Raster über das offene Wasser
-  const b = state.bounds;
+  // Wellenstriche auf einem gejitterten Raster über das offene Wasser. Das Feld reicht
+  // über die Karte hinaus, weil man bei der Gesamtansicht waagerecht darüber hinaussieht.
+  const b = state.bounds, f = state.sea;
+  const inner = (x, y) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1;
   let waves = 0;
-  for (let y = b.y0; y < b.y1; y += WAVE_STEP) {
-    for (let x = b.x0; x < b.x1; x += WAVE_STEP) {
+  for (let y = f.y0; y < f.y1; y += WAVE_STEP) {
+    for (let x = f.x0; x < f.x1; x += WAVE_STEP) {
       const px = x + (rnd() - 0.5) * WAVE_STEP * 0.7;
       const py = y + (rnd() - 0.5) * WAVE_STEP * 0.7;
-      const keep = rnd() < WAVE_KEEP;
+      const keep = rnd() < (inner(px, py) ? WAVE_KEEP : WAVE_KEEP_OUTER);
       const scale = 0.75 + rnd() * 0.5;
       const tilt = (rnd() - 0.5) * 16;
       const delay = rnd() * 9;
@@ -347,10 +364,16 @@ function buildSea(cellsByIsland) {
     return true;
   };
 
-  let ships = 0;
+  let ships = 0, nr = 0;
   for (const iid of Object.keys(cellsByIsland)) {
     if (iid === 'kern' || !mid.kern) continue;
-    const a = pushOut(mid.kern, mid[iid]), e = pushOut(mid[iid], mid.kern);
+    // Fahrtrichtung gesät auslosen. An die Lage der Insel gekoppelt wäre sie es nicht:
+    // "jede zweite umgekehrt" traf hier genau die westlichen Inseln, dann fuhren alle
+    // vier nach Osten.
+    nr++;
+    const hin = rnd() < 0.5;
+    const von = hin ? mid.kern : mid[iid], nach = hin ? mid[iid] : mid.kern;
+    const a = pushOut(von, nach), e = pushOut(nach, von);
     if (!a || !e) continue;
     const L = Math.hypot(e.x - a.x, e.y - a.y);
     const mx = (a.x + e.x) / 2, my = (a.y + e.y) / 2;
@@ -369,27 +392,39 @@ function buildSea(cellsByIsland) {
       d: `M${a.x.toFixed(1)} ${a.y.toFixed(1)}Q${c.x.toFixed(1)} ${c.y.toFixed(1)} ${e.x.toFixed(1)} ${e.y.toFixed(1)}`
     }));
 
-    const ship = el('g', { class: 'ship' });
-    ship.appendChild(el('path', { d: 'M-11 2L11 2L8 6L-8 6Z' }));     // Rumpf
-    ship.appendChild(el('path', { d: 'M0 2L0-11L9-2Z' }));            // Segel
+    /* Das Schiff ist von der Seite gezeichnet und bleibt deshalb immer aufrecht.
+       Kein rotate="auto": dessen Winkel folgt der Pfadtangente, nicht der Fahrt.
+       Auf einem westlichen Kurs stünde der Mast nach unten, und auf einer Rückfahrt
+       führe das Schiff rückwärts. Die Richtung zeigt stattdessen die Spiegelung,
+       so wie Schiffe auf gezeichneten Karten gehalten werden. */
+    const ship = el('g', { class: 'ship', opacity: '0.72' });
+    const rumpf = el('g', e.x < a.x ? { transform: 'scale(-1 1)' } : {});
+    rumpf.appendChild(el('path', { d: 'M-11 2L11 2L8 6L-8 6Z' }));    // Rumpf
+    rumpf.appendChild(el('path', { d: 'M0 2L0-11L9-2Z' }));           // Segel
+    ship.appendChild(rumpf);
+
     if (still) {
       // Ohne Bewegung liegt das Schiff auf der Kursmitte, t = 0.5 der Kurve
       const px = 0.25 * a.x + 0.5 * c.x + 0.25 * e.x;
       const py = 0.25 * a.y + 0.5 * c.y + 0.25 * e.y;
       ship.setAttribute('transform', `translate(${px.toFixed(1)} ${py.toFixed(1)})`);
     } else {
-      // Hin und zurück, damit kein Sprung am Kursende entsteht. Eine Geschwindigkeit
-      // für alle Schiffe, die Dauer folgt aus der Kurslänge.
-      const dur = (2 * L / SHIP_SPEED).toFixed(0);
+      // Eine Geschwindigkeit für alle Schiffe, die Dauer folgt aus der Kurslänge.
+      const dur = (L / SHIP_SPEED).toFixed(0);
+      const begin = '-' + (rnd() * dur).toFixed(0) + 's';
       const move = el('animateMotion', {
-        dur: dur + 's', repeatCount: 'indefinite', rotate: 'auto',
-        keyPoints: '0;1;0', keyTimes: '0;0.5;1', calcMode: 'linear',
-        begin: '-' + (rnd() * dur).toFixed(0) + 's'
+        dur: dur + 's', repeatCount: 'indefinite', begin
       });
       const mpath = el('mpath', { href: '#' + id });
       mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + id);
       move.appendChild(mpath);
       ship.appendChild(move);
+      // Am Kursende springt das Schiff zurück an den Anfang. Das Ein- und Ausblenden
+      // verdeckt den Sprung und läuft über dieselbe Zeitachse, ist also synchron.
+      ship.appendChild(el('animate', {
+        attributeName: 'opacity', dur: dur + 's', repeatCount: 'indefinite', begin,
+        values: '0;0.72;0.72;0', keyTimes: '0;0.08;0.92;1'
+      }));
     }
     layer.appendChild(ship);
     ships++;
@@ -609,7 +644,22 @@ function closeDetail() {
 
 /* ---------- Pan und Zoom ---------- */
 
+// Der sichtbare Bereich bleibt im Wellenfeld, sonst schaut man auf blanken Ozean.
+// Ist das Fenster breiter als das Feld, wird auf dieser Achse zentriert.
+function clampPan() {
+  const svg = document.getElementById('map');
+  const w = svg.clientWidth, h = svg.clientHeight, f = state.sea, s = state.scale;
+  if (!f || !w || !h) return;
+  state.tx = w / s >= f.x1 - f.x0
+    ? (w - (f.x0 + f.x1) * s) / 2
+    : Math.min(-f.x0 * s, Math.max(w - f.x1 * s, state.tx));
+  state.ty = h / s >= f.y1 - f.y0
+    ? (h - (f.y0 + f.y1) * s) / 2
+    : Math.min(-f.y0 * s, Math.max(h - f.y1 * s, state.ty));
+}
+
 function applyTransform() {
+  clampPan();
   document.getElementById('viewport')
     .setAttribute('transform', `translate(${state.tx} ${state.ty}) scale(${state.scale})`);
   // Drei Stufen: ganz draußen nur Inselnamen, dann die Bereichsnamen, dann die Kacheltitel.
@@ -633,13 +683,15 @@ function fit() {
   // Nutzereinheiten, sonst schneidet er die Namen der Randinseln ab.
   const mx = Math.min(130, w / 6), my = Math.min(70, h / 8);
   state.scale = Math.min((w - 2 * mx) / (b.x1 - b.x0), (h - 2 * my) / (b.y1 - b.y0));
+  // Weiter heraus als die Gesamtansicht gibt es nichts zu sehen, deshalb ist das die Grenze.
+  state.minScale = state.scale;
   state.tx = (w - (b.x1 + b.x0) * state.scale) / 2;
   state.ty = (h - (b.y1 + b.y0) * state.scale) / 2;
   applyTransform();
 }
 
 function zoomAt(factor, cx, cy) {
-  const next = Math.min(2.6, Math.max(0.1, state.scale * factor));
+  const next = Math.min(2.6, Math.max(state.minScale, state.scale * factor));
   const k = next / state.scale;
   state.tx = cx - (cx - state.tx) * k;
   state.ty = cy - (cy - state.ty) * k;

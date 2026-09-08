@@ -94,10 +94,9 @@ html, body {
   50%      { opacity: .56; }
 }
 
-.ship {
-  fill: var(--ship);
-  opacity: .72;
-}
+/* Die Deckkraft steht als Attribut am Element, damit das SMIL-Ein- und Ausblenden
+   sie überschreiben kann. Eine Regel hier würde gegen die Animation gewinnen. */
+.ship { fill: var(--ship); }
 
 .hex { stroke: var(--ink); stroke-width: 1.5; }
 

@@ -139,11 +139,34 @@ Laden, das wirkt unruhig, und `standalone.html` wäre nicht mehr reproduzierbar.
 wird verworfen, wenn sie näher als `SEA_MARGIN` an einer belegten Zelle liegt; das Flachwasser
 reicht bis 3.0, die Marken bleiben also im offenen Wasser. Dichte über `WAVE_STEP` und `WAVE_KEEP`.
 
+Das Wellenfeld `state.sea` ist deutlich größer als `state.bounds`. Der Grund steckt in `fit()`:
+dort bestimmt die Höhe die Skalierung, waagerecht sieht man deshalb immer über die Karte hinaus.
+Auf 3440x1440 sind das 7047 Nutzereinheiten Breite bei 2866 Kartenbreite. `SEA_PAD_X` und
+`SEA_PAD_Y` decken jedes Fenster bis 3440 Breite ab, auf noch breiteren kann am linken und
+rechten Rand blanker Ozean auftauchen. Innerhalb von `bounds` gilt `WAVE_KEEP`, außerhalb das
+dünnere `WAVE_KEEP_OUTER`.
+
+Dazu gehören zwei Grenzen. `zoomAt` klemmt nach außen bei `state.minScale`, und das ist die
+Skalierung der Gesamtansicht, die `fit()` setzt: weiter heraus gibt es nichts zu sehen. Und
+`clampPan` hält den sichtbaren Bereich im Wellenfeld, ist das Fenster auf einer Achse breiter als
+das Feld, wird dort zentriert. Ohne diese beiden Grenzen landet man auf blankem Ozean.
+
 Die Schiffskurse werden zur Laufzeit aus den Inselmitten berechnet, nicht hinterlegt: der Endpunkt
 wird aus der Inselmitte heraus geschoben, bis er im Wasser liegt, dann wird ein leichter Bogen
 gesucht, dessen Abtastpunkte alle im Wasser liegen. Findet sich keiner, fährt dort kein Schiff.
 Damit bleiben die Kurse gültig, wenn sich Insel-Ursprünge ändern. Alle Schiffe fahren mit
 `SHIP_SPEED`, die Fahrtdauer folgt aus der Kurslänge, es gibt also keine Laufzeit von Hand.
+
+**Kein `rotate="auto"` an der Fahrt.** Dessen Winkel folgt der Pfadtangente und nicht der
+Fahrtrichtung. Das Schiff ist von der Seite gezeichnet, auf einem westlichen Kurs stünde der Mast
+damit nach unten, und auf einer Rückfahrt über denselben Kurs führe es rückwärts. Es bleibt
+deshalb immer aufrecht, und die Richtung zeigt eine Spiegelung der inneren Gruppe, so wie Schiffe
+auf gezeichneten Karten gehalten werden. Aus demselben Grund fährt es nur in eine Richtung; den
+Sprung am Kursende verdeckt ein Ein- und Ausblenden, das über `dur` und `begin` an derselben
+Zeitachse hängt und damit synchron ist. Die Deckkraft steht als Attribut am Element, denn eine
+CSS-Regel würde die Animation überschreiben. Welche Richtung ein Schiff fährt, wird gesät
+ausgelost und nicht aus der Lage der Insel abgeleitet: "jede zweite umgekehrt" traf genau die
+westlichen Inseln, dann fuhren alle vier nach Osten.
 
 Die Kurse selbst sind unsichtbar. Eine sichtbare Linie zwischen zwei Inseln würde als modellierte
 Beziehung gelesen, und Beziehungen sind hier bewusst nicht modelliert.
