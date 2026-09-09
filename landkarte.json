@@ -3048,6 +3048,100 @@
       "what": "Daten, die zur Verhütung, Ermittlung oder Verfolgung von Straftaten sowie zur Gefahrenabwehr verarbeitet werden.",
       "why": "Für sie gilt nicht die DSGVO, sondern die Richtlinie 2016/680 und deren Umsetzung, im Bund in Teil 3 des BDSG. Rechtsgrundlagen, Betroffenenrechte und Protokollpflichten weichen ab, und wer nach der DSGVO plant, plant hier am falschen Regime.",
       "when": "Zu Beginn klären, ob die Verarbeitung in diesen Bereich fällt. Die Antwort verändert Rechtsgrundlage, Betroffenenrechte und Protokollierung, und sie ist nachträglich teuer."
+    },
+    "genetische-daten": {
+      "title": "Genetische Daten",
+      "area": "medtech-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:medtech",
+        "daten:art9"
+      ],
+      "aliases": [
+        "Genomdaten",
+        "Erbinformation",
+        "Sequenzierung",
+        "Genanalyse",
+        "Genom"
+      ],
+      "what": "Daten über die vererbten oder erworbenen genetischen Eigenschaften einer Person, etwa aus einer Sequenzierung oder einer gezielten Genanalyse. Die DSGVO nennt sie ausdrücklich als besondere Kategorie.",
+      "why": "Sie sagen auch etwas über Verwandte, die nie eingewilligt haben, sie lassen sich nicht ändern, und eine Anonymisierung ist praktisch nicht erreichbar: eine Genomsequenz ist selbst der Identifikator. Was hier einmal abfließt, bleibt ein Leben lang zuordenbar.",
+      "when": "Sobald Sequenzdaten oder Analyseergebnisse verarbeitet werden, auch in Forschung und in Testumgebungen. Die Annahme, pseudonymisierte Genomdaten seien unkritisch, ist falsch."
+    },
+    "studiendaten": {
+      "title": "Forschungs- & Studiendaten",
+      "area": "medtech-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:medtech"
+      ],
+      "aliases": [
+        "klinische Studie",
+        "Prüfplan",
+        "Broad Consent",
+        "Ethikkommission",
+        "Treuhandstelle",
+        "Art. 89"
+      ],
+      "what": "Daten aus klinischer Forschung, geführt nach einem Prüfplan, meist auf Einwilligung gestützt und über eine Treuhandstelle pseudonymisiert.",
+      "why": "Forschung hat eigene Erlaubnisse und eigene Pflichten, von der Einwilligung samt Widerrufsrecht bis zur Aufbewahrung nach den Regeln guter wissenschaftlicher Praxis. Der Widerruf ist der Punkt, an dem Architekturen scheitern: die Daten müssen einzelnen Teilnehmenden zuzuordnen sein, ohne dass die Auswertung die Zuordnung kennt.",
+      "when": "Vor dem Studienstart, zusammen mit Prüfplan und Ethikvotum. Der Weg für den Widerruf gehört in den Entwurf und nicht in die Betriebsanleitung."
+    },
+    "bilddaten": {
+      "title": "Bilddaten & Befunde (DICOM)",
+      "area": "medtech-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:medtech"
+      ],
+      "aliases": [
+        "DICOM",
+        "PACS",
+        "Radiologie",
+        "Befund",
+        "Bildmetadaten",
+        "Kopfdaten"
+      ],
+      "what": "Medizinische Bilddaten und die dazugehörigen Befunde, üblicherweise im DICOM-Format, in dem Patientenangaben und Geräteinformationen in der Datei selbst stehen.",
+      "why": "Die Kopfdaten einer Bilddatei tragen Namen, Kennungen und Aufnahmedaten mit, und sie reisen mit jeder Kopie. Wer nur den Dateinamen ändert, hat nichts entfernt. Dazu kommt, dass ein Schädel-CT selbst ein biometrisches Merkmal ist, weil sich daraus ein Gesicht rekonstruieren lässt.",
+      "when": "Vor jeder Weitergabe und vor jeder Nutzung in Test- oder Trainingsumgebungen. Zu klären ist, welche Kopffelder entfernt werden und ob die Bildinhalte selbst noch identifizieren."
+    },
+    "medizingeraetedaten": {
+      "title": "Gerätedaten aus dem Betrieb",
+      "area": "medtech-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:medtech"
+      ],
+      "aliases": [
+        "Post-Market Surveillance",
+        "Geräteprotokolle",
+        "Vigilanz",
+        "Telemetrie Medizingerät",
+        "Nutzungsdaten"
+      ],
+      "what": "Protokolle, Messwerte und Nutzungsdaten, die ein Medizingerät oder eine medizinische Software im Feld erzeugt und zurückmeldet.",
+      "why": "Die MDR verlangt eine Überwachung nach dem Inverkehrbringen, das Gerät muss also Daten liefern. Gleichzeitig hängt an diesen Daten ein Patientenbezug, oft über Zeitstempel und Gerätekennung statt über einen Namen. Überwachungspflicht und Datenminimierung ziehen hier in verschiedene Richtungen.",
+      "when": "Beim Entwurf der Rückmeldung aus dem Feld. Zu klären ist, welche Auflösung die Überwachung wirklich braucht und was im Gerät bleiben kann."
+    },
+    "abrechnungsdaten": {
+      "title": "Abrechnungs- & Leistungsdaten",
+      "area": "medtech-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:medtech"
+      ],
+      "aliases": [
+        "ICD",
+        "OPS",
+        "DRG",
+        "Kassenabrechnung",
+        "Leistungsziffern",
+        "Kostenträger"
+      ],
+      "what": "Die Daten, mit denen erbrachte Leistungen abgerechnet werden: Diagnose- und Prozedurenschlüssel, Ziffern und die Zuordnung zum Kostenträger.",
+      "why": "Ein Diagnoseschlüssel ist eine Gesundheitsangabe, auch wenn er nur als Code in einer Abrechnungszeile steht. Solche Datensätze verlassen das Haus regelmäßig und landen bei Kostenträgern und Dienstleistern, wo ein anderes Regime gilt; für die Trägerseite steht die Kachel zu Sozialdaten im Kern.",
+      "when": "Beim Entwurf der Abrechnungsschnittstellen. Zu klären ist, welche Angaben der Empfänger tatsächlich braucht und was im Haus bleibt."
     }
   }
 }
