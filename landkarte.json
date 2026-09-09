@@ -490,6 +490,14 @@
       "tags": [
         "drittland:ja"
       ]
+    },
+    {
+      "id": "nachweis",
+      "label": "Zertifizierung oder Nachweis gegenüber Kunden nötig?",
+      "type": "toggle",
+      "tags": [
+        "nachweis:ja"
+      ]
     }
   ],
   "tiles": {
@@ -558,7 +566,7 @@
       "when": "Immer prüfen, bevor Daten in Analytics, Testumgebungen oder zu Dritten wandern."
     },
     "ip-geheimnisse": {
-      "title": "Geschäftsgeheimnisse & IP",
+      "title": "Geschäfts\u00adgeheimnisse & IP",
       "area": "weitere-datenarten",
       "dimension": "klassifizierung",
       "triggers": [
@@ -661,7 +669,7 @@
       "when": "Am Anfang jeder Klassifizierung, für jede Datenart getrennt bewerten."
     },
     "schutzbedarfsstufen": {
-      "title": "Schutzbedarfsstufen",
+      "title": "Schutzbedarfs\u00adstufen",
       "area": "schutzbedarf",
       "dimension": "klassifizierung",
       "triggers": [
@@ -681,7 +689,7 @@
       "area": "datenschutzrecht",
       "dimension": "regulatorik",
       "triggers": [
-        "immer"
+        "pb:ja"
       ],
       "aliases": [
         "GDPR",
@@ -724,11 +732,11 @@
       "when": "Früh klären, wie eine Person und all ihre Daten systemweit gefunden werden. Nachträglich ist das teuer."
     },
     "avv": {
-      "title": "Auftragsverarbeitung (AVV, Art. 28)",
+      "title": "Auftrags\u00adverarbeitung (AVV, Art. 28)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
       "triggers": [
-        "immer"
+        "pb:ja"
       ],
       "aliases": [
         "AVV",
@@ -745,7 +753,7 @@
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
       "triggers": [
-        "immer"
+        "pb:ja"
       ],
       "aliases": [
         "TOM",
@@ -757,7 +765,7 @@
       "when": "Immer. Die TOM-Liste ist häufig auch das Dokument, das der Kunde im Audit vorlegen muss."
     },
     "vvt": {
-      "title": "Verarbeitungsverzeichnis (Art. 30)",
+      "title": "Verarbeitungs\u00adverzeichnis (Art. 30)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
       "triggers": [
@@ -773,7 +781,7 @@
       "when": "Beim Projektstart nach dem bestehenden Verzeichnis fragen, statt die Datenflüsse neu zu erheben."
     },
     "meldepflichten": {
-      "title": "Meldepflichten bei Datenschutzverletzung (Art. 33/34)",
+      "title": "Meldepflichten bei Datenschutz\u00adverletzung (Art. 33/34)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
       "triggers": [
@@ -854,7 +862,7 @@
       ],
       "what": "Die europäische Richtlinie zur Cybersicherheit, die für betroffene Einrichtungen Risikomanagement, Meldepflichten bei Sicherheitsvorfällen und Verantwortung der Leitungsebene vorschreibt.",
       "why": "Sie erweitert den Kreis der betroffenen Unternehmen deutlich über die klassischen kritischen Infrastrukturen hinaus, und viele Kunden wissen selbst nicht, ob sie darunter fallen.",
-      "when": "Betroffenheit früh mit dem Kunden klären. Die nationale Umsetzung und deren Zeitplan bitte aktuell prüfen."
+      "when": "Betroffenheit früh mit dem Kunden klären. Diese Kachel erscheint in jedem Projekt, weil die Betroffenheit zu prüfen ist, nicht weil NIS-2 überall gilt. Die nationale Umsetzung und deren Zeitplan bitte aktuell prüfen."
     },
     "cra": {
       "title": "Cyber Resilience Act",
@@ -869,10 +877,10 @@
       ],
       "what": "Die EU-Verordnung mit Sicherheitsanforderungen an Produkte mit digitalen Elementen, unter anderem zu sicheren Voreinstellungen, Schwachstellenbehandlung und Updateversorgung über den Lebenszyklus.",
       "why": "Sie trifft Software als Produkt und macht Themen wie SBOM und Schwachstellenmeldung zur Pflicht statt zur guten Praxis.",
-      "when": "Relevant, wenn Software in Verkehr gebracht wird, nicht nur intern betrieben. Zeitplan bitte aktuell prüfen."
+      "when": "Relevant, wenn Software in Verkehr gebracht wird, nicht nur intern betrieben. Die Kachel erscheint in jedem Projekt, weil diese Frage zu beantworten ist, nicht weil der CRA überall gilt. Zeitplan bitte aktuell prüfen."
     },
     "geschgehg": {
-      "title": "Geschäftsgeheimnisgesetz",
+      "title": "Geschäfts\u00adgeheimnis\u00adgesetz",
       "area": "sicherheitsrecht",
       "dimension": "regulatorik",
       "triggers": [
@@ -908,7 +916,7 @@
       "area": "normen",
       "dimension": "regulatorik",
       "triggers": [
-        "immer"
+        "nachweis:ja"
       ],
       "aliases": [
         "ISO 27001",
@@ -924,7 +932,8 @@
       "area": "normen",
       "dimension": "regulatorik",
       "triggers": [
-        "pb:ja"
+        "pb:ja",
+        "nachweis:ja"
       ],
       "aliases": [
         "27701",
@@ -940,7 +949,8 @@
       "area": "normen",
       "dimension": "regulatorik",
       "triggers": [
-        "cloud:hyperscaler"
+        "cloud:hyperscaler",
+        "nachweis:ja"
       ],
       "aliases": [
         "C5",
@@ -1004,7 +1014,8 @@
       "area": "prinzipien",
       "dimension": "architektur",
       "triggers": [
-        "immer"
+        "immer",
+        "daten:stammdaten"
       ],
       "aliases": [
         "Data Segregation",
@@ -1021,7 +1032,8 @@
       "area": "maskierung",
       "dimension": "architektur",
       "triggers": [
-        "pb:ja"
+        "pb:ja",
+        "daten:analytisch"
       ],
       "aliases": [
         "Anonymisierung",
@@ -1037,7 +1049,8 @@
       "area": "maskierung",
       "dimension": "architektur",
       "triggers": [
-        "pb:ja"
+        "pb:ja",
+        "daten:analytisch"
       ],
       "aliases": [
         "Pseudonymisierung",
@@ -1070,7 +1083,8 @@
       "area": "maskierung",
       "dimension": "architektur",
       "triggers": [
-        "pb:ja"
+        "pb:ja",
+        "daten:analytisch"
       ],
       "aliases": [
         "Maskierung",
@@ -1087,7 +1101,8 @@
       "area": "maskierung",
       "dimension": "architektur",
       "triggers": [
-        "immer"
+        "immer",
+        "daten:analytisch"
       ],
       "aliases": [
         "Testdaten",
@@ -1171,7 +1186,7 @@
       "when": "Erwägen bei sehr hohem Schutzbedarf in fremder Infrastruktur. Aufwand und Einschränkungen sind erheblich."
     },
     "schluesselverwaltung": {
-      "title": "Schlüsselverwaltung (KMS, BYOK, HYOK)",
+      "title": "Schlüssel\u00adverwaltung (KMS, BYOK, HYOK)",
       "area": "verschluesselung",
       "dimension": "architektur",
       "triggers": [
@@ -1186,7 +1201,8 @@
       ],
       "what": "Erzeugung, Aufbewahrung, Verteilung und Entzug kryptografischer Schlüssel, einschließlich der Frage, ob der Kunde eigene Schlüssel einbringt oder außerhalb der Cloud behält.",
       "why": "Verschlüsselung verlagert das Problem auf den Schlüssel. Wer ihn hält, entscheidet über Zugriff, und genau das ist die eigentliche Frage bei Cloud und Souveränität.",
-      "when": "Vor der Entscheidung über Verschlüsselung klären, nicht danach."
+      "when": "Vor der Entscheidung über Verschlüsselung klären, nicht danach.",
+      "tlandkarte": "Secret Management"
     },
     "access-control": {
       "title": "Access Control (RBAC, ABAC, Need-to-Know)",
@@ -1209,7 +1225,7 @@
       "tlandkarte": "Identity- & Access-Management"
     },
     "zero-trust": {
-      "title": "Zero Trust & Mikrosegmentierung",
+      "title": "Zero Trust & Mikro\u00adsegmentierung",
       "area": "zugriff",
       "dimension": "architektur",
       "triggers": [
@@ -1224,7 +1240,8 @@
       ],
       "what": "Der Verzicht auf implizites Vertrauen innerhalb des Netzes, verbunden mit kleinteiliger Segmentierung und der Minimierung von außen erreichbarer Endpunkte.",
       "why": "Das klassische Modell mit hartem Rand und weichem Inneren bedeutet, dass ein einziger kompromittierter Dienst alles erreicht. Segmentierung begrenzt den Radius und hält besonders sensible Teile klein.",
-      "when": "Besonders wertvoll, wenn ein stark regulierter Teil vom Rest getrennt werden soll."
+      "when": "Besonders wertvoll, wenn ein stark regulierter Teil vom Rest getrennt werden soll.",
+      "tlandkarte": "Identity- & Access-Management"
     },
     "dlp": {
       "title": "Data Loss Prevention",
@@ -1284,7 +1301,8 @@
       "area": "entwurf-nachweis",
       "dimension": "architektur",
       "triggers": [
-        "immer"
+        "immer",
+        "daten:logs"
       ],
       "aliases": [
         "Audit Trail",
@@ -1336,7 +1354,8 @@
       "area": "betrieb-vorfaelle",
       "dimension": "betrieb",
       "triggers": [
-        "immer"
+        "immer",
+        "daten:logs"
       ],
       "aliases": [
         "Monitoring",
@@ -1386,7 +1405,8 @@
       "area": "lebenszyklus",
       "dimension": "betrieb",
       "triggers": [
-        "pb:ja"
+        "pb:ja",
+        "daten:logs"
       ],
       "aliases": [
         "Retention",
@@ -1431,12 +1451,13 @@
       "when": "Besonders wichtig bei wechselnden Projektbesetzungen und externen Beteiligten."
     },
     "nda": {
-      "title": "Verpflichtungserklärungen (NDA)",
+      "title": "Verpflichtungs\u00aderklärungen (NDA)",
       "area": "organisation",
       "dimension": "betrieb",
       "triggers": [
         "daten:art9",
-        "immer"
+        "immer",
+        "daten:ip"
       ],
       "aliases": [
         "NDA",
@@ -1449,7 +1470,7 @@
       "when": "Vor dem ersten Zugriff auf sensible Daten, nicht nach dem Projektstart."
     },
     "schulungsnachweise": {
-      "title": "Schulungsnachweise",
+      "title": "Schulungs\u00adnachweise",
       "area": "organisation",
       "dimension": "betrieb",
       "triggers": [
@@ -1466,7 +1487,7 @@
       "when": "Vom Kunden häufig als Nachweis für externe Projektbeteiligte verlangt."
     },
     "schutzbedarfsfeststellung": {
-      "title": "Schutzbedarfsfeststellung",
+      "title": "Schutzbedarfs\u00adfeststellung",
       "area": "bewerten",
       "dimension": "methodik",
       "triggers": [
@@ -1531,7 +1552,8 @@
       ],
       "what": "Das Gegenstück zu STRIDE für Datenschutzbedrohungen, mit Kategorien wie Verknüpfbarkeit, Identifizierbarkeit, Nichtabstreitbarkeit, Erkennbarkeit, Offenlegung und Unkenntnis der Betroffenen.",
       "why": "STRIDE findet Sicherheitsprobleme, aber nicht die typischen Datenschutzprobleme. Verknüpfbarkeit über Datensätze hinweg ist ein Risiko, das kein Sicherheitsmodell aufdeckt.",
-      "when": "Ergänzend zu STRIDE, wenn personenbezogene Daten im Zentrum stehen. Liefert oft direkt die Substanz für eine DSFA."
+      "when": "Ergänzend zu STRIDE, wenn personenbezogene Daten im Zentrum stehen. Liefert oft direkt die Substanz für eine DSFA.",
+      "tlandkarte": "Threat Modeling"
     },
     "dfd": {
       "title": "Data Flow Diagrams",
@@ -1548,10 +1570,11 @@
       ],
       "what": "Eine einfache Darstellung von Datenquellen, Verarbeitungsschritten, Speichern und Vertrauensgrenzen, aus der hervorgeht, welche Daten wohin fließen.",
       "why": "Es ist die Grundlage für Threat Modeling, DSFA und Verarbeitungsverzeichnis gleichzeitig. Meist deckt schon das Zeichnen die überraschenden Datenpfade auf.",
-      "when": "Der günstigste erste Schritt in jedem Projekt mit sensiblen Daten."
+      "when": "Der günstigste erste Schritt in jedem Projekt mit sensiblen Daten.",
+      "tlandkarte": "Threat Modeling"
     },
     "adr": {
-      "title": "Architekturentscheidungen dokumentieren (ADR)",
+      "title": "Architektur\u00adentscheidungen dokumentieren (ADR)",
       "area": "verankern",
       "dimension": "methodik",
       "triggers": [
@@ -1603,7 +1626,7 @@
       "tlandkarte": "Security-by-Design"
     },
     "pipeline-werkzeuge": {
-      "title": "Sicherheitswerkzeuge in der Pipeline",
+      "title": "Sicherheits\u00adwerkzeuge in der Pipeline",
       "area": "verankern",
       "dimension": "methodik",
       "triggers": [
@@ -1787,7 +1810,7 @@
       "when": "Früh klären. Der harte Schnitt zwischen medizinischer Funktion und Rest des Systems ist eine Architekturentscheidung mit großer Kostenwirkung."
     },
     "gematik-ti": {
-      "title": "Telematikinfrastruktur & gematik",
+      "title": "Telematik\u00adinfrastruktur & gematik",
       "area": "medtech-reg-de",
       "dimension": "regulatorik",
       "triggers": [
@@ -1863,7 +1886,8 @@
       "area": "public-reg",
       "dimension": "regulatorik",
       "triggers": [
-        "branche:public"
+        "branche:public",
+        "nachweis:ja"
       ],
       "aliases": [
         "IT-Grundschutz",
@@ -1981,7 +2005,7 @@
       "when": "Bei jeder Modellanbindung prüfen, was tatsächlich im Kontext landet, nicht nur was der Nutzer tippt."
     },
     "trainingsdaten": {
-      "title": "Trainings- & Feinabstimmungsdaten",
+      "title": "Trainings- & Feinabstimmungs\u00addaten",
       "area": "ki-daten",
       "dimension": "klassifizierung",
       "triggers": [
@@ -2052,7 +2076,8 @@
       "area": "ki-reg",
       "dimension": "regulatorik",
       "triggers": [
-        "ki:ja"
+        "ki:ja",
+        "nachweis:ja"
       ],
       "aliases": [
         "42001",
@@ -2068,7 +2093,8 @@
       "area": "ki-arch",
       "dimension": "architektur",
       "triggers": [
-        "ki:ja"
+        "ki:ja",
+        "daten:prompts"
       ],
       "aliases": [
         "Prompt Masking",
@@ -2085,7 +2111,8 @@
       "area": "ki-arch",
       "dimension": "architektur",
       "triggers": [
-        "ki:ja"
+        "ki:ja",
+        "daten:prompts"
       ],
       "aliases": [
         "Guardrails",
@@ -2132,11 +2159,12 @@
       "when": "Zusicherungen zu Region, Support-Zugriff und Aufbewahrung schriftlich prüfen, nicht der Produktseite entnehmen."
     },
     "zero-data-retention": {
-      "title": "Zero Data Retention & Trainingsausschluss",
+      "title": "Zero Data Retention & Trainings\u00adausschluss",
       "area": "ki-arch",
       "dimension": "architektur",
       "triggers": [
-        "ki:ja"
+        "ki:ja",
+        "daten:prompts"
       ],
       "aliases": [
         "Zero Data Retention",
@@ -2328,7 +2356,8 @@
       "area": "automotive-reg",
       "dimension": "regulatorik",
       "triggers": [
-        "branche:automotive"
+        "branche:automotive",
+        "nachweis:ja"
       ],
       "aliases": [
         "TISAX",
@@ -2541,7 +2570,8 @@
       "area": "automotive-nachweise",
       "dimension": "betrieb",
       "triggers": [
-        "branche:automotive"
+        "branche:automotive",
+        "nachweis:ja"
       ],
       "aliases": [
         "VDA ISA",
@@ -2559,7 +2589,8 @@
       "area": "automotive-nachweise",
       "dimension": "betrieb",
       "triggers": [
-        "branche:automotive"
+        "branche:automotive",
+        "nachweis:ja"
       ],
       "aliases": [
         "Label",
@@ -2573,7 +2604,7 @@
       "when": "Vor der Beauftragung klären, welcher Geltungsbereich gebraucht wird, und beim Projektstart prüfen, ob der vorhandene passt. Laufzeiten und Verfahren bei der ENX nachsehen."
     },
     "feld-schwachstellen": {
-      "title": "Schwachstellen über die Fahrzeuglebensdauer",
+      "title": "Schwachstellen über die Fahrzeug\u00adlebens\u00addauer",
       "area": "automotive-nachweise",
       "dimension": "betrieb",
       "triggers": [
@@ -2600,13 +2631,212 @@
       "aliases": [
         "Zulieferer",
         "Cybersecurity Interface Agreement",
-        "CIA",
+        "Interface Agreement",
         "Nachweispflichten",
         "Aufgabenteilung"
       ],
       "what": "Die Vereinbarung darüber, wer in der Kette welche Sicherheitsaktivität übernimmt und welche Nachweise er liefert. ISO/SAE 21434 führt das als Cybersecurity Interface Agreement.",
       "why": "Die Typgenehmigung hängt an Nachweisen, die überwiegend nicht beim Hersteller entstehen, sondern bei Zulieferern. Ohne klare Aufteilung fehlen am Ende genau die Dokumente, die die Prüfung sehen will, und niemand hält sich für zuständig.",
       "when": "Bei der Beauftragung, nicht bei der Prüfung. Die Aufteilung gehört in den Vertrag, weil sie sich nachträglich nicht herstellen lässt."
+    },
+    "dienstleisterkontrolle": {
+      "title": "Dienstleister\u00adkontrolle",
+      "area": "organisation",
+      "dimension": "betrieb",
+      "triggers": [
+        "pb:ja"
+      ],
+      "aliases": [
+        "Auditrecht",
+        "Dienstleisterprüfung",
+        "Lieferantenaudit",
+        "Nachweis vom Auftragsverarbeiter",
+        "Unterauftragnehmer"
+      ],
+      "what": "Die wiederkehrende Prüfung, ob ein Auftragsverarbeiter die zugesagten Maßnahmen tatsächlich einhält, über eingeforderte Nachweise oder ein ausgeübtes Auditrecht.",
+      "why": "Der Vertrag nach Art. 28 begründet ein Prüfrecht, aber kein Prüfergebnis. Wer nie prüft, hat die Pflicht auf dem Papier erfüllt und trägt die Verantwortung weiter. Bei Unterauftragnehmern reicht die Kette außerdem oft tiefer, als der Vertrag abbildet.",
+      "when": "Nach dem Vertragsschluss und dann in festem Takt. Beim Projektstart klären, welche Nachweise es schon gibt und wie alt sie sind."
+    },
+    "wirksamkeitspruefung": {
+      "title": "Wirksamkeit der Maßnahmen prüfen",
+      "area": "organisation",
+      "dimension": "betrieb",
+      "triggers": [
+        "pb:ja"
+      ],
+      "aliases": [
+        "Wirksamkeitskontrolle",
+        "Überprüfung der TOM",
+        "Kontrollnachweis",
+        "Penetrationstest",
+        "Stichprobe"
+      ],
+      "what": "Die regelmäßige Überprüfung, ob die getroffenen Schutzmaßnahmen noch wirken, etwa über Tests, Stichproben oder Prüfungen durch Dritte. Art. 32 verlangt das ausdrücklich.",
+      "why": "Maßnahmen veralten leise: eine Berechtigung bleibt bestehen, ein Schlüssel wird nicht getauscht, eine Regel greift nach einem Umbau nicht mehr. Ohne Prüfung merkt das niemand, und im Vorfall steht nur die Absicht im Dokument.",
+      "when": "In festem Takt und nach jeder größeren Änderung. Wer die TOM-Liste pflegt, hält daneben fest, wann und wie jede Maßnahme zuletzt geprüft wurde."
+    },
+    "dsar-nachweis": {
+      "title": "Betroffenen\u00adanfragen nachweisen",
+      "area": "organisation",
+      "dimension": "betrieb",
+      "triggers": [
+        "pb:ja"
+      ],
+      "aliases": [
+        "DSAR-Protokoll",
+        "Fristennachweis",
+        "Auskunftsersuchen dokumentieren",
+        "Monatsfrist",
+        "Bearbeitungsnachweis"
+      ],
+      "what": "Die Dokumentation eingegangener Anfragen von Betroffenen samt Bearbeitung, Ergebnis und Zeitpunkt, sodass die Einhaltung der Fristen belegbar ist.",
+      "why": "Die Auskunft selbst ist technisch gelöst, sobald ein Weg dafür existiert. Der Streitfall dreht sich später aber um Fristen und Vollständigkeit, und dafür zählt nur, was protokolliert wurde.",
+      "when": "Ab der ersten Anfrage, und die kommt früher als gedacht. Der Nachweis gehört an denselben Ort wie die technische Umsetzung, sonst driftet er weg."
+    },
+    "ldsg": {
+      "title": "Landes\u00addatenschutz\u00adgesetze",
+      "area": "public-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:public"
+      ],
+      "aliases": [
+        "LDSG",
+        "Landesrecht",
+        "Landesbeauftragte",
+        "DSG NRW",
+        "BayDSG"
+      ],
+      "what": "Die Datenschutzgesetze der Länder, die für Landes- und Kommunalbehörden an die Stelle des BDSG treten und die DSGVO dort ausfüllen.",
+      "why": "Wer beim Bundesrecht stehen bleibt, prüft am falschen Gesetz. Zuständige Aufsicht, Meldewege und einzelne Befugnisse unterscheiden sich je Land, und bei länderübergreifenden Vorhaben gelten mehrere gleichzeitig.",
+      "when": "Zu Beginn klären, welche Ebene der Auftraggeber ist: Bund, Land oder Kommune. Davon hängt ab, welches Gesetz und welche Aufsicht gilt."
+    },
+    "archivrecht": {
+      "title": "Archivrecht & Anbietungspflicht",
+      "area": "public-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:public"
+      ],
+      "aliases": [
+        "Archivgesetz",
+        "Anbietungspflicht",
+        "Aussonderung",
+        "Archivwürdigkeit",
+        "Bundesarchiv"
+      ],
+      "what": "Die Pflicht öffentlicher Stellen, Unterlagen vor der Vernichtung dem zuständigen Archiv anzubieten, das über die Archivwürdigkeit entscheidet.",
+      "why": "Das steht dem Löschen entgegen und ist in Architekturen fast nie vorgesehen. Ein Löschkonzept, das die Anbietungspflicht nicht kennt, ist im öffentlichen Bereich falsch, und das fällt erst auf, wenn die Daten schon weg sind.",
+      "when": "Zusammen mit dem Löschkonzept, nicht danach. Zu klären ist, welche Unterlagen anbietungspflichtig sind und wie der Export dafür aussieht."
+    },
+    "eidas": {
+      "title": "eIDAS & Vertrauensdienste",
+      "area": "public-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:public"
+      ],
+      "aliases": [
+        "eIDAS",
+        "qualifizierte Signatur",
+        "Siegel",
+        "Zeitstempel",
+        "Vertrauensdienst"
+      ],
+      "what": "Der europäische Rahmen für elektronische Identifizierung und Vertrauensdienste, also Signaturen, Siegel, Zeitstempel und deren Rechtswirkung.",
+      "why": "Im Verwaltungsverfahren hängt an der Signaturstufe die Rechtswirkung eines Vorgangs. Die Stufe bestimmt außerdem, welche Schlüssel und welche Hardware nötig sind, und ist damit eine Architekturentscheidung mit Beschaffungsfolgen.",
+      "when": "Sobald Vorgänge rechtsverbindlich elektronisch abgeschlossen werden. Die benötigte Stufe früh festlegen, sie lässt sich später nicht billig anheben."
+    },
+    "evb-it": {
+      "title": "EVB-IT & Vergaberecht",
+      "area": "public-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:public"
+      ],
+      "aliases": [
+        "EVB-IT",
+        "Vergabe",
+        "Ausschreibung",
+        "UfAB",
+        "Vertragsbedingungen"
+      ],
+      "what": "Die ergänzenden Vertragsbedingungen für die Beschaffung von IT durch die öffentliche Hand, samt der vergaberechtlichen Rahmenbedingungen dahinter.",
+      "why": "Sie legen Pflichten zu Sicherheit, Nachweisen und Datenschutz vertraglich fest, bevor ein Projekt beginnt, und sind später kaum verhandelbar. Wer sie erst in der Umsetzung liest, findet Zusagen, die die Architektur nicht hergibt.",
+      "when": "Vor dem Angebot, nicht vor dem Projektstart. Die eingegangenen Zusagen gehören in die Anforderungen übernommen."
+    },
+    "bonitaetsdaten": {
+      "title": "Bonitäts- & Scoringdaten",
+      "area": "finance-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:finance",
+        "pb:ja"
+      ],
+      "aliases": [
+        "Scoring",
+        "Bonität",
+        "Kreditwürdigkeit",
+        "Auskunftei",
+        "automatisierte Entscheidung"
+      ],
+      "what": "Daten zur Zahlungsfähigkeit und daraus berechnete Punktwerte, häufig von Auskunfteien bezogen und in Entscheidungen eingebunden.",
+      "why": "Ein Score entscheidet über Verträge und Konditionen. Eine ausschließlich automatisierte Entscheidung unterliegt eigenen Regeln nach Art. 22 samt Auskunft über die Logik, und dazu kommt die Frage, ob die zugrunde liegenden Merkmale überhaupt herangezogen werden dürfen.",
+      "when": "Sobald ein Wert eine Entscheidung über eine Person beeinflusst. Zu klären ist, ob die Entscheidung automatisiert im Sinne von Art. 22 ist und wie die Logik erklärbar bleibt."
+    },
+    "psd2": {
+      "title": "PSD2 & Zahlungsdienste\u00adrecht",
+      "area": "finance-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:finance",
+        "daten:finanz"
+      ],
+      "aliases": [
+        "PSD2",
+        "ZAG",
+        "starke Kundenauthentifizierung",
+        "SCA",
+        "Kontoinformationsdienst"
+      ],
+      "what": "Das Zahlungsdiensterecht, das unter anderem starke Kundenauthentifizierung verlangt und den Zugang Dritter zu Konten regelt.",
+      "why": "Es bestimmt Authentisierung, Haftungsverteilung und Schnittstellen zugleich. Wer Zahlungen berührt, holt sich damit Anforderungen an Sicherheit und Erlaubnispflicht ins Projekt, die nicht verhandelbar sind.",
+      "when": "Sobald Zahlungen ausgelöst oder Kontodaten Dritter genutzt werden. Früh klären, ob eine Erlaubnispflicht besteht oder ein regulierter Partner nötig ist."
+    },
+    "bankgeheimnis": {
+      "title": "Bankgeheimnis",
+      "area": "finance-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:finance"
+      ],
+      "aliases": [
+        "Bankgeheimnis",
+        "Verschwiegenheitspflicht",
+        "Kundengeheimnis",
+        "AGB-Banken"
+      ],
+      "what": "Die Pflicht des Kreditinstituts, das Kundenverhältnis und alle daraus bekannten Tatsachen geheim zu halten. In Deutschland ist sie vertraglich und gewohnheitsrechtlich begründet, nicht in einem einzelnen Gesetz.",
+      "why": "Sie greift zusätzlich zum Datenschutz und auch dort, wo keine personenbezogenen Daten betroffen sind, etwa bei Firmenkunden. Für Dienstleister heißt das, dass der Zugriff auf Kundendaten schon vor der datenschutzrechtlichen Frage begrenzt ist.",
+      "when": "Bei jedem Zugriff Dritter auf Kundendaten, auch bei Support und Fehleranalyse. Die Zulässigkeit ist getrennt von der datenschutzrechtlichen zu beurteilen."
+    },
+    "auslagerung": {
+      "title": "Auslagerung",
+      "area": "finance-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:finance"
+      ],
+      "aliases": [
+        "Auslagerung",
+        "Outsourcing",
+        "Auslagerungsregister",
+        "kritische Funktion",
+        "Ausstiegsstrategie"
+      ],
+      "what": "Die aufsichtsrechtlichen Anforderungen an das Auslagern von Tätigkeiten an Dritte, mit Risikobewertung, Vertragsinhalten, Ausstiegsstrategie und einem Register der Auslagerungen.",
+      "why": "Ein Dienstleister wird damit Teil des beaufsichtigten Systems und nicht nur ein Lieferant. Anforderungen an Weisungs- und Prüfrechte, Kündbarkeit und Notfallvorsorge kommen aus der Aufsicht und reichen weiter als ein üblicher Vertrag. Die Einordnung als Auslagerung entscheidet über den Aufwand.",
+      "when": "Vor der Beauftragung. Ob eine Tätigkeit eine Auslagerung ist und ob sie als kritisch gilt, ist keine Frage für später."
     }
   }
 }

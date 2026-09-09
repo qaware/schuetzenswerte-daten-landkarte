@@ -71,7 +71,7 @@ const state = {
   bounds: null,
   sea: null,          // Wellenfeld, größer als bounds
   query: '',
-  filters: { branche: null, daten: new Set(), pb: false, cloud: false, ki: false, drittland: false },
+  filters: {},        // wird in initFilters() aus data.filters aufgebaut
   lastFocus: null,
   dragged: false     // wurde der letzte Zeigerzug zum Verschieben benutzt
 };
@@ -147,6 +147,7 @@ for (const c of 'fr()[]-' + HYPHEN)  EM[c] = 0.36;
 for (const c of 'mw')                EM[c] = 0.85;
 for (const c of 'MW')                EM[c] = 0.88;
 for (const c of 'ABCDEFGHJKLNOPQRSTUVXYZÄÖÜ&') EM[c] = 0.66;
+EM[SHY] = 0;              // unsichtbar, solange dort nicht umbrochen wird
 const emOf = c => EM[c] === undefined ? EM_DEFAULT : EM[c];
 function textEm(s) { let n = 0; for (const c of s) n += emOf(c); return n; }
 
@@ -198,9 +199,20 @@ function pieces(text) {
 
 const SPACE_EM = 0.29;
 
+/* Ein Stück, das auf ein weiches Trennzeichen endet, ist unterschiedlich breit: am
+   Zeilenende zeigt es einen Trennstrich, mitten in der Zeile nichts. Wer das ignoriert,
+   misst das Stück zu breit und zerlegt es noch einmal. Genau das passierte bei
+   "Zahlungsdienste" plus Hinweis: es kam auf 8.14 em gegen ein Limit von 8.04 und wurde
+   zu "Zahlungsdie-nsterecht", also mitten im Wort statt an der markierten Fuge. */
+const pieceEm = (p, letzte) => {
+  let t = p.text;
+  if (t.endsWith(SHY)) t = t.slice(0, -1) + (letzte ? HYPHEN : '');
+  return textEm(t);
+};
+
 const lineLen = (ps, i, j) => {
   let n = 0;
-  for (let k = i; k <= j; k++) n += textEm(ps[k].text) + (k > i && ps[k].space ? SPACE_EM : 0);
+  for (let k = i; k <= j; k++) n += pieceEm(ps[k], k === j) + (k > i && ps[k].space ? SPACE_EM : 0);
   return n;
 };
 
@@ -224,7 +236,8 @@ function splitLong(ps, limit) {
   const hy = emOf(HYPHEN);
   for (const p of ps) {
     let rest = p.text, space = p.space;
-    while (textEm(rest) > limit) {
+    // Im ungünstigsten Fall steht das Stück am Zeilenende und zeigt seinen Trennstrich
+    while (pieceEm({ text: rest }, true) > limit) {
       // So weit nach rechts schneiden, wie die Breite zulässt, aber MIN_FRAG Zeichen
       // stehen lassen, damit keine Zwei-Buchstaben-Waise entsteht.
       let cut = 0, w = 0;
@@ -235,7 +248,8 @@ function splitLong(ps, limit) {
         cut = i + 1;
       }
       if (cut < MIN_FRAG) break;
-      out.push({ text: rest.slice(0, cut) + HYPHEN, space });
+      // hart: hier wurde gegen den Text geschnitten, nicht an einer markierten Fuge
+      out.push({ text: rest.slice(0, cut) + HYPHEN, space, hart: true });
       rest = rest.slice(cut);
       space = false;
     }
@@ -248,7 +262,7 @@ function splitLong(ps, limit) {
 function fitsLines(ps, w, n) {
   let lines = 1, start = 0;
   for (let k = 0; k < ps.length; k++) {
-    if (textEm(ps[k].text) > w) return false;
+    if (pieceEm(ps[k], true) > w) return false;
     if (lineLen(ps, start, k) > w) {
       if (++lines > n) return false;
       start = k;
@@ -264,7 +278,7 @@ function pack(ps, w) {
     if (lineLen(ps, start, k) > w) { lines.push(lineText(ps, start, k - 1)); start = k; }
   }
   lines.push(lineText(ps, start, ps.length - 1));
-  return lines;
+  return { lines, hart: ps.filter(p => p.hart).length };
 }
 
 /* Die Zeilen werden ausgeglichen, nicht von links vollgefüllt. Gesucht ist die kleinste
@@ -272,7 +286,7 @@ function pack(ps, w) {
    Vollfüllen ergab sonst Zeilen wie nur "&" hinter einer randvollen ersten Zeile. */
 function wrap(text, limit) {
   const ps = splitLong(pieces(text), limit);
-  const longest = ps.reduce((m, p) => Math.max(m, textEm(p.text)), 0.1);
+  const longest = ps.reduce((m, p) => Math.max(m, pieceEm(p, true)), 0.1);
   const total = lineLen(ps, 0, ps.length - 1);
   // Die Suche läuft in Zehntel-em, das ist fein genug und bleibt ganzzahlig.
   for (let n = 1; n <= MAX_LINES; n++) {
@@ -286,19 +300,27 @@ function wrap(text, limit) {
   return pack(ps, Math.max(longest, limit));
 }
 
-/* Die enge Variante ist nicht mehr nur die Notbremse bei zu vielen Zeilen. Sie greift
-   auch, wenn sie eine Trennung vermeidet: ein Titel, der in normaler Größe getrennt werden
-   müsste, wird lieber eine Spur kleiner gesetzt als mitten im Wort zerlegt. */
+// Bequemer Zugriff, wo nur die Zeilen gebraucht werden
+const wrapLines = (text, limit) => wrap(text, limit).lines;
+
+/* Die enge Variante ist nicht die Notbremse bei zu vielen Zeilen, sondern das Mittel gegen
+   erzwungene Trennungen: ein Titel, der in normaler Größe mitten im Wort zerlegt werden
+   müsste, wird lieber eine Spur kleiner gesetzt.
+
+   Entscheidend ist `hart`, also die Zahl der Schnitte gegen den Text. Vorher entschied
+   nur, ob überhaupt ein Trennstrich vorkam, und dann verlor die enge Variante gegen die
+   normale, obwohl sie an der markierten Fuge brach und die normale mitten im Wort:
+   "Feinabstimm-ungsdaten" statt "Feinabstimmungs-daten". */
 function labelFor(title) {
   const t = hexLabel(title);
-  const lines = wrap(t, TILE_EM);
-  const getrennt = l => l.some(x => x.indexOf(HYPHEN) >= 0);
-  if (lines.length <= 4 && !getrennt(lines)) return { lines, tight: false };
-  const enger = wrap(t, TILE_EM_TIGHT);
-  if (enger.length <= MAX_LINES && (!getrennt(enger) || lines.length > 4)) {
-    return { lines: enger.slice(0, MAX_LINES), tight: true };
+  const normal = wrap(t, TILE_EM);
+  if (normal.lines.length <= 4 && !normal.hart) return { lines: normal.lines, tight: false };
+  const eng = wrap(t, TILE_EM_TIGHT);
+  const hilft = eng.hart < normal.hart || (normal.lines.length > 4 && !eng.hart);
+  if (hilft && eng.lines.length <= MAX_LINES) {
+    return { lines: eng.lines.slice(0, MAX_LINES), tight: true };
   }
-  return { lines: lines.slice(0, MAX_LINES), tight: false };
+  return { lines: normal.lines.slice(0, MAX_LINES), tight: false };
 }
 
 /* ---------- Aufbau ---------- */
@@ -356,7 +378,7 @@ function build(data) {
   for (const [aid, area] of Object.entries(data.areas)) {
     const [q, r] = areaCenter[aid], c = center(q, r);
     g('layer-areas').appendChild(el('path', { d: hexPath(q, r, 0.92), class: 'area-ring' }));
-    const lines = wrap(area.label, AREA_EM);
+    const lines = wrapLines(area.label, AREA_EM);
     const text = el('text', { class: 'area-label', x: c.x, y: c.y - (lines.length - 1) * 7 + 4 });
     lines.forEach((ln, i) => {
       const ts = el('tspan', { x: c.x, dy: i ? '1.15em' : 0 });
@@ -615,6 +637,7 @@ function buildLegend() {
 /* ---------- Projektfilter ---------- */
 
 function buildProjectPanel() {
+  initFilters();
   const host = document.getElementById('project-fields');
   for (const f of state.data.filters) {
     const group = document.createElement('div');
@@ -648,7 +671,7 @@ function buildProjectPanel() {
       const buttons = f.options.map(o => mk(o.label, (on, b) => {
         buttons.forEach(x => x.setAttribute('aria-pressed', 'false'));
         b.setAttribute('aria-pressed', String(on));
-        state.filters.branche = on ? o.tags : null;
+        state.filters[f.id] = on ? o.tags : null;
       }));
     } else {
       f.options.forEach(o => mk(o.label, (on, b) => {
@@ -663,20 +686,34 @@ function buildProjectPanel() {
   }
 }
 
+/* Der Filterzustand wird aus den Daten aufgebaut und nicht im Code aufgezählt. Vorher
+   stand jede Frage an vier Stellen: in state.filters, in activeTags, in filterActive und
+   im Zurücksetzen. Eine neue Frage in landkarte.json brauchte damit vier Codeänderungen,
+   und drei davon vergisst man leicht. Jetzt genügt der Eintrag in den Daten. */
+function initFilters() {
+  const f = {};
+  for (const q of state.data.filters) {
+    f[q.id] = q.type === 'toggle' ? false : q.type === 'single' ? null : new Set();
+  }
+  state.filters = f;
+}
+
 function activeTags() {
   const tags = new Set();
-  if (state.filters.branche) state.filters.branche.forEach(t => tags.add(t));
-  state.filters.daten.forEach(t => tags.add(t));
-  if (state.filters.pb) tags.add('pb:ja');
-  if (state.filters.cloud) tags.add('cloud:hyperscaler');
-  if (state.filters.ki) tags.add('ki:ja');
-  if (state.filters.drittland) tags.add('drittland:ja');
+  for (const q of state.data.filters) {
+    const v = state.filters[q.id];
+    if (q.type === 'toggle') { if (v) (q.tags || []).forEach(t => tags.add(t)); }
+    else if (q.type === 'single') { if (v) v.forEach(t => tags.add(t)); }
+    else v.forEach(t => tags.add(t));
+  }
   return tags;
 }
 
 function filterActive() {
-  const f = state.filters;
-  return f.branche !== null || f.daten.size > 0 || f.pb || f.cloud || f.ki || f.drittland;
+  return state.data.filters.some(q => {
+    const v = state.filters[q.id];
+    return q.type === 'toggle' ? !!v : q.type === 'single' ? v !== null : v.size > 0;
+  });
 }
 
 function matching() {
@@ -1002,7 +1039,7 @@ function wireInteraction() {
   document.getElementById('btn-export').onclick = exportChecklist;
   document.getElementById('btn-agent').onclick = exportAgentContext;
   document.getElementById('btn-reset').onclick = () => {
-    state.filters = { branche: null, daten: new Set(), pb: false, cloud: false, ki: false, drittland: false };
+    initFilters();
     panel.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
     document.getElementById('export-status').textContent = '';
     applyHighlight();

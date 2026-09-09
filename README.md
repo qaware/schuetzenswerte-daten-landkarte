@@ -76,6 +76,9 @@ Domänenspezifisches. Was allgemein gilt, bleibt im Kern und wird von dort refer
 }
 ```
 
+Die Fragen im Projektfilter stehen selbst in `filters`, und der Viewer liest sie von dort. Eine
+neue Frage ist deshalb eine reine Datenänderung, ohne Eingriff in den Code.
+
 `triggers` steuert den Projektfilter, mehrere Tags wirken als Oder-Verknüpfung. `immer` heißt, dass
 die Kachel in jedem Projekt mit schützenswerten Daten zu klären ist. `aliases` ist für die Suche da
 und der Grund, warum jemand die Kachel auch findet, wenn er ein anderes Wort benutzt.
@@ -92,6 +95,20 @@ in den Text, nicht in eigene Kacheln, sonst wird die Karte unlesbar.
 1. Eintrag in `tiles` ergänzen, `area` und `dimension` müssen zu vorhandenen Einträgen passen
 2. Neue Bereiche brauchen einen Eintrag in `areas` mit `island` und `lattice`
 3. `python3 tools/check-landkarte.py` laufen lassen
+4. Die Kachel auf der Karte ansehen. Bricht der Titel mitten im Wort, ein weiches
+   Trennzeichen `\u00ad` an die Wortgrenze setzen, etwa `Geschäfts\u00adgeheimnisse`
+
+Zwei Regeln, die sich nicht prüfen lassen und deshalb hier stehen:
+
+**`immer` heißt immer.** Eine Kachel mit diesem Trigger erscheint in jedem Projekt. Wenn ihr
+`when` eine Bedingung nennt, ist entweder der Trigger falsch oder der Text. Das war bei DSGVO,
+Auftragsverarbeitung und Art. 32 der Fall: sie trugen `immer` und schrieben daneben, dass sie
+personenbezogene Daten voraussetzen. Ein Projekt ohne Personenbezug bekam sie trotzdem.
+
+**Ein Trigger reicht selten.** Eine Kachel gehört an jede Projekteigenschaft, wegen der man sie
+klären muss, nicht nur an die eine, die sie benennt. Die Option „Analytische Daten" wählte lange
+genau eine Kachel aus, nämlich die, die so hieß; sinnvoll sind auch Anonymisierung,
+Pseudonymisierung, Data Masking und Testdaten.
 
 Das Layout wird aus den Daten berechnet und steht nicht in der JSON. `lattice` ist die Position
 eines Bereichs im groben Raster seiner Insel, die Kacheln ordnen sich in Ringen um den Bereich an.
@@ -153,6 +170,19 @@ Begründung als Aufgabenliste für Menschen, der Agenten-Kontext gibt die Texte 
 
 Beide Schaltflächen legen den Inhalt in die Zwischenablage und laden nur dann eine Datei
 herunter, wenn das Kopieren nicht möglich ist, etwa weil die Seite nicht über HTTPS läuft.
+
+## Reifegrad der Archipele
+
+Der Kern ist ausgearbeitet. Bei den Archipelen ist die Tiefe unterschiedlich, und das ist keine
+Aussage über die Wichtigkeit der Branche, sondern über den Stand der Arbeit:
+
+| Archipel | Kacheln | Stand |
+| --- | --- | --- |
+| Automotive | 22 | ausgearbeitet, vier Bereiche |
+| KI | 15 | ausgearbeitet, vier Bereiche |
+| MedTech | 8 | tragfähig, Regulatorik Deutschland vollständig |
+| Public Sector | 8 | tragfähig, Datenarten noch dünn |
+| Finance | 8 | tragfähig, Aufbewahrung nach HGB und AO fehlt |
 
 ## Offene Punkte
 

@@ -260,6 +260,58 @@ damit es im Quelltext sichtbar bleibt. Es erscheint nur, wenn dort wirklich umbr
 Übereinstimmung verhindern, und im Checklisten-Export landete ein unsichtbares Zeichen in der
 Datei.
 
+## Der Projektfilter
+
+Die Fragen stehen in `landkarte.json` unter `filters`, und `initFilters`, `activeTags` und
+`filterActive` lesen sie von dort. **Eine neue Frage ist eine reine Datenänderung.** Vorher stand
+jede Frage an vier Stellen im Code, und drei davon vergisst man beim Ergänzen.
+
+Zwei Regeln zu den Triggern, die aus einer Prüfung der Daten hervorgingen:
+
+**`immer` heißt immer.** DSGVO, Auftragsverarbeitung und Art.-32-Maßnahmen trugen `immer` und
+nannten im eigenen `when` die Bedingung, dass es um personenbezogene Daten geht. Ein Projekt mit
+nur Geschäftsgeheimnissen bekam damit drei Kacheln vorgesetzt, die für es nicht gelten. Wer eine
+Kachel auf `immer` setzt, liest ihr `when` daneben.
+
+Zwei Kacheln behalten `immer` mit Absicht: NIS-2 und der Cyber Resilience Act gelten nicht
+überall, aber ob sie gelten, muss jedes Projekt beantworten. Ihr `when` sagt das ausdrücklich.
+Ich habe versucht, diese Regel im Prüfskript zu automatisieren, über Signalwörter wie „wenn" und
+„sobald" im `when`. Das Ergebnis waren fünf Treffer und kein einziger Fehler; die Prüfung ist
+deshalb nicht im Skript, sondern hier. Eine Prüfung, die nur Fehlalarme liefert, macht die
+echten Hinweise unsichtbar.
+
+**Ein Trigger reicht selten.** Die Datenart-Optionen zeigten fast nur auf die Kachel, die die
+Datenart benennt: „Analytische Daten" wählte genau eine von damals 124 Kacheln aus. Eine Kachel
+gehört an jede Eigenschaft, wegen der man sie klären muss.
+
+## Trennhinweise in den Titeln
+
+Lange deutsche Zusammensetzungen brauchen im Titel ein weiches Trennzeichen an der Wortgrenze,
+sonst schneidet der Umbruch nach Breite und trifft die Fuge nur zufällig. Vorher stand auf der
+Karte `Geschäftsgehei-mnisse`, `Auftragsverarbe-itung` und `Schlüsselverwa-ltung`.
+
+**Zugesichert ist: jeder Trennstrich sitzt an einer in den Daten markierten Stelle.** Die
+Zusicherung liegt im JS-Test und nicht im Prüfskript, weil nur dort die echte Umbruchlogik läuft;
+eine Nachbildung in Python wäre auseinandergelaufen. Wer eine Kachel mit einem langen Wort
+ergänzt, sieht sie anschlagen und legt die Fuge selbst fest.
+
+Diese Zusicherung ist scharf formuliert, weil eine weichere zwei echte Fehler durchgelassen hat.
+Die erste Fassung zählte nur, ob ein Titel überhaupt getrennt wurde, und wertete jeden Titel mit
+Hinweis als in Ordnung. Beide Fehler landeten den Strich trotzdem mitten im Wort:
+
+`pieceEm` misst ein Stück, das auf ein weiches Trennzeichen endet, unterschiedlich: am Zeilenende
+mit Trennstrich, mitten in der Zeile ohne. Vorher zählte das unsichtbare Zeichen als normal
+breit. „Zahlungsdienste" plus Hinweis kam damit auf 8.14 em gegen ein Limit von 8.04 und wurde zu
+`Zahlungsdie-nsterecht`. **Das unsichtbare Zeichen hat Breite null**, `EM[SHY] = 0`.
+
+`pack` zählt in `hart`, wie oft gegen den Text geschnitten wurde, und `labelFor` entscheidet
+danach. Vorher entschied nur, ob überhaupt ein Trennstrich vorkam, und dann verlor die enge
+Variante gegen die normale, obwohl sie an der Fuge brach und die normale mitten im Wort:
+`Feinabstimm-ungsdaten` statt `Feinabstimmungs-daten`.
+
+Gefunden habe ich den ersten Fehler im gerenderten Bild, nicht im Test. Wer hier etwas ändert,
+sieht sich eine Insel als Bild an und liest nicht nur die Zusicherungen.
+
 ## Zugriff durch KI-Agenten
 
 Das ist ein erwarteter Hauptfall, nicht ein Nebenweg: jemand gibt der KI den ganzen oder den
