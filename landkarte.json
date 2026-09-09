@@ -72,7 +72,7 @@
       ]
     },
     "finance": {
-      "label": "Finance Archipel",
+      "label": "Finanzdienstleistungen",
       "origin": [
         14,
         0
@@ -295,13 +295,29 @@
         0
       ]
     },
-    "finance-reg": {
-      "label": "Regulatorik",
+    "finance-aufsicht": {
       "island": "finance",
       "lattice": [
         1,
         0
-      ]
+      ],
+      "label": "Aufsichtsrecht"
+    },
+    "finance-zahlung": {
+      "island": "finance",
+      "lattice": [
+        0,
+        1
+      ],
+      "label": "Zahlungsverkehr"
+    },
+    "finance-geheimnis": {
+      "island": "finance",
+      "lattice": [
+        1,
+        1
+      ],
+      "label": "Geheimnisschutz & Vertragsrecht"
     },
     "ki-daten": {
       "label": "Daten",
@@ -387,9 +403,15 @@
           ]
         },
         {
-          "label": "Finance",
+          "label": "Bank",
           "tags": [
-            "branche:finance"
+            "branche:bank"
+          ]
+        },
+        {
+          "label": "Versicherung",
+          "tags": [
+            "branche:versicherung"
           ]
         },
         {
@@ -566,7 +588,7 @@
       "when": "Immer prüfen, bevor Daten in Analytics, Testumgebungen oder zu Dritten wandern."
     },
     "ip-geheimnisse": {
-      "title": "Geschäfts\u00adgeheimnisse & IP",
+      "title": "Geschäfts­geheimnisse & IP",
       "area": "weitere-datenarten",
       "dimension": "klassifizierung",
       "triggers": [
@@ -669,7 +691,7 @@
       "when": "Am Anfang jeder Klassifizierung, für jede Datenart getrennt bewerten."
     },
     "schutzbedarfsstufen": {
-      "title": "Schutzbedarfs\u00adstufen",
+      "title": "Schutzbedarfs­stufen",
       "area": "schutzbedarf",
       "dimension": "klassifizierung",
       "triggers": [
@@ -732,7 +754,7 @@
       "when": "Früh klären, wie eine Person und all ihre Daten systemweit gefunden werden. Nachträglich ist das teuer."
     },
     "avv": {
-      "title": "Auftrags\u00adverarbeitung (AVV, Art. 28)",
+      "title": "Auftrags­verarbeitung (AVV, Art. 28)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
       "triggers": [
@@ -765,7 +787,7 @@
       "when": "Immer. Die TOM-Liste ist häufig auch das Dokument, das der Kunde im Audit vorlegen muss."
     },
     "vvt": {
-      "title": "Verarbeitungs\u00adverzeichnis (Art. 30)",
+      "title": "Verarbeitungs­verzeichnis (Art. 30)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
       "triggers": [
@@ -781,7 +803,7 @@
       "when": "Beim Projektstart nach dem bestehenden Verzeichnis fragen, statt die Datenflüsse neu zu erheben."
     },
     "meldepflichten": {
-      "title": "Meldepflichten bei Datenschutz\u00adverletzung (Art. 33/34)",
+      "title": "Meldepflichten bei Datenschutz­verletzung (Art. 33/34)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
       "triggers": [
@@ -880,7 +902,7 @@
       "when": "Relevant, wenn Software in Verkehr gebracht wird, nicht nur intern betrieben. Die Kachel erscheint in jedem Projekt, weil diese Frage zu beantworten ist, nicht weil der CRA überall gilt. Zeitplan bitte aktuell prüfen."
     },
     "geschgehg": {
-      "title": "Geschäfts\u00adgeheimnis\u00adgesetz",
+      "title": "Geschäfts­geheimnis­gesetz",
       "area": "sicherheitsrecht",
       "dimension": "regulatorik",
       "triggers": [
@@ -1186,7 +1208,7 @@
       "when": "Erwägen bei sehr hohem Schutzbedarf in fremder Infrastruktur. Aufwand und Einschränkungen sind erheblich."
     },
     "schluesselverwaltung": {
-      "title": "Schlüssel\u00adverwaltung (KMS, BYOK, HYOK)",
+      "title": "Schlüssel­verwaltung (KMS, BYOK, HYOK)",
       "area": "verschluesselung",
       "dimension": "architektur",
       "triggers": [
@@ -1225,7 +1247,7 @@
       "tlandkarte": "Identity- & Access-Management"
     },
     "zero-trust": {
-      "title": "Zero Trust & Mikro\u00adsegmentierung",
+      "title": "Zero Trust & Mikro­segmentierung",
       "area": "zugriff",
       "dimension": "architektur",
       "triggers": [
@@ -1451,7 +1473,7 @@
       "when": "Besonders wichtig bei wechselnden Projektbesetzungen und externen Beteiligten."
     },
     "nda": {
-      "title": "Verpflichtungs\u00aderklärungen (NDA)",
+      "title": "Verpflichtungs­erklärungen (NDA)",
       "area": "organisation",
       "dimension": "betrieb",
       "triggers": [
@@ -1470,7 +1492,7 @@
       "when": "Vor dem ersten Zugriff auf sensible Daten, nicht nach dem Projektstart."
     },
     "schulungsnachweise": {
-      "title": "Schulungs\u00adnachweise",
+      "title": "Schulungs­nachweise",
       "area": "organisation",
       "dimension": "betrieb",
       "triggers": [
@@ -1487,7 +1509,7 @@
       "when": "Vom Kunden häufig als Nachweis für externe Projektbeteiligte verlangt."
     },
     "schutzbedarfsfeststellung": {
-      "title": "Schutzbedarfs\u00adfeststellung",
+      "title": "Schutzbedarfs­feststellung",
       "area": "bewerten",
       "dimension": "methodik",
       "triggers": [
@@ -1574,7 +1596,7 @@
       "tlandkarte": "Threat Modeling"
     },
     "adr": {
-      "title": "Architektur\u00adentscheidungen dokumentieren (ADR)",
+      "title": "Architektur­entscheidungen dokumentieren (ADR)",
       "area": "verankern",
       "dimension": "methodik",
       "triggers": [
@@ -1626,7 +1648,7 @@
       "tlandkarte": "Security-by-Design"
     },
     "pipeline-werkzeuge": {
-      "title": "Sicherheits\u00adwerkzeuge in der Pipeline",
+      "title": "Sicherheits­werkzeuge in der Pipeline",
       "area": "verankern",
       "dimension": "methodik",
       "triggers": [
@@ -1810,7 +1832,7 @@
       "when": "Früh klären. Der harte Schnitt zwischen medizinischer Funktion und Rest des Systems ist eine Architekturentscheidung mit großer Kostenwirkung."
     },
     "gematik-ti": {
-      "title": "Telematik\u00adinfrastruktur & gematik",
+      "title": "Telematik­infrastruktur & gematik",
       "area": "medtech-reg-de",
       "dimension": "regulatorik",
       "triggers": [
@@ -1921,7 +1943,8 @@
       "area": "finance-daten",
       "dimension": "klassifizierung",
       "triggers": [
-        "branche:finance",
+        "branche:bank",
+        "branche:versicherung",
         "daten:finanz"
       ],
       "aliases": [
@@ -1937,9 +1960,11 @@
     },
     "pci-dss": {
       "title": "PCI-DSS",
-      "area": "finance-reg",
+      "area": "finance-zahlung",
       "dimension": "regulatorik",
       "triggers": [
+        "branche:bank",
+        "branche:versicherung",
         "daten:finanz"
       ],
       "aliases": [
@@ -1954,10 +1979,11 @@
     },
     "dora": {
       "title": "DORA",
-      "area": "finance-reg",
+      "area": "finance-aufsicht",
       "dimension": "regulatorik",
       "triggers": [
-        "branche:finance"
+        "branche:bank",
+        "branche:versicherung"
       ],
       "aliases": [
         "DORA",
@@ -1970,10 +1996,10 @@
     },
     "bait-marisk": {
       "title": "BAIT & MaRisk",
-      "area": "finance-reg",
+      "area": "finance-aufsicht",
       "dimension": "regulatorik",
       "triggers": [
-        "branche:finance"
+        "branche:bank"
       ],
       "aliases": [
         "BAIT",
@@ -2005,7 +2031,7 @@
       "when": "Bei jeder Modellanbindung prüfen, was tatsächlich im Kontext landet, nicht nur was der Nutzer tippt."
     },
     "trainingsdaten": {
-      "title": "Trainings- & Feinabstimmungs\u00addaten",
+      "title": "Trainings- & Feinabstimmungs­daten",
       "area": "ki-daten",
       "dimension": "klassifizierung",
       "triggers": [
@@ -2159,7 +2185,7 @@
       "when": "Zusicherungen zu Region, Support-Zugriff und Aufbewahrung schriftlich prüfen, nicht der Produktseite entnehmen."
     },
     "zero-data-retention": {
-      "title": "Zero Data Retention & Trainings\u00adausschluss",
+      "title": "Zero Data Retention & Trainings­ausschluss",
       "area": "ki-arch",
       "dimension": "architektur",
       "triggers": [
@@ -2604,7 +2630,7 @@
       "when": "Vor der Beauftragung klären, welcher Geltungsbereich gebraucht wird, und beim Projektstart prüfen, ob der vorhandene passt. Laufzeiten und Verfahren bei der ENX nachsehen."
     },
     "feld-schwachstellen": {
-      "title": "Schwachstellen über die Fahrzeug\u00adlebens\u00addauer",
+      "title": "Schwachstellen über die Fahrzeug­lebens­dauer",
       "area": "automotive-nachweise",
       "dimension": "betrieb",
       "triggers": [
@@ -2640,7 +2666,7 @@
       "when": "Bei der Beauftragung, nicht bei der Prüfung. Die Aufteilung gehört in den Vertrag, weil sie sich nachträglich nicht herstellen lässt."
     },
     "dienstleisterkontrolle": {
-      "title": "Dienstleister\u00adkontrolle",
+      "title": "Dienstleister­kontrolle",
       "area": "organisation",
       "dimension": "betrieb",
       "triggers": [
@@ -2676,7 +2702,7 @@
       "when": "In festem Takt und nach jeder größeren Änderung. Wer die TOM-Liste pflegt, hält daneben fest, wann und wie jede Maßnahme zuletzt geprüft wurde."
     },
     "dsar-nachweis": {
-      "title": "Betroffenen\u00adanfragen nachweisen",
+      "title": "Betroffenen­anfragen nachweisen",
       "area": "organisation",
       "dimension": "betrieb",
       "triggers": [
@@ -2694,7 +2720,7 @@
       "when": "Ab der ersten Anfrage, und die kommt früher als gedacht. Der Nachweis gehört an denselben Ort wie die technische Umsetzung, sonst driftet er weg."
     },
     "ldsg": {
-      "title": "Landes\u00addatenschutz\u00adgesetze",
+      "title": "Landes­datenschutz­gesetze",
       "area": "public-reg",
       "dimension": "regulatorik",
       "triggers": [
@@ -2770,7 +2796,8 @@
       "area": "finance-daten",
       "dimension": "klassifizierung",
       "triggers": [
-        "branche:finance",
+        "branche:bank",
+        "branche:versicherung",
         "pb:ja"
       ],
       "aliases": [
@@ -2785,11 +2812,11 @@
       "when": "Sobald ein Wert eine Entscheidung über eine Person beeinflusst. Zu klären ist, ob die Entscheidung automatisiert im Sinne von Art. 22 ist und wie die Logik erklärbar bleibt."
     },
     "psd2": {
-      "title": "PSD2 & Zahlungsdienste\u00adrecht",
-      "area": "finance-reg",
+      "title": "PSD2 & Zahlungsdienste­recht",
+      "area": "finance-zahlung",
       "dimension": "regulatorik",
       "triggers": [
-        "branche:finance",
+        "branche:bank",
         "daten:finanz"
       ],
       "aliases": [
@@ -2805,10 +2832,10 @@
     },
     "bankgeheimnis": {
       "title": "Bankgeheimnis",
-      "area": "finance-reg",
+      "area": "finance-geheimnis",
       "dimension": "regulatorik",
       "triggers": [
-        "branche:finance"
+        "branche:bank"
       ],
       "aliases": [
         "Bankgeheimnis",
@@ -2822,10 +2849,11 @@
     },
     "auslagerung": {
       "title": "Auslagerung",
-      "area": "finance-reg",
+      "area": "finance-aufsicht",
       "dimension": "regulatorik",
       "triggers": [
-        "branche:finance"
+        "branche:bank",
+        "branche:versicherung"
       ],
       "aliases": [
         "Auslagerung",
@@ -2837,6 +2865,115 @@
       "what": "Die aufsichtsrechtlichen Anforderungen an das Auslagern von Tätigkeiten an Dritte, mit Risikobewertung, Vertragsinhalten, Ausstiegsstrategie und einem Register der Auslagerungen.",
       "why": "Ein Dienstleister wird damit Teil des beaufsichtigten Systems und nicht nur ein Lieferant. Anforderungen an Weisungs- und Prüfrechte, Kündbarkeit und Notfallvorsorge kommen aus der Aufsicht und reichen weiter als ein üblicher Vertrag. Die Einordnung als Auslagerung entscheidet über den Aufwand.",
       "when": "Vor der Beauftragung. Ob eine Tätigkeit eine Auslagerung ist und ob sie als kritisch gilt, ist keine Frage für später."
+    },
+    "vait": {
+      "title": "VAIT",
+      "area": "finance-aufsicht",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:versicherung"
+      ],
+      "aliases": [
+        "VAIT",
+        "Versicherungsaufsichtliche Anforderungen an die IT",
+        "BaFin",
+        "IT-Anforderungen Versicherung"
+      ],
+      "what": "Die versicherungsaufsichtlichen Anforderungen an die IT, das Gegenstück zu BAIT für Versicherungsunternehmen. Sie konkretisieren, was die Aufsicht zu IT-Strategie, Informationssicherheit, Berechtigungen und Auslagerung erwartet.",
+      "why": "Sie sind der Maßstab, an dem eine Prüfung die IT eines Versicherers messen wird, und sie reichen über die Anforderungen an den Dienstleister bis ins Projekt. Wer für einen Versicherer baut, findet hier die Vorgaben, die später als Zusage im Vertrag auftauchen.",
+      "when": "Bei Projektstart für einen Versicherer. Für den aktuellen Stand die Veröffentlichung der BaFin ansehen, die Fassungen werden fortgeschrieben."
+    },
+    "vvg": {
+      "title": "VVG",
+      "area": "finance-geheimnis",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:versicherung"
+      ],
+      "aliases": [
+        "VVG",
+        "Versicherungsvertragsgesetz",
+        "Anzeigepflicht",
+        "Informationspflichten",
+        "Beratungsdokumentation"
+      ],
+      "what": "Das Recht des Versicherungsvertrags, unter anderem mit den Anzeige- und Informationspflichten und der Pflicht, die Beratung zu dokumentieren.",
+      "why": "Es bestimmt, welche Angaben erhoben werden dürfen und müssen, in welcher Form Erklärungen wirksam sind und was aufzubewahren ist. Damit greift es direkt in Datenmodell und Aufbewahrung ein, unabhängig vom Datenschutz.",
+      "when": "Beim Entwurf von Antrags-, Beratungs- und Vertragsstrecken. Die Dokumentationspflicht ist der Teil, der in der Architektur regelmäßig fehlt."
+    },
+    "versicherungsgeheimnis": {
+      "title": "Versicherungs­geheimnis (§ 203 StGB)",
+      "area": "finance-geheimnis",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:versicherung",
+        "daten:art9"
+      ],
+      "aliases": [
+        "Versicherungsgeheimnis",
+        "§ 203 StGB",
+        "Privatgeheimnis",
+        "Schweigepflicht Versicherung",
+        "mitwirkende Personen"
+      ],
+      "what": "Die strafrechtlich bewehrte Schweigepflicht, die für Angehörige eines Unternehmens der privaten Kranken-, Unfall- oder Lebensversicherung gilt.",
+      "why": "Sie trifft die Personen und nicht nur das Unternehmen, und sie gilt zusätzlich zum Datenschutz. Für Dienstleister heißt das, dass ein Zugriff auf solche Daten strafrechtlich relevant werden kann und sich nicht allein über einen Auftragsverarbeitungsvertrag regeln lässt.",
+      "when": "Sobald Kranken-, Unfall- oder Lebensversicherungsdaten berührt werden, auch bei Support und Fehleranalyse. Wie Dienstleister einzubeziehen sind, gehört vorher geklärt."
+    },
+    "gdv-verhaltensregeln": {
+      "title": "GDV-Verhaltensregeln",
+      "area": "finance-geheimnis",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:versicherung",
+        "pb:ja"
+      ],
+      "aliases": [
+        "Code of Conduct",
+        "GDV",
+        "Verhaltensregeln Versicherungswirtschaft",
+        "Art. 40 DSGVO"
+      ],
+      "what": "Die genehmigten Verhaltensregeln der deutschen Versicherungswirtschaft zum Umgang mit personenbezogenen Daten, ein Code of Conduct nach Art. 40 DSGVO.",
+      "why": "Sie legen für die Branche fest, wie einzelne Fragen ausgelegt werden, etwa zu Einwilligungen, zur Weitergabe zwischen Unternehmen und zur Aufbewahrung. Wer beigetreten ist, hat damit einen Maßstab, an dem die Aufsicht messen kann, und einen Anhaltspunkt, wo die eigene Auslegung enden sollte.",
+      "when": "Bei Auslegungsfragen im Versicherungskontext zuerst hier nachsehen, bevor allgemein argumentiert wird. Ob das Unternehmen beigetreten ist, gehört zu den ersten Fragen."
+    },
+    "antragsdaten": {
+      "title": "Antrags- & Risikoprüfungs­daten",
+      "area": "finance-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:versicherung",
+        "daten:art9"
+      ],
+      "aliases": [
+        "Antragsdaten",
+        "Risikoprüfung",
+        "Gesundheitsfragen",
+        "Vorerkrankungen",
+        "Underwriting"
+      ],
+      "what": "Die Angaben, die bei Antrag und Risikoprüfung erhoben werden, häufig einschließlich Gesundheitsangaben und Vorerkrankungen.",
+      "why": "Hier entstehen besondere Kategorien nach Art. 9 in einem Vertragsverhältnis und nicht in einer Behandlung, und das verschiebt die Rechtsgrundlage. Die Daten dienen der Risikoeinschätzung, überdauern aber oft den Antrag, und dann stellt sich die Zweckbindung neu.",
+      "when": "Beim Entwurf der Antragsstrecke. Zu klären ist, was nach der Entscheidung noch gebraucht wird und was gelöscht werden kann. Die allgemeinen Regeln zu Gesundheitsdaten stehen im Kern und im MedTech-Archipel, hier steht nur das Versicherungsspezifische."
+    },
+    "schadendaten": {
+      "title": "Schaden- & Leistungsdaten",
+      "area": "finance-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:versicherung"
+      ],
+      "aliases": [
+        "Schadendaten",
+        "Leistungsfall",
+        "Regulierung",
+        "Schadenakte",
+        "Gutachten"
+      ],
+      "what": "Die Daten, die im Schaden- oder Leistungsfall entstehen: Meldung, Prüfung, Gutachten, Zahlungen und der Schriftverkehr dazu.",
+      "why": "In der Akte laufen Angaben Dritter, Gesundheitsangaben und Verdachtsmomente zusammen, und sie wird von vielen Rollen gelesen. Den Zugriff zu begrenzen ist hier schwerer als bei Vertragsdaten, weil die Bearbeitung Kontext braucht.",
+      "when": "Beim Entwurf der Schadenbearbeitung. Zu klären ist, wer welche Teile der Akte sehen muss und wie Angaben Dritter davon getrennt bleiben."
     }
   }
 }

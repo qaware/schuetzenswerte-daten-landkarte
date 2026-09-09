@@ -181,9 +181,14 @@ Aussage über die Wichtigkeit der Branche, sondern über den Stand der Arbeit:
 | --- | --- | --- |
 | Automotive | 22 | ausgearbeitet, vier Bereiche |
 | KI | 15 | ausgearbeitet, vier Bereiche |
+| Finanzdienstleistungen | 14 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
 | MedTech | 8 | tragfähig, Regulatorik Deutschland vollständig |
 | Public Sector | 8 | tragfähig, Datenarten noch dünn |
-| Finance | 8 | tragfähig, Aufbewahrung nach HGB und AO fehlt |
+
+Bei den Finanzdienstleistungen sind Bank und Versicherung **eine Insel mit zwei
+Branchenoptionen**. Fünf der vierzehn Kacheln gelten für beide, drei nur für Banken und sechs
+nur für Versicherer. Zwei getrennte Inseln hätten die gemeinsamen Kacheln gedoppelt, eine
+gemeinsame Option hätte einem Versicherer Bankgeheimnis und PSD2 vorgesetzt.
 
 ## Offene Punkte
 

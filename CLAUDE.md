@@ -260,6 +260,26 @@ damit es im Quelltext sichtbar bleibt. Es erscheint nur, wenn dort wirklich umbr
 Übereinstimmung verhindern, und im Checklisten-Export landete ein unsichtbares Zeichen in der
 Datei.
 
+## Insel oder Filter, wenn eine Branche zwei Rollen hat
+
+Bank und Versicherung sind **eine Insel mit zwei Branchenoptionen**, nicht zwei Inseln und nicht
+eine Option. Die Entscheidung war nicht Geschmack, sie folgt aus den Zahlen: von vierzehn
+Kacheln gelten fünf für beide, drei nur für Banken, sechs nur für Versicherer.
+
+Zwei Inseln hätten die fünf gemeinsamen Kacheln gedoppelt, also DORA, Auslagerung, Zahlungs- und
+Kontodaten, Bonitätsdaten und PCI-DSS. Dopplung zwischen Inseln ist genau das, was die Regel
+„was allgemein gilt, bleibt im Kern" verhindern soll. Eine gemeinsame Option hätte einem
+Versicherer Bankgeheimnis, BAIT und PSD2 vorgesetzt, also dieselbe Fehlerklasse wie die vier
+falschen `immer`.
+
+**Die Insel gruppiert nach Domäne, der Filter unterscheidet nach Rolle.** Diese Trennung ist auf
+weitere Fälle übertragbar: wenn zwei Rollen sich den größeren Teil des Stoffs teilen, gehören sie
+auf eine Insel und bekommen zwei Optionen, deren Tags die geteilten Kacheln beide tragen.
+
+Die Insel heißt `finance` im Datenmodell und „Finanzdienstleistungen" in der Anzeige. Der
+Schlüssel blieb, weil er nur ein interner Handgriff ist und ein Umbenennen alle Bereiche
+angefasst hätte.
+
 ## Der Projektfilter
 
 Die Fragen stehen in `landkarte.json` unter `filters`, und `initFilters`, `activeTags` und
