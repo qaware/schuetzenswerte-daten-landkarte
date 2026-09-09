@@ -4,6 +4,7 @@
     "subtitle": "Orientierung für Projekte, in denen sensible Daten verarbeitet werden",
     "disclaimer": "Orientierungshilfe, kein Rechtsrat. Verbindliche Aussagen kommen von Datenschutzbeauftragten, Legal und den zuständigen Aufsichtsbehörden.",
     "version": "0.1",
+    "quelle": "https://qaware.github.io/schuetzenswerte-daten-landkarte/landkarte.json",
     "verwandt": {
       "label": "T-Landkarte (Engineering-Kompetenzen)",
       "url": "https://qa-thomas-kothmayr.github.io/t-landkarte/"
@@ -357,6 +358,14 @@
         1
       ],
       "label": "Architektur"
+    },
+    "automotive-nachweise": {
+      "island": "automotive",
+      "lattice": [
+        1,
+        1
+      ],
+      "label": "Nachweise"
     }
   },
   "filters": [
@@ -2224,7 +2233,7 @@
       "when": "Bevor das erste Signal das Fahrzeug verlässt. Zu klären ist, welche Signale gebraucht werden, in welcher Auflösung und wie lange sie bleiben."
     },
     "vin": {
-      "title": "Fahrzeug\u00adidentifikations\u00adnummer (VIN)",
+      "title": "Fahrzeug­identifikations­nummer (VIN)",
       "area": "automotive-daten",
       "dimension": "klassifizierung",
       "triggers": [
@@ -2526,6 +2535,78 @@
       "what": "Die Auswertung findet im Fahrzeug statt, übertragen werden nur Ergebnisse oder Aggregate und nicht die Rohdaten.",
       "why": "Was das Fahrzeug nicht verlässt, muss weder übertragen noch im Backend geschützt, begrenzt und gelöscht werden. Das ist die wirksamste Datenminimierung im Fahrzeugkontext, steht aber gegen den Wunsch, Rohdaten für spätere und noch unbekannte Auswertungen zu behalten.",
       "when": "Bei jeder neuen Datenquelle. Die Frage lautet, welche Entscheidung die Daten stützen sollen und ob dafür ein Aggregat genügt."
+    },
+    "vda-isa-selbstauskunft": {
+      "title": "VDA ISA Selbstauskunft",
+      "area": "automotive-nachweise",
+      "dimension": "betrieb",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "VDA ISA",
+        "Selbstauskunft",
+        "Reifegrad",
+        "Maturity Level",
+        "Fragenkatalog"
+      ],
+      "what": "Der Fragenkatalog, mit dem die eigene Informationssicherheit bewertet wird. Jede Anforderung erhält einen Reifegrad, offene Punkte bekommen Maßnahmen und Fristen.",
+      "why": "Die Selbstauskunft ist die Grundlage jedes Assessments und gleichzeitig das Arbeitsmittel dazwischen. Ungepflegt veraltet sie, und dann steht kurz vor der Prüfung ein Berg Arbeit, der über Monate hätte laufen können.",
+      "when": "Fortlaufend, nicht erst vor dem Assessment. Wer sie jährlich durchgeht und Maßnahmen nachzieht, hat den Termin im Griff."
+    },
+    "tisax-label-austausch": {
+      "title": "TISAX-Label & Austausch über ENX",
+      "area": "automotive-nachweise",
+      "dimension": "betrieb",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "Label",
+        "ENX-Portal",
+        "Geltungsbereich",
+        "Scope",
+        "Ergebnis teilen"
+      ],
+      "what": "Das Ergebnis eines Assessments wird als Label in der ENX-Plattform hinterlegt und dort gezielt für Partner freigegeben. Der Geltungsbereich, also Standorte und Prozesse, ist Teil des Ergebnisses.",
+      "why": "Das Label ist kein Zertifikat an der Wand, sondern ein Eintrag mit Geltungsbereich und Laufzeit, den man aktiv teilen muss. Passt der Geltungsbereich nicht zum Projektstandort oder zum Prozess, hilft ein vorhandenes Label nicht.",
+      "when": "Vor der Beauftragung klären, welcher Geltungsbereich gebraucht wird, und beim Projektstart prüfen, ob der vorhandene passt. Laufzeiten und Verfahren bei der ENX nachsehen."
+    },
+    "feld-schwachstellen": {
+      "title": "Schwachstellen über die Fahrzeuglebensdauer",
+      "area": "automotive-nachweise",
+      "dimension": "betrieb",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "Vulnerability Management",
+        "Feldbeobachtung",
+        "VSOC",
+        "Monitoring",
+        "Lebensdauer"
+      ],
+      "what": "Die fortlaufende Beobachtung von Schwachstellen in Fahrzeugen im Feld, mit Bewertung, Entscheidung und Nachverfolgung über die gesamte Nutzungsdauer.",
+      "why": "Fahrzeuge laufen fünfzehn Jahre und länger, deutlich länger als die Softwarelieferketten dahinter. R155 verlangt genau diese Beobachtung, und sie braucht eine Stelle, die sie über Jahre wirklich betreibt, nicht nur einen Prozess auf Papier.",
+      "when": "Ab der ersten Auslieferung und dann dauerhaft. Wer erst beim ersten Vorfall anfängt, hat weder eine Bestandsübersicht noch einen Weg, das Update auszuliefern."
+    },
+    "lieferkette-nachweise": {
+      "title": "Nachweise in der Lieferkette",
+      "area": "automotive-nachweise",
+      "dimension": "betrieb",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "Zulieferer",
+        "Cybersecurity Interface Agreement",
+        "CIA",
+        "Nachweispflichten",
+        "Aufgabenteilung"
+      ],
+      "what": "Die Vereinbarung darüber, wer in der Kette welche Sicherheitsaktivität übernimmt und welche Nachweise er liefert. ISO/SAE 21434 führt das als Cybersecurity Interface Agreement.",
+      "why": "Die Typgenehmigung hängt an Nachweisen, die überwiegend nicht beim Hersteller entstehen, sondern bei Zulieferern. Ohne klare Aufteilung fehlen am Ende genau die Dokumente, die die Prüfung sehen will, und niemand hält sich für zuständig.",
+      "when": "Bei der Beauftragung, nicht bei der Prüfung. Die Aufteilung gehört in den Vertrag, weil sie sich nachträglich nicht herstellen lässt."
     }
   }
 }

@@ -260,6 +260,24 @@ damit es im Quelltext sichtbar bleibt. Es erscheint nur, wenn dort wirklich umbr
 Übereinstimmung verhindern, und im Checklisten-Export landete ein unsichtbares Zeichen in der
 Datei.
 
+## Zugriff durch KI-Agenten
+
+Das ist ein erwarteter Hauptfall, nicht ein Nebenweg: jemand gibt der KI den ganzen oder den
+gefilterten Kontext, damit sie die Punkte mitdenkt. Zwei Dinge folgen daraus.
+
+`meta.quelle` in `landkarte.json` hält die öffentliche Adresse der Datei. Sie ist damit Teil der
+Schnittstelle und keine Beigabe, denn der Agenten-Kontext gibt sie mit, damit ein Modell bei
+Bedarf nachladen kann. Wer die Datei umbenennt oder verschiebt, ändert eine Schnittstelle.
+
+`exportAgentContext` benutzt `matching()`, dieselbe Auswahl wie die Karte und der
+Checklisten-Export. **Die Filterregel darf es nur einmal geben.** Ein zweites Werkzeug, das
+denselben Filter nachbildet, war die verworfene Variante: es hätte still auseinanderlaufen können.
+Wer den Kontext ohne Browser braucht, liest `landkarte.json` und wendet die Regel selbst an; sie
+steht dafür im README in einer Zeile.
+
+`plain()` läuft über jeden Text, der in den Export geht, sonst landen die weichen Trennzeichen aus
+den Daten im Prompt.
+
 ## Bedienung
 
 `#map` trägt `user-select: none`. Die Karte enthält Text, und beim Ziehen mit der Maus würde

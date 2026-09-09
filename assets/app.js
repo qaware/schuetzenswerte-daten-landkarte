@@ -722,16 +722,66 @@ function exportChecklist() {
     for (const t of list) md += `- [ ] **${plain(t.title)}** — ${plain(t.when || t.why)}\n`;
   }
 
-  navigator.clipboard?.writeText(md).then(
-    () => status.textContent = 'In die Zwischenablage kopiert.',
-    () => status.textContent = 'Kopieren nicht möglich, bitte Datei herunterladen.'
-  );
+  liefern(md, 'checkliste-schuetzenswerte-daten.md', hits.length + ' Kacheln');
+}
 
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown' }));
-  a.download = 'checkliste-schuetzenswerte-daten.md';
-  a.click();
-  URL.revokeObjectURL(a.href);
+/* Derselbe gefilterte Stand, nur ausführlicher: mit what, why und when, damit ein Agent
+   damit arbeiten kann, ohne die Datei selbst zu holen. Die Auswahl kommt aus matching(),
+   es gibt also keine zweite Filterlogik. */
+function exportAgentContext() {
+  const hits = matching();
+  const status = document.getElementById('export-status');
+  if (!hits.length) { status.textContent = 'Keine Kacheln ausgewählt.'; return; }
+
+  const d = state.data;
+  const tags = [...activeTags()].map(tagLabel);
+  let md = `# Kontext: Umgang mit besonders schützenswerten Daten\n\n`;
+  md += `Auszug aus der Landkarte, gefiltert auf dieses Vorhaben.\n`;
+  if (d.meta.quelle) md += `Vollständige Daten: ${d.meta.quelle}\n`;
+  md += `Ausgewählt: ${hits.length} von ${state.tiles.length} Kacheln.\n`;
+  md += tags.length
+    ? `Als zutreffend angegeben: ${tags.join(', ')}.\n`
+    : `Kein Projektfilter gesetzt, es sind alle Kacheln enthalten.\n`;
+  md += `\n${d.meta.disclaimer}\n`;
+  md += `\nDas Feld „Wann relevant“ sagt, warum eine Kachel für dieses Vorhaben gilt.\n`;
+
+  const byDim = {};
+  for (const e of hits) (byDim[e.tile.dimension] ||= []).push(e);
+  for (const [key, dim] of Object.entries(d.dimensions)) {
+    const list = byDim[key];
+    if (!list) continue;
+    md += `\n## ${dim.label} — ${dim.frage}\n`;
+    for (const e of list) {
+      const t = e.tile, area = d.areas[e.area];
+      md += `\n### ${plain(t.title)}\n`;
+      md += `Ort: ${plain(d.islands[area.island].label)}, Bereich ${plain(area.label)}\n`;
+      md += `Was: ${plain(t.what)}\n`;
+      md += `Warum: ${plain(t.why)}\n`;
+      if (t.when) md += `Wann relevant: ${plain(t.when)}\n`;
+      if (t.tlandkarte) md += `Allgemeines Handwerkszeug dazu: T-Landkarte, ${t.tlandkarte}\n`;
+    }
+  }
+  liefern(md, 'agenten-kontext-schuetzenswerte-daten.md', hits.length + ' Kacheln');
+}
+
+/* Zwischenablage zuerst, Datei nur als Rückfall. Vorher wurde immer zusätzlich eine Datei
+   heruntergeladen, auch wenn das Kopieren geklappt hat, und das legt bei jedem Klick eine
+   Datei ab, die niemand wollte. */
+function liefern(md, dateiname, was) {
+  const status = document.getElementById('export-status');
+  const herunterladen = () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown' }));
+    a.download = dateiname;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    status.textContent = was + ' als Datei ' + dateiname + ' gespeichert.';
+  };
+  if (!navigator.clipboard) { herunterladen(); return; }
+  navigator.clipboard.writeText(md).then(
+    () => status.textContent = was + ' in die Zwischenablage kopiert.',
+    herunterladen
+  );
 }
 
 /* ---------- Detailkarte ---------- */
@@ -950,6 +1000,7 @@ function wireInteraction() {
   };
 
   document.getElementById('btn-export').onclick = exportChecklist;
+  document.getElementById('btn-agent').onclick = exportAgentContext;
   document.getElementById('btn-reset').onclick = () => {
     state.filters = { branche: null, daten: new Set(), pb: false, cloud: false, ki: false, drittland: false };
     panel.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', 'false'));

@@ -23,7 +23,7 @@ statt sie zu doppeln.
 - Weiter heraus als die Gesamtansicht geht nicht, und die Karte lässt sich nicht aus dem Bild schieben
 - Klick oder Enter auf eine Kachel öffnet die Details
 - Die Suche findet Titel, Synonyme und Kacheltexte
-- „Mein Projekt“ hebt die Kacheln hervor, die für ein Vorhaben zu klären sind, und exportiert sie als Markdown-Checkliste
+- „Mein Projekt“ hebt die Kacheln hervor, die für ein Vorhaben zu klären sind, und gibt sie als Markdown heraus: als Checkliste für Menschen oder als Kontext für einen KI-Agenten, siehe unten
 
 ## Lokal starten
 
@@ -80,6 +80,10 @@ Domänenspezifisches. Was allgemein gilt, bleibt im Kern und wird von dort refer
 die Kachel in jedem Projekt mit schützenswerten Daten zu klären ist. `aliases` ist für die Suche da
 und der Grund, warum jemand die Kachel auch findet, wenn er ein anderes Wort benutzt.
 
+In `meta` steht neben Titel und Disclaimer die Adresse `quelle`, unter der die Datei öffentlich
+liegt. Sie ist Teil der Schnittstelle: der Agenten-Kontext gibt sie mit, damit ein Modell bei
+Bedarf die vollständigen Daten nachladen kann.
+
 ## Kacheln ergänzen
 
 Eine Kachel steht für einen Begriff, den jemand tatsächlich nachschlagen würde. Varianten gehören
@@ -100,11 +104,55 @@ liegen, hängt von der Reihenfolge in `landkarte.json` ab, fällt also nicht zuv
 Insel-Abständen.
 Wer mehr als sechs Kacheln in einem Bereich braucht, teilt den Bereich.
 
-## Für Agenten
+## Die Karte per KI-Agent abfragen
 
-`landkarte.json` liegt öffentlich im Repository und ist ohne Umweg lesbar. Der übliche Weg für ein
-Projekt-Repo ist ein Verweis in der `CLAUDE.md`, welche Datenklassen vorkommen und welche Kacheln
-deshalb gelten. Die exportierte Checkliste aus „Mein Projekt“ eignet sich als Ausgangspunkt.
+Die Karte ist bewusst eine einzelne offene Datei, damit ein Agent sie ohne Umweg lesen kann.
+Es gibt zwei Wege, und sie unterscheiden sich darin, wer filtert.
+
+### Den Agenten selbst lesen lassen
+
+Die Daten liegen ohne Anmeldung unter einer stabilen Adresse:
+
+```
+https://qaware.github.io/schuetzenswerte-daten-landkarte/landkarte.json
+```
+
+Rund 110 KB, geschätzt 27.000 Token. Das ist für ein Modell verdaulich, für ein einzelnes
+Vorhaben aber mehr als nötig; gefiltert bleiben typisch 10.000 bis 15.000 Token übrig.
+
+**Das Datenmodell in drei Sätzen.** `tiles` enthält die Kacheln, jede mit `title`, `what`, `why`
+und `when`. `when` ist der Auslöser und damit der Satz, der als Begründung taugt, warum eine
+Kachel für ein Vorhaben gilt. `dimension` und `area` ordnen sie ein, `area` verweist über `island`
+auf Kern oder Archipel.
+
+**Die Filterregel in einer Zeile.** Eine Kachel ist relevant, wenn ihr `triggers` den Wert
+`immer` enthält oder eine Eigenschaft des Vorhabens. Welche Eigenschaften es gibt, steht in
+`filters` in derselben Datei, der Agent braucht also keine weitere Quelle.
+
+**Für die `CLAUDE.md` eines Projekt-Repos**, die Tags an das Vorhaben angepasst:
+
+```
+Bei Fragen zu Datenschutz, Datensicherheit und Regulatorik in diesem Projekt:
+lies https://qaware.github.io/schuetzenswerte-daten-landkarte/landkarte.json und
+berücksichtige die Kacheln, deren "triggers" den Wert "immer" enthalten oder eines
+von: branche:automotive, pb:ja, cloud:hyperscaler.
+Das Feld "when" sagt, warum eine Kachel hier gilt, "why" warum sie wichtig ist.
+Die Karte ist eine Orientierung, kein Rechtsrat und keine Vollständigkeitszusage;
+bei Fristen und Anwendbarkeit auf die Quelle verweisen statt etwas zu behaupten.
+```
+
+### Den Kontext fertig mitnehmen
+
+Wer nicht möchte, dass der Agent selbst filtert: unter „Mein Projekt“ das Vorhaben beantworten
+und **Als Agenten-Kontext kopieren** drücken. In der Zwischenablage liegt dann Markdown mit den
+ausgewählten Kacheln samt `what`, `why` und `when`, gruppiert nach Dimension, mit Quellenangabe
+und Disclaimer im Kopf. Für ein typisches Vorhaben sind das etwa 12.000 Token.
+
+Der Unterschied zur Schaltfläche daneben: **Als Checkliste kopieren** gibt nur Titel und
+Begründung als Aufgabenliste für Menschen, der Agenten-Kontext gibt die Texte mit.
+
+Beide Schaltflächen legen den Inhalt in die Zwischenablage und laden nur dann eine Datei
+herunter, wenn das Kopieren nicht möglich ist, etwa weil die Seite nicht über HTTPS läuft.
 
 ## Offene Punkte
 

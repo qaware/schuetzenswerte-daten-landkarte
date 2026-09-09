@@ -307,7 +307,12 @@ button.ghost { background: transparent; }
 .chip[aria-pressed="true"]:hover { background: #24312b; border-color: #24312b; }
 .chip[aria-pressed="true"]::before { content: "\2713\00a0"; }
 
-.project-actions { display: flex; gap: 8px; margin-top: 4px; }
+/* Drei Knöpfe brauchen zusammen rund 600px, das Panel ist 330px breit. Ohne Umbruch
+   liefen sie heraus. Die beiden Export-Knöpfe stehen deshalb je auf einer eigenen Zeile
+   und füllen sie, "Auswahl zurücksetzen" bleibt schmal darunter. */
+.project-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.project-actions button { flex: 1 1 100%; }
+.project-actions button.ghost { flex: 0 0 auto; }
 #project .project-actions button {
   border-color: var(--paper-edge);
   background: #fbf9f3;
