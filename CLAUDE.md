@@ -301,8 +301,9 @@ wird aber erst modelliert, wenn klar ist, wofür.
 Das echte Auflösen eines Bereichs-Sechsecks in seine Kacheln beim Hineinzoomen. Aktuell blenden
 nur die Beschriftungen um. Mit berechneten Koordinaten ist der Schritt nachträglich möglich.
 
-Automotive-Archipel. Mit nur TISAX wäre er irreführend, sinnvoll wird er mit ISO/SAE 21434,
-UNECE R155 und R156 sowie Fahrzeug- und Telemetriedaten.
+Der Data Act und der Zugang zu Reparatur- und Wartungsinformationen fehlen noch. Beides ist
+horizontales Recht und gehört deshalb in den Kern, nicht in den Automotive-Archipel, auch wenn
+Automotive dort der Paradefall ist. Im Kern hat `Sicherheits- & Geheimnisschutzrecht` Platz dafür.
 
 Reifegrad und Verantwortliche pro Kachel, sobald mehrere Personen pflegen.
 

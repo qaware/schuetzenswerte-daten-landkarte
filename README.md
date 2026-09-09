@@ -108,7 +108,7 @@ deshalb gelten. Die exportierte Checkliste aus „Mein Projekt“ eignet sich al
 
 ## Offene Punkte
 
-- Automotive fehlt noch. Mit nur TISAX wäre der Archipel irreführend, sinnvoll wird er mit ISO/SAE 21434, UNECE R155 und R156 sowie Fahrzeug- und Telemetriedaten.
+- Der Data Act und der Zugang zu Reparatur- und Wartungsinformationen fehlen noch. Beides ist horizontales Recht und gehört in den Kern, nicht in den Automotive-Archipel, auch wenn Automotive dort der Paradefall ist.
 - Beziehungen zwischen Kacheln sind noch nicht modelliert. Nachbarschaft trägt Bedeutung, ist aber bewusst nicht maschinenlesbar, solange nicht klar ist, wofür sie gebraucht wird.
 - Der Reifegrad der Kacheln ist unterschiedlich. Ein Feld für Stand und Verantwortliche kommt dazu, sobald mehrere Personen pflegen.
 

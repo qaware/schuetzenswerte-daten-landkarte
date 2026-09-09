@@ -76,6 +76,13 @@
         14,
         0
       ]
+    },
+    "automotive": {
+      "label": "Automotive Archipel",
+      "origin": [
+        -14,
+        -7
+      ]
     }
   },
   "areas": {
@@ -326,6 +333,30 @@
         1,
         1
       ]
+    },
+    "automotive-daten": {
+      "island": "automotive",
+      "lattice": [
+        0,
+        0
+      ],
+      "label": "Daten"
+    },
+    "automotive-reg": {
+      "island": "automotive",
+      "lattice": [
+        1,
+        0
+      ],
+      "label": "Regulatorik"
+    },
+    "automotive-arch": {
+      "island": "automotive",
+      "lattice": [
+        0,
+        1
+      ],
+      "label": "Architektur"
     }
   },
   "filters": [
@@ -350,6 +381,12 @@
           "label": "Finance",
           "tags": [
             "branche:finance"
+          ]
+        },
+        {
+          "label": "Automotive",
+          "tags": [
+            "branche:automotive"
           ]
         },
         {
@@ -2166,6 +2203,329 @@
       "what": "Die Liste der häufigsten Schwachstellenklassen in Anwendungen mit großen Sprachmodellen, unter anderem Prompt Injection, Offenlegung sensibler Informationen und unsichere Werkzeugnutzung.",
       "why": "Sie ist die konkreteste verfügbare Prüfliste für KI-Anwendungen und deckt genau die Fehler ab, die in ersten Prototypen regelmäßig entstehen.",
       "when": "Als Review-Checkliste, bevor ein KI-Prototyp produktiv geht."
+    },
+    "fahrzeugdaten": {
+      "title": "Fahrzeug- & Telemetriedaten",
+      "area": "automotive-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "Telemetrie",
+        "CAN-Daten",
+        "Steuergerätedaten",
+        "Fahrzeugsensorik",
+        "Connected Car",
+        "Flottendaten"
+      ],
+      "what": "Daten, die im Fahrzeugbetrieb entstehen: Sensorwerte, Signale auf dem Bus, Zustände und Fehlerzähler aus Steuergeräten, häufig laufend an ein Backend übertragen.",
+      "why": "Einzelne Werte wirken harmlos, die Zeitreihe beschreibt Fahrverhalten, Nutzung und Aufenthalt einer Person. Der Personenbezug entsteht selten im Signal selbst, sondern in der Verknüpfung mit Fahrzeug und Halter.",
+      "when": "Bevor das erste Signal das Fahrzeug verlässt. Zu klären ist, welche Signale gebraucht werden, in welcher Auflösung und wie lange sie bleiben."
+    },
+    "vin": {
+      "title": "Fahrzeug\u00adidentifikations\u00adnummer (VIN)",
+      "area": "automotive-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "VIN",
+        "FIN",
+        "Fahrgestellnummer",
+        "Fahrzeugidentnummer"
+      ],
+      "what": "Die eindeutige Kennung eines Fahrzeugs. Sie ist von außen ablesbar und verbindet Fahrzeug-, Diagnose- und Backenddaten miteinander.",
+      "why": "Ob die VIN personenbezogen ist, hängt davon ab, ob der Verantwortliche sie einer Person zuordnen kann. Beim Hersteller ist das meist der Fall, beim Zulieferer oft nicht. Diese Einordnung entscheidet, welche Pflichten überhaupt greifen, und wird regelmäßig pauschal und damit falsch beantwortet.",
+      "when": "Zu Beginn, und für jede Rolle getrennt. Die Antwort unterscheidet sich zwischen Hersteller, Zulieferer und Dienstleister und gehört dokumentiert."
+    },
+    "standortdaten": {
+      "title": "Standort- & Bewegungsdaten",
+      "area": "automotive-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "GPS",
+        "Trajektorie",
+        "Bewegungsprofil",
+        "Positionsdaten",
+        "Geodaten"
+      ],
+      "what": "Positionen und daraus gebildete Fahrtverläufe, entweder als Einzelpunkte oder als zusammenhängende Trajektorie.",
+      "why": "Bewegungsprofile sind auch ohne Namen re-identifizierbar, wenige Punkte über die Zeit genügen, weil Wohn- und Arbeitsort daraus hervorgehen. Anonymisierung ist hier deutlich schwerer als bei anderen Datenarten.",
+      "when": "Sobald mehr als eine Position je Fahrzeug gespeichert wird. Prüfen, ob Aggregate oder eine Rasterung ausreichen, statt Einzelpunkte zu behalten."
+    },
+    "innenraumsensorik": {
+      "title": "Innenraumsensorik (Kamera, Mikrofon)",
+      "area": "automotive-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:automotive",
+        "daten:art9"
+      ],
+      "aliases": [
+        "Driver Monitoring",
+        "DMS",
+        "Innenraumkamera",
+        "Insassenerkennung",
+        "Sprachassistent"
+      ],
+      "what": "Kameras, Mikrofone und Sensoren im Fahrzeuginnenraum, etwa für Fahrerbeobachtung, Insassenerkennung oder Sprachbedienung.",
+      "why": "Die Daten können in besondere Kategorien fallen, über Biometrie und über Rückschlüsse auf Gesundheit und Aufmerksamkeit. Betroffen sind außerdem Mitfahrende, die in nichts eingewilligt haben.",
+      "when": "Bei jeder Sensorik, die Menschen im Fahrzeug erfasst. Zu klären ist, ob die Verarbeitung im Fahrzeug bleiben kann und was das Backend davon überhaupt braucht."
+    },
+    "diagnosedaten": {
+      "title": "Diagnose- & Werkstattdaten",
+      "area": "automotive-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "DTC",
+        "Fehlerspeicher",
+        "OBD",
+        "Serviceverlauf",
+        "Werkstattdaten"
+      ],
+      "what": "Fehlercodes, Messwerte und Serviceverlauf, die bei Wartung und Reparatur gelesen und geschrieben werden, oft über eine genormte Schnittstelle.",
+      "why": "An dieser Schnittstelle greifen Dritte zu, freie Werkstätten und Prüfdienste, und gleichzeitig hängen daran Fahrzeughistorie und Halterbezug. Zugriff, Zweck und Protokollierung sind hier schwerer zu begrenzen als im eigenen Backend.",
+      "when": "Wenn Werkstattsysteme oder externe Dienste angebunden werden. Vorher festlegen, wer welche Daten sehen darf und was davon protokolliert wird."
+    },
+    "prototypendaten": {
+      "title": "Prototypen- & Erprobungsdaten",
+      "area": "automotive-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:automotive",
+        "daten:ip"
+      ],
+      "aliases": [
+        "Erlkönig",
+        "Vorserie",
+        "Messfahrt",
+        "Prototypenschutz",
+        "Erprobungsträger"
+      ],
+      "what": "Daten aus Fahrzeugen vor Serienstart: Messfahrten, Kalibrierungen, Bilder und Videos von Erprobungsträgern, dazu die Fahrzeuge und Bauteile selbst.",
+      "why": "Hier liegt der wirtschaftliche Kern, und der Schutzbedarf heißt Geheimhaltung, nicht Datenschutz. TISAX führt Prototypenschutz deshalb als eigenes Schutzniveau, mit Anforderungen an Räume, Gelände und Transport und nicht nur an IT.",
+      "when": "Sobald Vorserienfahrzeuge oder deren Daten im Spiel sind. Der Anforderungssprung betrifft dann Bau, Gelände und Zutritt mit, nicht nur die Systeme."
+    },
+    "tisax": {
+      "title": "TISAX",
+      "area": "automotive-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "TISAX",
+        "VDA ISA",
+        "ENX",
+        "Prototypenschutz",
+        "Label",
+        "Assessment"
+      ],
+      "what": "Ein Prüf- und Austauschverfahren der ENX Association für den VDA. Grundlage ist der Fragebogen VDA ISA; das Ergebnis eines Assessments wird als Label über die ENX-Plattform mit Partnern geteilt.",
+      "why": "Ohne Label kommt man bei vielen Herstellern und Zulieferern nicht in die Lieferkette. Es ist aber keine Zertifizierung im engen Sinn, und es deckt die Informationssicherheit der Organisation ab, nicht die Cybersicherheit des Fahrzeugs. Welches Prüfniveau und welche Schutzziele gelten, hängt davon ab, welche Daten man verarbeitet.",
+      "when": "Sobald ein Hersteller oder Zulieferer es verlangt, und das ist meist früher als der Projektstart. Prüfniveau und Schutzziele stehen im Vertrag, den aktuellen Stand des Verfahrens bei der ENX nachsehen."
+    },
+    "iso-sae-21434": {
+      "title": "ISO/SAE 21434",
+      "area": "automotive-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "21434",
+        "Cybersecurity Engineering",
+        "TARA",
+        "Road vehicles cybersecurity"
+      ],
+      "what": "Die Norm für Cybersecurity-Engineering im Fahrzeug, über den ganzen Lebenszyklus von Konzept über Entwicklung und Produktion bis zur Außerbetriebnahme. Sie verlangt unter anderem eine Bedrohungs- und Risikoanalyse, die TARA.",
+      "why": "Sie verschiebt Sicherheit von einer Prüfung am Ende zu einer Anforderung an den Entwicklungsprozess und erzeugt Nachweispflichten über Jahre. Ohne sie ist die Typgenehmigung nach R155 praktisch nicht zu erreichen.",
+      "when": "Mit dem Konzept, nicht mit der Umsetzung. Die TARA ist eine Architekturentscheidung, weil aus ihr die Sicherheitsziele der Steuergeräte folgen.",
+      "tlandkarte": "Threat Modeling"
+    },
+    "unece-r155": {
+      "title": "UNECE R155 (CSMS)",
+      "area": "automotive-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "R155",
+        "UN R155",
+        "CSMS",
+        "Cyber Security Management System",
+        "Typgenehmigung"
+      ],
+      "what": "Die UNECE-Regelung, die für die Typgenehmigung eines Fahrzeugs ein nachgewiesenes Cyber Security Management System verlangt, also einen Prozess für Risiken, Überwachung und Reaktion über die Fahrzeuglebensdauer.",
+      "why": "Die Genehmigung hängt nicht am Produkt allein, sondern am Prozess dahinter, und der wird geprüft. Das bindet die Organisation und die Zulieferer, weil Nachweise die Lieferkette hinunter gebraucht werden.",
+      "when": "Wenn ein Fahrzeug oder ein genehmigungsrelevantes Steuergerät entsteht. Für Fristen und Anwendbarkeit die Regelung selbst und die Genehmigungsbehörde ansehen, die Übergangsregelungen ändern sich."
+    },
+    "unece-r156": {
+      "title": "UNECE R156 (SUMS)",
+      "area": "automotive-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "R156",
+        "UN R156",
+        "SUMS",
+        "Software Update Management System",
+        "OTA"
+      ],
+      "what": "Die UNECE-Regelung für ein Software Update Management System. Sie regelt, wie Updates identifiziert, freigegeben, dokumentiert und ausgeliefert werden, auch drahtlos.",
+      "why": "Sie ist die Voraussetzung dafür, Software im Feld überhaupt ändern zu dürfen, und macht aus einem Update gleichzeitig einen genehmigungsrelevanten Vorgang. Wer Sicherheitslücken schnell schließen will, braucht diesen Prozess vorher.",
+      "when": "Vor der ersten Auslieferung, wenn Software im Feld aktualisierbar sein soll. Der Prozess ist nicht nachrüstbar, ohne die Genehmigung zu berühren."
+    },
+    "edpb-connected-vehicles": {
+      "title": "EDPB-Leitlinien zu Connected Vehicles",
+      "area": "automotive-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "EDPB 01/2020",
+        "Connected Vehicles",
+        "vernetzte Fahrzeuge",
+        "Leitlinien Fahrzeug"
+      ],
+      "what": "Die Leitlinien des Europäischen Datenschutzausschusses zu vernetzten Fahrzeugen und mobilitätsbezogenen Anwendungen. Sie legen aus, wie die DSGVO im Fahrzeugkontext anzuwenden ist.",
+      "why": "Sie beantworten die Fragen, die im Fahrzeug immer aufkommen: Rollen und Verantwortlichkeiten zwischen Hersteller, Zulieferer und Diensten, Rechtsgrundlagen für Telemetrie und der Umgang mit Endgeräten im Auto. Verbindlich sind sie nicht, Aufsichtsbehörden orientieren sich aber daran.",
+      "when": "Bei der Festlegung von Rollen und Rechtsgrundlagen. Für den aktuellen Stand die Veröffentlichung des EDPB selbst ansehen."
+    },
+    "edr": {
+      "title": "Unfalldatenspeicher (EDR)",
+      "area": "automotive-reg",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "EDR",
+        "Event Data Recorder",
+        "Unfalldatenspeicher",
+        "UN R160"
+      ],
+      "what": "Ein Speicher, der kurz vor und während eines Unfalls festgelegte Fahrzeugparameter aufzeichnet. Er ist für neue Fahrzeuge vorgeschrieben, der Umfang der Parameter ist geregelt.",
+      "why": "Hier ist die Verarbeitung gesetzlich verlangt und im Umfang begrenzt, gleichzeitig sind die Daten für die Rekonstruktion von Unfällen hoch aussagekräftig. Zugriff und Auslesen sind deshalb eng zu führen, und die Abgrenzung zu freiwillig erhobener Telemetrie muss klar sein.",
+      "when": "Wenn Fahrzeugdaten rund um Unfallereignisse verarbeitet werden. Die Trennung zwischen gesetzlich gefordertem Speicher und eigener Datensammlung gehört in die Architektur."
+    },
+    "secoc": {
+      "title": "Secure Onboard Communication",
+      "area": "automotive-arch",
+      "dimension": "architektur",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "SecOC",
+        "AUTOSAR SecOC",
+        "Botschaftsauthentisierung",
+        "CAN-Authentisierung"
+      ],
+      "what": "Authentisierung von Botschaften zwischen Steuergeräten, üblicherweise über einen Prüfwert je Nachricht und einen Frischezähler gegen Wiedereinspielung.",
+      "why": "Der klassische Fahrzeugbus überträgt ohne Absendernachweis, eine eingespeiste Botschaft ist von einer echten nicht zu unterscheiden. SecOC schließt das, kostet aber Bandbreite, Rechenzeit und Schlüsselverwaltung in jedem beteiligten Steuergerät.",
+      "when": "Beim Entwurf der Bordnetz-Architektur. Nachträglich ist es teuer, weil Zykluszeiten und Botschaftslängen davon abhängen."
+    },
+    "steuergeraet-vertrauensanker": {
+      "title": "Vertrauensanker im Steuergerät",
+      "area": "automotive-arch",
+      "dimension": "architektur",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "HSM",
+        "Secure Boot",
+        "SHE",
+        "Hardware-Vertrauensanker",
+        "Schlüsselspeicher"
+      ],
+      "what": "Ein Hardware-Baustein im Steuergerät, der Schlüssel geschützt hält und die Startkette prüft, sodass nur freigegebene Software läuft.",
+      "why": "Ohne geschützten Schlüsselspeicher ist jede Verschlüsselung und jede Signaturprüfung im Fahrzeug nur so stark wie der Flash-Speicher, und der ist physisch erreichbar. Der Baustein ist eine Beschaffungsentscheidung mit langer Bindung.",
+      "when": "Bei der Auswahl der Steuergeräte. Die Wahl bestimmt, welche Verfahren später überhaupt möglich sind.",
+      "tlandkarte": "Verschlüsselung"
+    },
+    "ota-updates": {
+      "title": "Signierte OTA-Updates & Rückrollbarkeit",
+      "area": "automotive-arch",
+      "dimension": "architektur",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "OTA",
+        "Over-the-Air",
+        "Update-Signatur",
+        "Rollback",
+        "Delta-Update"
+      ],
+      "what": "Die technische Kette eines Updates im Feld: signieren, ausliefern, im Fahrzeug prüfen, einspielen, und ein definierter Weg zurück, wenn es fehlschlägt.",
+      "why": "Das Update ist der Weg, Sicherheitslücken zu schließen, und gleichzeitig der attraktivste Angriffsweg, weil er Code ins Fahrzeug bringt. Der Rückweg ist der Teil, der meist fehlt, und ohne ihn wird ein fehlerhaftes Update zum Rückruf.",
+      "when": "Bevor die erste Software ausgeliefert wird. Signaturkette und Rollback gehören zusammen entworfen, die regulatorische Seite steht in R156.",
+      "tlandkarte": "SW-Supply-Chain Security"
+    },
+    "vin-entkopplung": {
+      "title": "Entkopplung der VIN im Backend",
+      "area": "automotive-arch",
+      "dimension": "architektur",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "VIN-Pseudonymisierung",
+        "Fahrzeug-Alias",
+        "Identitätsentkopplung"
+      ],
+      "what": "Die Fahrzeugidentität wird im Backend durch eine eigene Kennung ersetzt. Die Zuordnung zur VIN liegt getrennt und wird nur dort aufgelöst, wo sie gebraucht wird.",
+      "why": "Die VIN verbindet sonst alle Datentöpfe miteinander und zieht den Personenbezug in Systeme, die ihn nicht brauchen, etwa Analytik und Flottenauswertung. Die Entkopplung begrenzt, wie weit ein einzelner Zugriff reicht.",
+      "when": "Beim Entwurf des Backends. Nachträglich ist es aufwendig, weil die VIN dann in Schlüsseln, Pfaden und Logs steckt."
+    },
+    "consent-im-fahrzeug": {
+      "title": "Einwilligung im Fahrzeug",
+      "area": "automotive-arch",
+      "dimension": "architektur",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "Consent",
+        "Privacy-Einstellungen",
+        "HMI",
+        "Nutzerwechsel",
+        "Fahrzeugverkauf"
+      ],
+      "what": "Die Verwaltung von Einwilligungen und Datenschutzeinstellungen über die Fahrzeugbedienung, samt Speicherung, Widerruf und Weitergabe an die verarbeitenden Dienste.",
+      "why": "Ein Fahrzeug hat mehrere Nutzer, wird verliehen, vermietet und verkauft, und der Halter ist nicht immer der Fahrer. Eine Einwilligung, die am Fahrzeug hängt statt an der Person, ist praktisch wertlos, und beim Halterwechsel bleiben sonst Einstellungen und Daten des Vorgängers stehen.",
+      "when": "Sobald eine Verarbeitung auf Einwilligung gestützt wird. Nutzerwechsel und Verkauf sind die Fälle, die im Entwurf regelmäßig fehlen."
+    },
+    "edge-verarbeitung": {
+      "title": "Verarbeitung im Fahrzeug statt im Backend",
+      "area": "automotive-arch",
+      "dimension": "architektur",
+      "triggers": [
+        "branche:automotive"
+      ],
+      "aliases": [
+        "Edge",
+        "On-Board-Verarbeitung",
+        "Datenminimierung im Fahrzeug",
+        "Aggregate"
+      ],
+      "what": "Die Auswertung findet im Fahrzeug statt, übertragen werden nur Ergebnisse oder Aggregate und nicht die Rohdaten.",
+      "why": "Was das Fahrzeug nicht verlässt, muss weder übertragen noch im Backend geschützt, begrenzt und gelöscht werden. Das ist die wirksamste Datenminimierung im Fahrzeugkontext, steht aber gegen den Wunsch, Rohdaten für spätere und noch unbekannte Auswertungen zu behalten.",
+      "when": "Bei jeder neuen Datenquelle. Die Frage lautet, welche Entscheidung die Daten stützen sollen und ob dafür ein Aggregat genügt."
     }
   }
 }
