@@ -3142,6 +3142,101 @@
       "what": "Die Daten, mit denen erbrachte Leistungen abgerechnet werden: Diagnose- und Prozedurenschlüssel, Ziffern und die Zuordnung zum Kostenträger.",
       "why": "Ein Diagnoseschlüssel ist eine Gesundheitsangabe, auch wenn er nur als Code in einer Abrechnungszeile steht. Solche Datensätze verlassen das Haus regelmäßig und landen bei Kostenträgern und Dienstleistern, wo ein anderes Regime gilt; für die Trägerseite steht die Kachel zu Sozialdaten im Kern.",
       "when": "Beim Entwurf der Abrechnungsschnittstellen. Zu klären ist, welche Angaben der Empfänger tatsächlich braucht und was im Haus bleibt."
+    },
+    "fda-part11": {
+      "title": "FDA 21 CFR Part 11",
+      "area": "medtech-reg-int",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:medtech",
+        "nachweis:ja"
+      ],
+      "aliases": [
+        "Part 11",
+        "21 CFR 11",
+        "elektronische Aufzeichnungen",
+        "elektronische Signatur",
+        "Audit Trail",
+        "FDA"
+      ],
+      "what": "Die US-Regeln für elektronische Aufzeichnungen und elektronische Signaturen in allem, was die FDA fordert. Verlangt werden unter anderem Validierung, ein unveränderlicher Änderungsverlauf, Zugriffskontrolle und nachvollziehbare Signaturen.",
+      "why": "Der Änderungsverlauf ist hier keine Komfortfunktion, sondern Pflicht, und er muss lückenlos sein und die Person nennen. Wer das nachträglich einbauen will, greift in die Datenhaltung ein. Betroffen sind auch Systeme, die nur mitwirken, etwa ein Laborsystem oder ein Dokumentenspeicher.",
+      "when": "Sobald ein System Aufzeichnungen führt, die in ein FDA-Verfahren eingehen. Früh klären, welche Aufzeichnungen das sind, denn davon hängt der Umfang der Validierung ab."
+    },
+    "gcp": {
+      "title": "Gute klinische Praxis (ICH E6)",
+      "area": "medtech-reg-int",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:medtech"
+      ],
+      "aliases": [
+        "GCP",
+        "ICH E6",
+        "Good Clinical Practice",
+        "Quelldaten",
+        "Trial Master File",
+        "Monitoring"
+      ],
+      "what": "Der internationale Standard für die Durchführung klinischer Prüfungen, mit Anforderungen an Quelldaten, Nachvollziehbarkeit, Zugriff für Monitoring und Aufbewahrung der wesentlichen Dokumente.",
+      "why": "Er bestimmt, was als Quelldatum gilt und dass jede Änderung daran zurückverfolgbar bleiben muss. Damit legt er die Datenhaltung einer Studie fest, unabhängig vom Datenschutz, und die geforderten Aufbewahrungszeiten reichen weit über die Projektlaufzeit hinaus.",
+      "when": "Vor dem Studienstart, zusammen mit Prüfplan und Ethikvotum. Für die geltende Fassung und die Aufbewahrungszeiten auf die Quelle sehen, beides wird fortgeschrieben."
+    },
+    "iec-81001": {
+      "title": "IEC 81001-5-1",
+      "area": "medtech-reg-int",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:medtech",
+        "nachweis:ja"
+      ],
+      "aliases": [
+        "81001",
+        "Security im Lebenszyklus",
+        "Gesundheitssoftware",
+        "MDCG Cybersecurity",
+        "Secure Development"
+      ],
+      "what": "Der internationale Standard für Sicherheitsaktivitäten im Lebenszyklus von Gesundheitssoftware, von der Anforderung über die Entwicklung bis zur Pflege im Feld.",
+      "why": "Er ist der gangbare Weg, die Sicherheitsanforderungen der MDR belegbar zu erfüllen, weil er die Aktivitäten benennt, die eine Prüfung sehen will. Ohne ihn muss man dieselben Nachweise selbst herleiten und begründen.",
+      "when": "Mit dem Entwicklungsprozess, nicht mit dem Produkt. Wer die Aktivitäten nicht von Anfang an dokumentiert, kann sie nicht nachreichen."
+    },
+    "iso13485": {
+      "title": "ISO 13485",
+      "area": "medtech-reg-int",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:medtech",
+        "nachweis:ja"
+      ],
+      "aliases": [
+        "13485",
+        "Qualitätsmanagement Medizinprodukte",
+        "QMS",
+        "Lenkung von Dokumenten",
+        "Rückverfolgbarkeit"
+      ],
+      "what": "Der internationale Standard für Qualitätsmanagementsysteme bei Medizinprodukten, mit Anforderungen an gelenkte Dokumente, Aufzeichnungen und Rückverfolgbarkeit.",
+      "why": "Er ist die Zertifizierung, nach der ein Auftraggeber im Medizinbereich zuerst fragt, und er zieht Nachweispflichten in die Entwicklung: was nicht als Aufzeichnung entsteht, gilt als nicht getan. Für Dienstleister heißt das, dass Arbeitsweise und Werkzeuge mitgeprüft werden.",
+      "when": "Sobald ein Auftraggeber im Medizinbereich Nachweise verlangt. Ob das eigene Unternehmen zertifiziert sein muss oder als Zulieferer im Rahmen des Auftraggebers mitläuft, gehört früh geklärt."
+    },
+    "iso27799": {
+      "title": "ISO 27799",
+      "area": "medtech-reg-int",
+      "dimension": "regulatorik",
+      "triggers": [
+        "branche:medtech",
+        "nachweis:ja"
+      ],
+      "aliases": [
+        "27799",
+        "Informationssicherheit im Gesundheitswesen",
+        "Health Informatics",
+        "ISO 27002 im Gesundheitswesen"
+      ],
+      "what": "Die Anwendung von ISO/IEC 27002 auf das Gesundheitswesen: dieselben Maßnahmenbereiche, ausgelegt auf Gesundheitsinformationen und die Besonderheiten von Behandlungsprozessen.",
+      "why": "Sie schließt die Lücke zwischen einer allgemeinen Informationssicherheitsnorm und der Praxis im Gesundheitswesen, etwa beim Notfallzugriff auf Patientendaten, der sich mit einer strengen Berechtigungslogik allein nicht vereinbaren lässt.",
+      "when": "Wenn ein Informationssicherheitsmanagement für ein Gesundheitsvorhaben aufgesetzt wird. Nützlich als Prüfliste dafür, was die allgemeine Norm im Gesundheitskontext offenlässt."
     }
   }
 }

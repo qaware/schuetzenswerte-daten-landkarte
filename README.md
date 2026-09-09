@@ -182,7 +182,7 @@ Aussage über die Wichtigkeit der Branche, sondern über den Stand der Arbeit:
 | Automotive | 22 | ausgearbeitet, vier Bereiche |
 | KI | 15 | ausgearbeitet, vier Bereiche |
 | Finanzdienstleistungen | 14 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
-| MedTech | 13 | ausgearbeitet, Regulatorik international noch dünn |
+| MedTech | 18 | ausgearbeitet, drei volle Bereiche |
 | Public Sector | 12 | ausgearbeitet, beide Bereiche voll |
 
 Bei den Finanzdienstleistungen sind Bank und Versicherung **eine Insel mit zwei
