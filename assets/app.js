@@ -30,15 +30,12 @@ const WHEEL_MAX = 120;         // Betrag je Rad-Ereignis, begrenzt schnelle Wisc
    bei jedem Laden gleich aussieht. */
 const SEA_SEED = 20260908;
 const WAVE_STEP = 160;         // Rasterweite der Wellenstriche in Nutzereinheiten
-const WAVE_KEEP = 0.88;        // ausdünnen, sonst wird das Wasser zu dicht
-const WAVE_KEEP_OUTER = 0.22;  // draußen dünner, dort schaut man selten hin
-/* Die Wellen hängen in wenigen Gruppen, die je als Ganzes pulsieren, statt dass jeder
-   Strich seine eigene Animation trägt. Bei gut 360 Strichen wäre das ein Neuberechnen
-   von 360 Deckkräften je Bild, und der Zoom ruckelt davon. Die Zuordnung ist gelost,
-   nicht räumlich, deshalb liegen Nachbarn in verschiedenen Phasen und man sieht die
-   Gruppen nicht. */
-const WAVE_BANDS = 8;
-const WAVE_PERIOD = 9;         // Sekunden, muss zur Keyframe swell in style.css passen
+/* Jeder Strich ist ein Pfad, der bei jedem Zoomschritt mitgezeichnet wird. Die Zahl ist
+   deshalb keine reine Geschmacksfrage: sie war der größte Posten, den das Seeleben zu den
+   rund 960 übrigen Elementen unter #viewport hinzugefügt hat. Draußen deutlich dünner,
+   dort schaut man selten hin. */
+const WAVE_KEEP = 0.62;
+const WAVE_KEEP_OUTER = 0.10;
 /* Das Wellenfeld muss größer sein als die Karte. Bei fit bestimmt die Höhe die
    Skalierung, waagerecht sieht man deshalb immer über die Karte hinaus: auf
    3440x1440 sind das 7047 Nutzereinheiten Breite bei 2866 Kartenbreite. Die
@@ -335,16 +332,13 @@ function buildSea(cellsByIsland) {
     return true;
   };
 
-  const bands = [];
-  for (let i = 0; i < WAVE_BANDS; i++) {
-    const g = el('g', { class: 'wave-band' });
-    if (!still) g.setAttribute('style', `animation-delay:-${(i * WAVE_PERIOD / WAVE_BANDS).toFixed(2)}s`);
-    layer.appendChild(g);
-    bands.push(g);
-  }
+  /* Wellenstriche auf einem gejitterten Raster über das offene Wasser. Das Feld reicht
+     über die Karte hinaus, weil man bei der Gesamtansicht waagerecht darüber hinaussieht.
 
-  // Wellenstriche auf einem gejitterten Raster über das offene Wasser. Das Feld reicht
-  // über die Karte hinaus, weil man bei der Gesamtansicht waagerecht darüber hinaussieht.
+     Sie liegen flach in layer-sea, ohne Gruppe darüber. Eine Zwischengruppe mit einer
+     Deckkraft unter 1 hatte den Inselhintergrund aufblitzen lassen, siehe die Begründung
+     bei .wave in style.css. Die Reihenfolge zählt: die Wellen entstehen vor den Schiffen
+     und liegen deshalb unter ihnen. */
   const b = state.bounds, f = state.sea;
   const inner = (x, y) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1;
   let waves = 0;
@@ -355,9 +349,8 @@ function buildSea(cellsByIsland) {
       const keep = rnd() < (inner(px, py) ? WAVE_KEEP : WAVE_KEEP_OUTER);
       const scale = 0.75 + rnd() * 0.5;
       const tilt = (rnd() - 0.5) * 16;
-      const band = Math.floor(rnd() * WAVE_BANDS);
       if (!keep || !isWater(px, py)) continue;
-      bands[band].appendChild(el('path', {
+      layer.appendChild(el('path', {
         class: 'wave',
         d: 'M-15 0q7.5 -5 15 0q7.5 5 15 0',
         transform: `translate(${px.toFixed(1)} ${py.toFixed(1)}) rotate(${tilt.toFixed(1)}) scale(${scale.toFixed(2)})`

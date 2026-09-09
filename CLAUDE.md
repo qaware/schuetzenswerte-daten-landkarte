@@ -171,9 +171,10 @@ westlichen Inseln, dann fuhren alle vier nach Osten.
 Die Kurse selbst sind unsichtbar. Eine sichtbare Linie zwischen zwei Inseln würde als modellierte
 Beziehung gelesen, und Beziehungen sind hier bewusst nicht modelliert.
 
-Bei `prefers-reduced-motion` stehen Wellen und Schiffe still, bleiben aber sichtbar. Die Wellen
-über `animation: none` in der CSS, die Schiffe müssen in `buildSea` ohne `animateMotion` gebaut
-werden, weil SMIL nicht auf CSS hört. Sie liegen dann auf der Kursmitte.
+Die Wellen bewegen sich nicht, die Bewegung tragen allein die Schiffe. Der Grund ist nicht
+Geschmack, sondern die Zeichenlast, siehe unten. Bei `prefers-reduced-motion` bleiben auch die
+Schiffe stehen; sie müssen dafür in `buildSea` ohne `animateMotion` gebaut werden, weil SMIL
+nicht auf CSS hört, und liegen dann auf der Kursmitte.
 
 Ein Fehler in `buildSea` bricht `build` ab, und der Aufruf steht nicht in einem try. Wer dort
 etwas ändert, führt den Aufbau danach aus, sonst bleibt die Karte im Fehlerfall stumm leer.
@@ -181,8 +182,9 @@ etwas ändert, führt den Aufbau danach aus, sonst bleibt die Karte im Fehlerfal
 ## Warum das Zoomen flüssig bleibt
 
 Beim Zoomen mit dem Trackpad kommen mehr Ereignisse als es Bilder gibt, und unter
-`#viewport` hängen gut 1300 Elemente. Fünf Dinge hatten daran gedreht, alle fünf sind
-behoben und dürfen nicht zurückkommen:
+`#viewport` hängen rund 1200 Elemente, die bei jeder Änderung der Transformation neu
+gezeichnet werden. Sieben Dinge hatten daran gedreht, alle sieben sind behoben und dürfen
+nicht zurückkommen:
 
 `.area-label` hatte einen Übergang auf `font-size`. Die Größe ist aber eine Funktion der
 Skalierung und wird beim Zoomen bei jedem Rad-Ereignis neu gesetzt. Der Übergang startete
@@ -195,7 +197,25 @@ vor dem Schreiben der Transformation. Das erzwingt bei jedem Ereignis ein Layout
 stehen jetzt in `view` und werden nur in `measure()` geholt, das `fit()` aufruft.
 
 Die Wellen trugen jede eine eigene CSS-Animation. Bei gut 360 Strichen sind das 360
-Deckkräfte je Bild. Die Animation sitzt jetzt an `WAVE_BANDS` Gruppen.
+Deckkräfte je Bild.
+
+Der Versuch, das zu retten, indem die Animation an acht Gruppen wanderte, war schlimmer.
+Eine Gruppe mit `opacity` unter 1 muss der Browser in einen eigenen Puffer zeichnen, und
+die Marken einer Gruppe lagen über das ganze Wellenfeld gestreut. Der Puffer war damit
+7466 x 3763 Einheiten groß, bei Skalierung 2.6 rund 19400 x 9780 Pixel, achtmal. Das liegt
+über den üblichen Texturgrenzen, der Browser verwirft die Ebene und baut sie neu, und dabei
+blitzt der Inselhintergrund weg. **Keine Gruppe über dem Wellenfeld darf eine Deckkraft
+unter 1 tragen.** Die Wellen stehen jetzt still und liegen flach in `layer-sea`, ihre
+Deckkraft sitzt als `stroke-opacity` am einzelnen Strich. Wer einen Schimmer möchte,
+animiert `stroke-opacity` an einer kleinen Teilmenge der Striche.
+
+`vector-effect: non-scaling-stroke` hielt die Striche am Schirm gleich dick, erzwingt aber
+je Element eine neue Strichgeometrie, sobald sich die Transformation ändert. Bei 360
+Strichen heißt das 360 Neuberechnungen je Zoomschritt. Die Strichbreite steht jetzt in
+Nutzereinheiten und ist für das untere Ende des Zoombereichs gewählt.
+
+Die Zahl der Striche selbst zählt, weil jeder Pfad bei jedem Zoomschritt mitgezeichnet
+wird. `WAVE_KEEP` und `WAVE_KEEP_OUTER` sind deshalb keine reine Geschmacksfrage.
 
 `applyTransform` lief bei jedem Ereignis. Zoomen und Verschieben gehen jetzt über
 `scheduleTransform`, das auf ein Bild bündelt. Das Flag wird **vor** dem Anmelden gesetzt,
@@ -209,6 +229,10 @@ meldet, so gut wie nicht, während ein Trackpad in Pixelschritten zappelt. `WHEE
 begrenzt den Betrag je Ereignis, damit eine schnelle Wischbewegung nicht springt.
 
 ## Bedienung
+
+`#map` trägt `user-select: none`. Die Karte enthält Text, und beim Ziehen mit der Maus würde
+der Browser ihn sonst markieren, was den Zug unterbricht. Die Regel gilt nur für die Karte, in
+den Panels und in der Detailkarte bleibt Text auswählbar.
 
 Verschieben geht von jeder Stelle aus, auch von einer Kachel. Als Ziehen gilt es erst ab
 `DRAG_SLOP`, und erst dann übernimmt die Karte den Zeiger. Darunter bleibt es ein Klick und öffnet

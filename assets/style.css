@@ -47,6 +47,11 @@ html, body {
     radial-gradient(120% 90% at 50% 40%, #14303b 0%, var(--ocean) 55%, var(--ocean-deep) 100%);
   cursor: grab;
   touch-action: none;
+  /* Die Karte enthält Text: Kacheltitel, Bereichs- und Inselnamen. Beim Ziehen mit der
+     Maus markiert der Browser den sonst, was den Zug unterbricht. In den Panels und in
+     der Detailkarte bleibt Text auswählbar, die Regel gilt nur für die Karte selbst. */
+  user-select: none;
+  -webkit-user-select: none;
 }
 #map.dragging, #map.dragging .tile { cursor: grabbing; }
 
@@ -77,27 +82,32 @@ html, body {
    Beziehungen sind auf dieser Karte bewusst nicht modelliert. */
 .sea-route { fill: none; stroke: none; }
 
-/* Die Animation sitzt an der Gruppe, nicht am einzelnen Strich. Sonst muss der Browser
-   je Bild gut 360 Deckkräfte neu berechnen, und der Zoom ruckelt. WAVE_BANDS und
-   WAVE_PERIOD in app.js verteilen die Phasen, die Dauer hier muss dazu passen. */
-.wave-band {
-  opacity: .38;
-  animation: swell 9s ease-in-out infinite;
-}
+/* Die Wellen sind bewusst unbewegt, und die Deckkraft sitzt am Strich, nicht an einer
+   Gruppe darüber. Beides hatte einen handfesten Grund:
 
+   Eine Gruppe mit opacity unter 1 muss der Browser in einen eigenen Puffer zeichnen und
+   dann zusammensetzen. Die Marken einer Gruppe lagen über das ganze Feld gestreut, der
+   Puffer war also 7466 x 3763 Einheiten groß, bei Skalierung 2.6 rund 19400 x 9780 Pixel.
+   Das liegt über den üblichen Texturgrenzen, der Browser verwirft die Ebene und baut sie
+   neu, und dabei blitzt der Inselhintergrund weg. Mit acht solchen Gruppen je Bild war
+   das auch der Rest des Ruckelns.
+
+   stroke-opacity an einer einzelnen Form braucht keinen solchen Puffer. Wer den früheren
+   Schimmer zurückwill, animiert stroke-opacity an einer kleinen Teilmenge der Striche,
+   niemals opacity an einer Gruppe über dem ganzen Feld.
+
+   Hier stand außerdem vector-effect: non-scaling-stroke, damit der Strich am Schirm
+   gleich dick bleibt. Das erzwingt aber je Element eine neue Strichgeometrie, sobald sich
+   die Transformation ändert, also bei jedem Zoomschritt für jeden Strich. Die Breite ist
+   jetzt in Nutzereinheiten angegeben und für das untere Ende des Zoombereichs gewählt:
+   2.6 ergibt bei der Gesamtansicht knapp 0.7 Pixel und bei Skalierung 1 etwa 2.6. Weit
+   hineingezoomt wird der Strich dicker, dort sieht man aber ohnehin fast nur Land. */
 .wave {
   fill: none;
   stroke: var(--wave);
-  stroke-width: 1.8;
+  stroke-opacity: .42;
+  stroke-width: 2.6;
   stroke-linecap: round;
-  /* Konstante Strichstärke am Schirm, sonst verschwinden die Striche beim Herauszoomen,
-     also genau dann, wenn am meisten Wasser zu sehen ist. */
-  vector-effect: non-scaling-stroke;
-}
-
-@keyframes swell {
-  0%, 100% { opacity: .26; }
-  50%      { opacity: .56; }
 }
 
 /* Die Deckkraft steht als Attribut am Element, damit das SMIL-Ein- und Ausblenden
@@ -370,9 +380,8 @@ button.ghost { background: transparent; }
 @keyframes rise { from { transform: translateY(8px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   #detail { animation: none; }
-  /* Wellen und Schiffe bleiben sichtbar, sie bewegen sich nur nicht. Die Schiffe
-     werden dafür in buildSea ohne animateMotion gebaut, SMIL hört nicht auf CSS. */
-  .wave-band { animation: none; }
+  /* Die Wellen stehen ohnehin still. Die Schiffe werden in buildSea ohne animateMotion
+     gebaut und bleiben auf der Kursmitte liegen, SMIL hört nicht auf CSS. */
   * { transition: none !important; }
 }
 
