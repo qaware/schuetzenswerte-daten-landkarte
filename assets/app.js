@@ -9,17 +9,18 @@ const LATTICE = 3;             // Abstand zweier Bereichs-Mittelpunkte in Hexzel
                                // Kacheln. Wächst er auf Ring 2, ist dessen Zelle die Ring-1-
                                // Zelle des Nachbarn und die Kacheln überlappen.
                                // check-landkarte.py prüft das.
-const AREA_LABELS_ABOVE = 0.5; // ab hier passen die Bereichsnamen nebeneinander.
+const AREA_LABELS_ABOVE = 0.55; // ab hier passen die Bereichsnamen nebeneinander.
                                // Abgeleitet: zwei Bereichs-Mittelpunkte liegen 239
-                               // Nutzereinheiten auseinander, die längste Zeile nach dem
-                               // Umbruch hat 15 Zeichen und ist bei 15px Bildschirmschrift
-                               // rund 117px breit. 117 / 239 ist 0.49. Darunter würden sich
-                               // die Bereichsnamen überlappen, dort stehen nur Inselnamen.
+                               // Nutzereinheiten auseinander, die breiteste Zeile nach dem
+                               // Umbruch ist "Entwurf für Betrieb" mit 8.72 em, bei 15px
+                               // Bildschirmschrift also 131px. 131 / 239 ergibt 0.55.
+                               // Darunter würden sich die Bereichsnamen überlappen, dort
+                               // stehen nur Inselnamen. Wer AREA_EM ändert, rechnet das neu.
 const OVERVIEW_BELOW = 0.9;    // unterhalb dieser Skalierung nur Bereichsnamen.
-                               // Abgeleitet, nicht geschätzt: die Kacheltitel stehen mit 9.5px
-                               // in Nutzereinheiten, auf dem Schirm also 9.5 * scale. Bei 0.62
-                               // wären das 5.9px, und 13 Zeichen Zeile bräuchten 69px in einem
-                               // 57px breiten Sechseck. Ab 0.9 passt der Text und ist lesbar.
+                               // Abgeleitet, nicht geschätzt: die Kacheltitel stehen mit
+                               // 10.2px in Nutzereinheiten, auf dem Schirm also 10.2 * scale.
+                               // Bei 0.9 sind das 9.2px, darunter wird es unlesbar. Dass der
+                               // Text ins Sechseck passt, sichert TILE_EM ab.
 
 const DRAG_SLOP = 4;           // Bildschirmpixel, ab denen aus einem Klick ein Ziehen wird
 const WHEEL_LINE = 16;         // Pixel je Zeile, wenn das Gerät deltaMode 1 meldet
@@ -126,7 +127,44 @@ function ring(q, r, radius) {
   return out;
 }
 
-/* ---------- Textumbruch im Sechseck ---------- */
+/* ---------- Textumbruch ---------- */
+
+const HYPHEN = '\u2011';  // nicht umbrechender Bindestrich, bleibt am Wortende stehen
+const SHY = '\u00ad';     // weiches Trennzeichen in den Daten, erlaubte Bruchstelle
+                          // Als Escape geschrieben: U+00AD ist im Quelltext unsichtbar.
+const MIN_FRAG = 5;       // kleinstes Bruchstück, das eine erzwungene Trennung stehen lässt
+const MAX_LINES = 5;
+
+/* Gemessen wird in geschätzter Breite, nicht in Zeichen. Zeichen zu zählen war zu grob:
+   "Zusammenarbeit" mit 14 Zeichen ist schmaler als "Schulungsnachweise" mit 18, ein Limit
+   in Zeichen lässt deshalb entweder Platz liegen oder läuft aus dem Sechseck heraus. Die
+   Werte sind Vorschussbreiten einer humanistischen Groteske in em, grob geschätzt und kein
+   Ersatz für echte Metriken, aber ein ganzes Stück näher an der Wahrheit. */
+const EM_DEFAULT = 0.55;
+const EM = {};
+for (const c of "iljtI.,;:!|'’ ") EM[c] = 0.29;
+for (const c of 'fr()[]-' + HYPHEN)  EM[c] = 0.36;
+for (const c of 'mw')                EM[c] = 0.85;
+for (const c of 'MW')                EM[c] = 0.88;
+for (const c of 'ABCDEFGHJKLNOPQRSTUVXYZÄÖÜ&') EM[c] = 0.66;
+const emOf = c => EM[c] === undefined ? EM_DEFAULT : EM[c];
+function textEm(s) { let n = 0; for (const c of s) n += emOf(c); return n; }
+
+/* Ein weiches Trennzeichen in den Daten ist nur für den Umbruch da. Überall, wo der Titel
+   als Text weiterverwendet wird, muss es weg: in der Suche würde es sonst mitten im Wort
+   die Übereinstimmung verhindern, und im Checklisten-Export landete ein unsichtbares
+   Zeichen in der Datei. */
+const plain = s => (s || '').split(SHY).join('');
+
+/* Platz im Sechseck. Es ist 2 * R breit, also 92 Nutzereinheiten; TILE_PAD lässt Rand,
+   weil die Beschriftung mittig sitzt und ein Sechseck oben und unten schmaler wird. Das
+   Limit ist damit die tatsächliche Geometrie und keine geratene Zeichenzahl. */
+const TILE_PAD = 10;
+const TILE_EM = (2 * R - TILE_PAD) / 10.2;        // normale Kachelschrift
+const TILE_EM_TIGHT = (2 * R - TILE_PAD) / 8.8;   // enge Variante, passt mehr Text
+/* Bereichsnamen stehen frei über der Insel. Hier begrenzt nicht das Sechseck, sondern der
+   Abstand zweier Bereiche, siehe AREA_LABELS_ABOVE. */
+const AREA_EM = 8.8;
 
 function hexLabel(title) {
   // Klammerzusätze sind für die Kachel zu lang, im Detail steht der ganze Titel
@@ -137,29 +175,130 @@ function hexLabel(title) {
   return title;
 }
 
-function wrap(text, maxChars) {
-  const lines = [];
-  let line = '';
-  for (let word of text.split(/\s+/)) {
-    while (word.length > maxChars) {
-      const cut = maxChars - 1;
-      if (line) { lines.push(line); line = ''; }
-      lines.push(word.slice(0, cut) + '\u2011');
-      word = word.slice(cut);
+/* Ein Titel wird in Stücke zerlegt, zwischen denen umbrochen werden darf: an
+   Leerzeichen, nach einem Bindestrich im Wort und an einem weichen Trennzeichen aus den
+   Daten. Dadurch bricht "Architektur-Prinzipien" hinter dem Bindestrich, statt mitten im
+   zweiten Wort getrennt zu werden. Wer einen bestimmten Umbruch erzwingen will, setzt in
+   landkarte.json ein weiches Trennzeichen U+00AD an die gewünschte Stelle; es wird nur
+   sichtbar, wenn dort tatsächlich umbrochen wird. */
+function pieces(text) {
+  const out = [];
+  text.trim().split(/\s+/).forEach((word, wi) => {
+    let start = 0;
+    for (let i = 0; i < word.length - 1; i++) {
+      if (word[i] === '-' || word[i] === SHY) {
+        out.push({ text: word.slice(start, i + 1), space: wi > 0 && start === 0 });
+        start = i + 1;
+      }
     }
-    const candidate = line ? line + ' ' + word : word;
-    if (candidate.length > maxChars && line) { lines.push(line); line = word; }
-    else line = candidate;
+    out.push({ text: word.slice(start), space: wi > 0 && start === 0 });
+  });
+  return out;
+}
+
+const SPACE_EM = 0.29;
+
+const lineLen = (ps, i, j) => {
+  let n = 0;
+  for (let k = i; k <= j; k++) n += textEm(ps[k].text) + (k > i && ps[k].space ? SPACE_EM : 0);
+  return n;
+};
+
+function lineText(ps, i, j) {
+  let s = '';
+  for (let k = i; k <= j; k++) {
+    let t = ps[k].text;
+    if (t.endsWith(SHY)) t = t.slice(0, -1) + (k === j ? HYPHEN : '');
+    s += (k > i && ps[k].space ? ' ' : '') + t;
   }
-  if (line) lines.push(line);
+  return s;
+}
+
+/* Ein Stück, das allein nicht in eine Zeile passt, muss getrennt werden. Der Schnitt geht
+   so weit nach rechts wie möglich, lässt aber mindestens MIN_FRAG stehen. Bei deutschen
+   Zusammensetzungen trifft das die Wortgrenze häufiger als ein mittiger Schnitt, etwa
+   "Schutzbedarf-sstufen" statt "Schutzbeda-rfsstufen". Sicher ist das nicht, dafür
+   bräuchte es Trennmuster; wer einen Treffer erzwingen will, nimmt U+00AD. */
+function splitLong(ps, limit) {
+  const out = [];
+  const hy = emOf(HYPHEN);
+  for (const p of ps) {
+    let rest = p.text, space = p.space;
+    while (textEm(rest) > limit) {
+      // So weit nach rechts schneiden, wie die Breite zulässt, aber MIN_FRAG Zeichen
+      // stehen lassen, damit keine Zwei-Buchstaben-Waise entsteht.
+      let cut = 0, w = 0;
+      for (let i = 0; i < rest.length - MIN_FRAG; i++) {
+        const nw = w + emOf(rest[i]);
+        if (nw + hy > limit) break;
+        w = nw;
+        cut = i + 1;
+      }
+      if (cut < MIN_FRAG) break;
+      out.push({ text: rest.slice(0, cut) + HYPHEN, space });
+      rest = rest.slice(cut);
+      space = false;
+    }
+    out.push({ text: rest, space });
+  }
+  return out;
+}
+
+// Passen die Stücke in n Zeilen der Breite w? Von links auffüllen ist dafür optimal.
+function fitsLines(ps, w, n) {
+  let lines = 1, start = 0;
+  for (let k = 0; k < ps.length; k++) {
+    if (textEm(ps[k].text) > w) return false;
+    if (lineLen(ps, start, k) > w) {
+      if (++lines > n) return false;
+      start = k;
+    }
+  }
+  return true;
+}
+
+function pack(ps, w) {
+  const lines = [];
+  let start = 0;
+  for (let k = 0; k < ps.length; k++) {
+    if (lineLen(ps, start, k) > w) { lines.push(lineText(ps, start, k - 1)); start = k; }
+  }
+  lines.push(lineText(ps, start, ps.length - 1));
   return lines;
 }
 
+/* Die Zeilen werden ausgeglichen, nicht von links vollgefüllt. Gesucht ist die kleinste
+   Zeilenzahl, die unter das Limit passt, und darin die kleinste mögliche längste Zeile.
+   Vollfüllen ergab sonst Zeilen wie nur "&" hinter einer randvollen ersten Zeile. */
+function wrap(text, limit) {
+  const ps = splitLong(pieces(text), limit);
+  const longest = ps.reduce((m, p) => Math.max(m, textEm(p.text)), 0.1);
+  const total = lineLen(ps, 0, ps.length - 1);
+  // Die Suche läuft in Zehntel-em, das ist fein genug und bleibt ganzzahlig.
+  for (let n = 1; n <= MAX_LINES; n++) {
+    let lo = Math.ceil(longest * 10), hi = Math.max(lo, Math.ceil(total * 10));
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (fitsLines(ps, mid / 10, n)) hi = mid; else lo = mid + 1;
+    }
+    if (lo / 10 <= limit && fitsLines(ps, lo / 10, n)) return pack(ps, lo / 10);
+  }
+  return pack(ps, Math.max(longest, limit));
+}
+
+/* Die enge Variante ist nicht mehr nur die Notbremse bei zu vielen Zeilen. Sie greift
+   auch, wenn sie eine Trennung vermeidet: ein Titel, der in normaler Größe getrennt werden
+   müsste, wird lieber eine Spur kleiner gesetzt als mitten im Wort zerlegt. */
 function labelFor(title) {
-  let lines = wrap(hexLabel(title), 13);
-  let tight = false;
-  if (lines.length > 4) { lines = wrap(hexLabel(title), 16); tight = true; }
-  return { lines: lines.slice(0, 5), tight };
+  const t = hexLabel(title);
+  const lines = wrap(t, TILE_EM);
+  const getrennt = l => l.some(x => x.indexOf(HYPHEN) >= 0);
+  if (lines.length <= 4 && !getrennt(lines)) return { lines, tight: false };
+  const enger = wrap(t, TILE_EM_TIGHT);
+  if (enger.length <= MAX_LINES && (!getrennt(enger) || lines.length > 4)) {
+    return { lines: enger.slice(0, MAX_LINES), tight: true };
+  }
+  return { lines: lines.slice(0, MAX_LINES), tight: false };
 }
 
 /* ---------- Aufbau ---------- */
@@ -217,7 +356,7 @@ function build(data) {
   for (const [aid, area] of Object.entries(data.areas)) {
     const [q, r] = areaCenter[aid], c = center(q, r);
     g('layer-areas').appendChild(el('path', { d: hexPath(q, r, 0.92), class: 'area-ring' }));
-    const lines = wrap(area.label, 15);
+    const lines = wrap(area.label, AREA_EM);
     const text = el('text', { class: 'area-label', x: c.x, y: c.y - (lines.length - 1) * 7 + 4 });
     lines.forEach((ln, i) => {
       const ts = el('tspan', { x: c.x, dy: i ? '1.15em' : 0 });
@@ -233,7 +372,7 @@ function build(data) {
     const dim = data.dimensions[tile.dimension];
     const grp = el('g', {
       class: 'tile', tabindex: '0', role: 'button',
-      'aria-label': tile.title + ', ' + dim.short
+      'aria-label': plain(tile.title) + ', ' + dim.short
     });
     const hex = el('path', { d: hexPath(q, r), class: 'hex', fill: dim.color });
     const { lines, tight } = labelFor(tile.title);
@@ -252,7 +391,7 @@ function build(data) {
     const entry = {
       id: tile.id, tile, area, el: grp,
       haystack: [tile.title, ...(tile.aliases || []), tile.what, tile.why, tile.when || '']
-        .join(' ').toLowerCase()
+        .map(plain).join(' ').toLowerCase()
     };
     state.tiles.push(entry);
     grp.addEventListener('click', () => { if (!state.dragged) openDetail(entry); });
@@ -580,7 +719,7 @@ function exportChecklist() {
     const list = byDim[key];
     if (!list) continue;
     md += `\n## ${dim.label}\n\n`;
-    for (const t of list) md += `- [ ] **${t.title}** — ${t.when || t.why}\n`;
+    for (const t of list) md += `- [ ] **${plain(t.title)}** — ${plain(t.when || t.why)}\n`;
   }
 
   navigator.clipboard?.writeText(md).then(
@@ -619,9 +758,9 @@ function openDetail(entry) {
   chip.textContent = dim.label;
   chip.style.background = dim.color;
 
-  document.getElementById('detail-title').textContent = t.title;
+  document.getElementById('detail-title').textContent = plain(t.title);
   document.getElementById('detail-place').textContent =
-    `${d.islands[area.island].label}, Bereich ${area.label}`;
+    `${plain(d.islands[area.island].label)}, Bereich ${plain(area.label)}`;
 
   const body = document.getElementById('detail-body');
   body.textContent = '';

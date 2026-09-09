@@ -182,10 +182,13 @@ body.world .area-label { opacity: 0; }
 .faded { opacity: .13; transition: opacity .18s ease; }
 .tile .hex, .tile .tile-label { transition: opacity .18s ease; }
 
-.marked .hex {
-  stroke-width: 3.5;
-  filter: drop-shadow(0 0 9px rgba(255,255,255,.65));
-}
+/* Hier stand ein drop-shadow als Leuchten. Ein Filter ist ein eigener Zeichendurchgang je
+   Element, und je nach Projektfilter sind siebzig Kacheln und mehr hervorgehoben. Beim
+   Zoomen mit aktivem Filter kostet das entsprechend viel. Es braucht das Leuchten auch
+   nicht: die nicht passenden Kacheln stehen auf .faded bei 13 Prozent Deckkraft, die
+   hervorgehobenen sind also ohnehin das Einzige, was noch kräftig zu sehen ist. Der
+   dickere Rand genügt als Betonung. */
+.marked .hex { stroke-width: 4; }
 
 /* ---------- Panels ---------- */
 

@@ -228,6 +228,38 @@ Dazu wertet der Rad-Empfänger `deltaMode` aus. Ohne das zoomt ein Mausrad, das 
 meldet, so gut wie nicht, während ein Trackpad in Pixelschritten zappelt. `WHEEL_MAX`
 begrenzt den Betrag je Ereignis, damit eine schnelle Wischbewegung nicht springt.
 
+## Zeilenumbruch in den Beschriftungen
+
+Der Umbruch steckt in `wrap` und `labelFor` in `assets/app.js`. Vier Dinge machen ihn aus, und
+alle vier hatten einen sichtbaren Grund:
+
+**Gemessen wird Breite, nicht Zeichenzahl.** `EM` hält grobe Vorschussbreiten in em. Zeichen zu
+zählen war zu ungenau: "Zusammenarbeit" mit 14 Zeichen ist schmaler als "Schulungsnachweise" mit
+18. Ein Limit in Zeichen ließ deshalb entweder Platz liegen oder lief aus dem Sechseck heraus.
+Die Limits sind damit die tatsächliche Geometrie, `TILE_EM` aus der Sechseckbreite und `AREA_EM`
+aus dem Bereichsabstand.
+
+**Gebrochen wird an vorhandenen Bindestrichen.** "Architektur-Prinzipien" bricht hinter dem
+Bindestrich, statt mitten im zweiten Wort getrennt zu werden, und hinter einen Bindestrich kommt
+nie ein zweiter Trennstrich.
+
+**Zeilen werden ausgeglichen, nicht von links vollgefüllt.** Vollfüllen ergab Zeilen wie nur "&"
+hinter einer randvollen ersten Zeile. Gesucht ist die kleinste Zeilenzahl, die passt, und darin
+die kleinste mögliche längste Zeile.
+
+**Die enge Variante vermeidet Trennungen.** Ein Titel, der in normaler Größe getrennt werden
+müsste, wird lieber eine Spur kleiner gesetzt. Das brachte die Zahl der getrennten Kacheltitel
+von 55 auf 16.
+
+Was übrig bleibt, sind lange deutsche Zusammensetzungen. Der Notschnitt geht so weit nach rechts
+wie die Breite zulässt und lässt mindestens `MIN_FRAG` Zeichen stehen; bei Zusammensetzungen
+trifft das die Wortgrenze oft, aber nicht immer. **Wer einen Umbruch erzwingen will, setzt in
+`landkarte.json` ein weiches Trennzeichen an die Stelle**, als JSON-Escape `\u00ad` geschrieben,
+damit es im Quelltext sichtbar bleibt. Es erscheint nur, wenn dort wirklich umbrochen wird.
+`plain()` entfernt es überall sonst: in der Suche würde es sonst mitten im Wort die
+Übereinstimmung verhindern, und im Checklisten-Export landete ein unsichtbares Zeichen in der
+Datei.
+
 ## Bedienung
 
 `#map` trägt `user-select: none`. Die Karte enthält Text, und beim Ziehen mit der Maus würde
