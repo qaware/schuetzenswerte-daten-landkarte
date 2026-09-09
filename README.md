@@ -179,7 +179,7 @@ Aussage über die Wichtigkeit der Branche, sondern über den Stand der Arbeit:
 
 | Archipel | Kacheln | Stand |
 | --- | --- | --- |
-| Automotive | 22 | ausgearbeitet, vier Bereiche |
+| Automotive | 22 | ausgearbeitet, fünf Bereiche nach Thema statt nach Dimension |
 | KI | 15 | ausgearbeitet, vier Bereiche |
 | Finanzdienstleistungen | 14 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
 | MedTech | 18 | ausgearbeitet, drei volle Bereiche |

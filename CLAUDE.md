@@ -143,7 +143,12 @@ Das Wellenfeld `state.sea` ist deutlich größer als `state.bounds`. Der Grund s
 dort bestimmt die Höhe die Skalierung, waagerecht sieht man deshalb immer über die Karte hinaus.
 Auf 3440x1440 sind das 7047 Nutzereinheiten Breite bei 2866 Kartenbreite. `SEA_PAD_X` und
 `SEA_PAD_Y` decken jedes Fenster bis 3440 Breite ab, auf noch breiteren kann am linken und
-rechten Rand blanker Ozean auftauchen. Innerhalb von `bounds` gilt `WAVE_KEEP`, außerhalb das
+rechten Rand blanker Ozean auftauchen.
+
+**Diese Werte hängen an der Kartenhöhe.** Wächst die Karte, sinkt die Skalierung der
+Gesamtansicht, und der sichtbare Bereich wird breiter. Als der Automotive-Archipel eine
+Rasterzeile nach Norden wuchs, ragte der sichtbare Bereich auf 3440x1440 aus dem Feld heraus. Wer
+eine Insel vergrößert, rechnet die Zuschläge nach. Innerhalb von `bounds` gilt `WAVE_KEEP`, außerhalb das
 dünnere `WAVE_KEEP_OUTER`.
 
 Dazu gehören zwei Grenzen. `zoomAt` klemmt nach außen bei `state.minScale`, und das ist die
@@ -259,6 +264,31 @@ damit es im Quelltext sichtbar bleibt. Es erscheint nur, wenn dort wirklich umbr
 `plain()` entfernt es überall sonst: in der Suche würde es sonst mitten im Wort die
 Übereinstimmung verhindern, und im Checklisten-Export landete ein unsichtbares Zeichen in der
 Datei.
+
+## Bereichsnamen dürfen nicht die Dimension wiederholen
+
+Eine Prüfung aller Bereiche hat einen Konstruktionsfehler gefunden: im Kern sagen **18 von 20**
+Bereichsnamen etwas, was die Farbe nicht schon sagt, in den Archipelen nur **3 von 17**. Dort
+hießen die Bereiche `Daten`, `Regulatorik`, `Architektur` und `Nachweise`, also genau wie die
+Dimensionen. Damit trugen zwei der drei Achsen dasselbe, und das ist der Zustand, den diese Karte
+gegenüber der T-Landkarte gerade vermeiden soll.
+
+Die Ursache: die Archipele wurden als ein Bereich je Dimension gebaut. Dann kann kein Name der
+Dimension entkommen, und Umbenennen allein behebt nur das Symptom.
+
+**Regel: ein Bereichsname muss sagen, um welchen Teil der Domäne es geht, nicht welche Art von
+Frage.** `Zahlungsverkehr` ist gut, `Regulatorik` nicht. Wer einen Archipel anlegt, gruppiert nach
+Thema und schaut danach, welche Farben dabei herauskommen, nicht umgekehrt.
+
+**Ein Bereich darf mehrere Dimensionen spannen.** Die Regel zu zusammenhängenden Farbregionen gilt
+nur für den Kern, siehe Layout. In einem Archipel ist ein Thema wie `Software im Feld` mit UNECE
+R156 als Pflicht, signierten OTA-Updates als Entwurf und der Schwachstellenbeobachtung als
+laufendem Nachweis genau richtig: ein Thema, drei Farben. Erst so sagt die Lage, worum es geht,
+und die Farbe, welche Art von Frage es ist.
+
+Der Preis ist sichtbar: die Farben bilden im Archipel keine Blöcke mehr, und thematische Bereiche
+sind ungleich groß, wodurch die Ringe teils halb leer bleiben und mehr Sand zu sehen ist. Bei
+Automotive ist das umgesetzt, die übrigen Archipele sind noch nach Dimension gruppiert.
 
 ## Insel oder Filter, wenn eine Branche zwei Rollen hat
 

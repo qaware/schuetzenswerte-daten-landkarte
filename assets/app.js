@@ -39,11 +39,14 @@ const WAVE_KEEP = 0.62;
 const WAVE_KEEP_OUTER = 0.10;
 /* Das Wellenfeld muss größer sein als die Karte. Bei fit bestimmt die Höhe die
    Skalierung, waagerecht sieht man deshalb immer über die Karte hinaus: auf
-   3440x1440 sind das 7047 Nutzereinheiten Breite bei 2866 Kartenbreite. Die
+   3440x1440 sind das 7785 Nutzereinheiten Breite bei 2866 Kartenbreite. Die
    Zuschläge decken jedes Fenster bis 3440 Breite ab, darüber kann am linken und
-   rechten Rand blanker Ozean auftauchen. */
-const SEA_PAD_X = 2300;
-const SEA_PAD_Y = 550;
+   rechten Rand blanker Ozean auftauchen.
+   Achtung: die Werte hängen an der Kartenhöhe. Wächst die Karte, sinkt die
+   Skalierung der Gesamtansicht und der sichtbare Bereich wird breiter. Wer eine
+   Insel vergrößert, rechnet das nach; der Test prüft es für fünf Fenstergrößen. */
+const SEA_PAD_X = 2500;
+const SEA_PAD_Y = 600;
 const SEA_MARGIN = 3.3;        // Abstand zur Küste in Hexradien, Flachwasser reicht bis 3.0
 const SHIP_SPEED = 6;          // Nutzereinheiten je Sekunde, daraus folgt die Fahrtdauer
 

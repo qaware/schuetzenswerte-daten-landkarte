@@ -248,7 +248,7 @@
       ]
     },
     "medtech-daten": {
-      "label": "Daten",
+      "label": "Behandlung, Gerät & Forschung",
       "island": "medtech",
       "lattice": [
         0,
@@ -272,7 +272,7 @@
       ]
     },
     "public-daten": {
-      "label": "Daten",
+      "label": "Hoheitliche Daten",
       "island": "public",
       "lattice": [
         0,
@@ -280,7 +280,7 @@
       ]
     },
     "public-reg": {
-      "label": "Regulatorik",
+      "label": "Sicherheits­vorgaben & Verwaltungsrecht",
       "island": "public",
       "lattice": [
         1,
@@ -288,7 +288,7 @@
       ]
     },
     "finance-daten": {
-      "label": "Daten",
+      "label": "Kunde, Risiko & Schaden",
       "island": "finance",
       "lattice": [
         0,
@@ -320,7 +320,7 @@
       "label": "Geheimnisschutz & Vertragsrecht"
     },
     "ki-daten": {
-      "label": "Daten",
+      "label": "Prompts & Trainingsdaten",
       "island": "ki",
       "lattice": [
         0,
@@ -328,7 +328,7 @@
       ]
     },
     "ki-reg": {
-      "label": "Regulatorik",
+      "label": "AI Act & Konformität",
       "island": "ki",
       "lattice": [
         1,
@@ -336,7 +336,7 @@
       ]
     },
     "ki-arch": {
-      "label": "Architektur",
+      "label": "Modellwahl & Absicherung",
       "island": "ki",
       "lattice": [
         0,
@@ -344,44 +344,52 @@
       ]
     },
     "ki-quellen": {
-      "label": "Quellen",
+      "label": "Rahmenwerke",
       "island": "ki",
       "lattice": [
         1,
         1
       ]
     },
-    "automotive-daten": {
+    "automotive-erfasst": {
       "island": "automotive",
       "lattice": [
         0,
         0
       ],
-      "label": "Daten"
+      "label": "Was das Fahrzeug erfasst"
     },
-    "automotive-reg": {
+    "automotive-identitaet": {
       "island": "automotive",
       "lattice": [
         1,
         0
       ],
-      "label": "Regulatorik"
+      "label": "Identität & Einwilligung"
     },
-    "automotive-arch": {
+    "automotive-software": {
+      "island": "automotive",
+      "lattice": [
+        0,
+        -1
+      ],
+      "label": "Software im Feld"
+    },
+    "automotive-produkt": {
+      "island": "automotive",
+      "lattice": [
+        1,
+        -1
+      ],
+      "label": "Produkt­sicherheit & Zulassung"
+    },
+    "automotive-geheimnis": {
       "island": "automotive",
       "lattice": [
         0,
         1
       ],
-      "label": "Architektur"
-    },
-    "automotive-nachweise": {
-      "island": "automotive",
-      "lattice": [
-        1,
-        1
-      ],
-      "label": "Nachweise"
+      "label": "Geheimnisschutz & Prüfung"
     }
   },
   "filters": [
@@ -2269,7 +2277,7 @@
     },
     "fahrzeugdaten": {
       "title": "Fahrzeug- & Telemetriedaten",
-      "area": "automotive-daten",
+      "area": "automotive-erfasst",
       "dimension": "klassifizierung",
       "triggers": [
         "branche:automotive"
@@ -2288,7 +2296,7 @@
     },
     "vin": {
       "title": "Fahrzeug­identifikations­nummer (VIN)",
-      "area": "automotive-daten",
+      "area": "automotive-identitaet",
       "dimension": "klassifizierung",
       "triggers": [
         "branche:automotive"
@@ -2305,7 +2313,7 @@
     },
     "standortdaten": {
       "title": "Standort- & Bewegungsdaten",
-      "area": "automotive-daten",
+      "area": "automotive-erfasst",
       "dimension": "klassifizierung",
       "triggers": [
         "branche:automotive"
@@ -2323,7 +2331,7 @@
     },
     "innenraumsensorik": {
       "title": "Innenraumsensorik (Kamera, Mikrofon)",
-      "area": "automotive-daten",
+      "area": "automotive-erfasst",
       "dimension": "klassifizierung",
       "triggers": [
         "branche:automotive",
@@ -2342,7 +2350,7 @@
     },
     "diagnosedaten": {
       "title": "Diagnose- & Werkstattdaten",
-      "area": "automotive-daten",
+      "area": "automotive-erfasst",
       "dimension": "klassifizierung",
       "triggers": [
         "branche:automotive"
@@ -2360,7 +2368,7 @@
     },
     "prototypendaten": {
       "title": "Prototypen- & Erprobungsdaten",
-      "area": "automotive-daten",
+      "area": "automotive-geheimnis",
       "dimension": "klassifizierung",
       "triggers": [
         "branche:automotive",
@@ -2379,7 +2387,7 @@
     },
     "tisax": {
       "title": "TISAX",
-      "area": "automotive-reg",
+      "area": "automotive-geheimnis",
       "dimension": "regulatorik",
       "triggers": [
         "branche:automotive",
@@ -2399,7 +2407,7 @@
     },
     "iso-sae-21434": {
       "title": "ISO/SAE 21434",
-      "area": "automotive-reg",
+      "area": "automotive-produkt",
       "dimension": "regulatorik",
       "triggers": [
         "branche:automotive"
@@ -2417,7 +2425,7 @@
     },
     "unece-r155": {
       "title": "UNECE R155 (CSMS)",
-      "area": "automotive-reg",
+      "area": "automotive-produkt",
       "dimension": "regulatorik",
       "triggers": [
         "branche:automotive"
@@ -2435,7 +2443,7 @@
     },
     "unece-r156": {
       "title": "UNECE R156 (SUMS)",
-      "area": "automotive-reg",
+      "area": "automotive-software",
       "dimension": "regulatorik",
       "triggers": [
         "branche:automotive"
@@ -2453,7 +2461,7 @@
     },
     "edpb-connected-vehicles": {
       "title": "EDPB-Leitlinien zu Connected Vehicles",
-      "area": "automotive-reg",
+      "area": "automotive-identitaet",
       "dimension": "regulatorik",
       "triggers": [
         "branche:automotive"
@@ -2470,7 +2478,7 @@
     },
     "edr": {
       "title": "Unfalldatenspeicher (EDR)",
-      "area": "automotive-reg",
+      "area": "automotive-erfasst",
       "dimension": "regulatorik",
       "triggers": [
         "branche:automotive"
@@ -2487,7 +2495,7 @@
     },
     "secoc": {
       "title": "Secure Onboard Communication",
-      "area": "automotive-arch",
+      "area": "automotive-produkt",
       "dimension": "architektur",
       "triggers": [
         "branche:automotive"
@@ -2504,7 +2512,7 @@
     },
     "steuergeraet-vertrauensanker": {
       "title": "Vertrauensanker im Steuergerät",
-      "area": "automotive-arch",
+      "area": "automotive-produkt",
       "dimension": "architektur",
       "triggers": [
         "branche:automotive"
@@ -2523,7 +2531,7 @@
     },
     "ota-updates": {
       "title": "Signierte OTA-Updates & Rückrollbarkeit",
-      "area": "automotive-arch",
+      "area": "automotive-software",
       "dimension": "architektur",
       "triggers": [
         "branche:automotive"
@@ -2542,7 +2550,7 @@
     },
     "vin-entkopplung": {
       "title": "Entkopplung der VIN im Backend",
-      "area": "automotive-arch",
+      "area": "automotive-identitaet",
       "dimension": "architektur",
       "triggers": [
         "branche:automotive"
@@ -2558,7 +2566,7 @@
     },
     "consent-im-fahrzeug": {
       "title": "Einwilligung im Fahrzeug",
-      "area": "automotive-arch",
+      "area": "automotive-identitaet",
       "dimension": "architektur",
       "triggers": [
         "branche:automotive"
@@ -2576,7 +2584,7 @@
     },
     "edge-verarbeitung": {
       "title": "Verarbeitung im Fahrzeug statt im Backend",
-      "area": "automotive-arch",
+      "area": "automotive-erfasst",
       "dimension": "architektur",
       "triggers": [
         "branche:automotive"
@@ -2593,7 +2601,7 @@
     },
     "vda-isa-selbstauskunft": {
       "title": "VDA ISA Selbstauskunft",
-      "area": "automotive-nachweise",
+      "area": "automotive-geheimnis",
       "dimension": "betrieb",
       "triggers": [
         "branche:automotive",
@@ -2612,7 +2620,7 @@
     },
     "tisax-label-austausch": {
       "title": "TISAX-Label & Austausch über ENX",
-      "area": "automotive-nachweise",
+      "area": "automotive-geheimnis",
       "dimension": "betrieb",
       "triggers": [
         "branche:automotive",
@@ -2631,7 +2639,7 @@
     },
     "feld-schwachstellen": {
       "title": "Schwachstellen über die Fahrzeug­lebens­dauer",
-      "area": "automotive-nachweise",
+      "area": "automotive-software",
       "dimension": "betrieb",
       "triggers": [
         "branche:automotive"
@@ -2649,7 +2657,7 @@
     },
     "lieferkette-nachweise": {
       "title": "Nachweise in der Lieferkette",
-      "area": "automotive-nachweise",
+      "area": "automotive-geheimnis",
       "dimension": "betrieb",
       "triggers": [
         "branche:automotive"
