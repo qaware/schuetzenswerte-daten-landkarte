@@ -318,6 +318,16 @@ button.ghost { background: transparent; }
 }
 .chip[aria-pressed="true"]:hover { background: #24312b; border-color: #24312b; }
 .chip[aria-pressed="true"]::before { content: "\2713\00a0"; }
+/* Die neutrale Antwort ist gewählt, engt aber nichts ein. Sie wird deshalb ruhiger
+   gezeichnet als eine echte Antwort und bekommt kein Häkchen. */
+.chip.neutral[aria-pressed="true"] {
+  background: #e7e1d1;
+  border-color: #a9a08b;
+  color: #3b4640;
+  font-weight: 400;
+}
+.chip.neutral[aria-pressed="true"]:hover { background: #ded7c4; border-color: #a9a08b; }
+.chip.neutral[aria-pressed="true"]::before { content: none; }
 
 /* Drei Knöpfe brauchen zusammen rund 600px, das Panel ist 330px breit. Ohne Umbruch
    liefen sie heraus. Die beiden Export-Knöpfe stehen deshalb je auf einer eigenen Zeile

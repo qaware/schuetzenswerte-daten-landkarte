@@ -316,6 +316,26 @@ Die Fragen stehen in `landkarte.json` unter `filters`, und `initFilters`, `activ
 `filterActive` lesen sie von dort. **Eine neue Frage ist eine reine Datenänderung.** Vorher stand
 jede Frage an vier Stellen im Code, und drei davon vergisst man beim Ergänzen.
 
+**Jede Frage hat eine neutrale Antwort**, `neutral: true`, die von Anfang an gewählt ist und
+nichts einengt: „Alle" bei den Listen, „egal" bei den Ja-Nein-Fragen. Vorher war überhaupt nichts
+gewählt, und dann war nicht zu sehen, ob die Karte alles zeigt oder ob die Auswahl nur noch nicht
+gewirkt hat.
+
+**Die neutrale Antwort trägt keine Tags.** Die naheliegende Lesart von „Alle" wäre, alle Tags des
+Abschnitts zu aktivieren. Gemessen brachte das aber für „Branche Automotive" **128 von 155**
+Kacheln statt 55, weil die übrigen sechs Fragen weiter alles zuließen: der Filter hätte erst
+gewirkt, wenn alle sieben Fragen beantwortet sind. So wirkt jede einzelne Antwort sofort.
+
+**Der Zustand ist ein Index in `options`, keine Tag-Liste.** Die Antwort „andere" bei der Branche
+trägt nämlich auch keine Tags und wäre von der neutralen Antwort nicht zu unterscheiden, obwohl
+sie etwas anderes bedeutet: „meine Branche ist keine davon", also keine branchenspezifische
+Kachel. Der Test prüft beides gegeneinander.
+
+Ein Klick auf die schon gewählte Antwort führt zurück auf die neutrale, sonst gäbe es keinen Weg
+zurück. Es gibt keinen Typ `toggle` mehr; eine Ja-Nein-Frage ist eine Auswahl mit den drei
+Antworten „egal", „ja" und „nein". „nein" ist dabei nicht dasselbe wie „egal": es engt ein, denn
+wer alle Fragen mit „nein" beantwortet, will die 33 Kacheln sehen, die immer gelten.
+
 Zwei Regeln zu den Triggern, die aus einer Prüfung der Daten hervorgingen:
 
 **`immer` heißt immer.** DSGVO, Auftragsverarbeitung und Art.-32-Maßnahmen trugen `immer` und

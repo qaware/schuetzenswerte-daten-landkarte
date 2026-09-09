@@ -399,6 +399,10 @@
       "type": "single",
       "options": [
         {
+          "label": "Alle",
+          "neutral": true
+        },
+        {
           "label": "MedTech",
           "tags": [
             "branche:medtech"
@@ -437,9 +441,22 @@
     {
       "id": "pb",
       "label": "Personenbezogene Daten im Spiel?",
-      "type": "toggle",
-      "tags": [
-        "pb:ja"
+      "type": "single",
+      "options": [
+        {
+          "label": "egal",
+          "neutral": true
+        },
+        {
+          "label": "ja",
+          "tags": [
+            "pb:ja"
+          ]
+        },
+        {
+          "label": "nein",
+          "tags": []
+        }
       ]
     },
     {
@@ -447,6 +464,10 @@
       "label": "Welche Datenarten kommen vor?",
       "type": "multi",
       "options": [
+        {
+          "label": "Alle",
+          "neutral": true
+        },
         {
           "label": "Besondere Kategorien (Art. 9)",
           "tags": [
@@ -500,33 +521,85 @@
     {
       "id": "cloud",
       "label": "Hyperscaler-Cloud im Einsatz?",
-      "type": "toggle",
-      "tags": [
-        "cloud:hyperscaler"
+      "type": "single",
+      "options": [
+        {
+          "label": "egal",
+          "neutral": true
+        },
+        {
+          "label": "ja",
+          "tags": [
+            "cloud:hyperscaler"
+          ]
+        },
+        {
+          "label": "nein",
+          "tags": []
+        }
       ]
     },
     {
       "id": "ki",
       "label": "KI im Einsatz?",
-      "type": "toggle",
-      "tags": [
-        "ki:ja"
+      "type": "single",
+      "options": [
+        {
+          "label": "egal",
+          "neutral": true
+        },
+        {
+          "label": "ja",
+          "tags": [
+            "ki:ja"
+          ]
+        },
+        {
+          "label": "nein",
+          "tags": []
+        }
       ]
     },
     {
       "id": "drittland",
       "label": "Datentransfer ins Drittland?",
-      "type": "toggle",
-      "tags": [
-        "drittland:ja"
+      "type": "single",
+      "options": [
+        {
+          "label": "egal",
+          "neutral": true
+        },
+        {
+          "label": "ja",
+          "tags": [
+            "drittland:ja"
+          ]
+        },
+        {
+          "label": "nein",
+          "tags": []
+        }
       ]
     },
     {
       "id": "nachweis",
       "label": "Zertifizierung oder Nachweis gegenüber Kunden nötig?",
-      "type": "toggle",
-      "tags": [
-        "nachweis:ja"
+      "type": "single",
+      "options": [
+        {
+          "label": "egal",
+          "neutral": true
+        },
+        {
+          "label": "ja",
+          "tags": [
+            "nachweis:ja"
+          ]
+        },
+        {
+          "label": "nein",
+          "tags": []
+        }
       ]
     }
   ],

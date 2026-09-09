@@ -650,39 +650,37 @@ function buildProjectPanel() {
     const opts = document.createElement('div');
     opts.className = 'qopts';
 
-    const mk = (label, onToggle, pressed = false) => {
+    const nIdx = neutralIndex(f);
+    const chips = f.options.map((o, i) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'chip';
-      b.textContent = label;
-      b.setAttribute('aria-pressed', String(pressed));
-      b.addEventListener('click', () => {
-        const now = b.getAttribute('aria-pressed') !== 'true';
-        onToggle(now, b);
-        applyHighlight();
-      });
+      b.className = 'chip' + (o.neutral ? ' neutral' : '');
+      b.textContent = o.label;
+      b.setAttribute('aria-pressed', 'false');
       opts.appendChild(b);
       return b;
+    });
+    const zeigen = () => {
+      const v = state.filters[f.id];
+      chips.forEach((b, i) => b.setAttribute('aria-pressed',
+        String(f.type === 'single' ? i === v : (v.size ? v.has(i) : i === nIdx))));
     };
 
-    if (f.type === 'toggle') {
-      mk('ja', (on, b) => {
-        state.filters[f.id] = on;
-        b.setAttribute('aria-pressed', String(on));
-      });
-    } else if (f.type === 'single') {
-      const buttons = f.options.map(o => mk(o.label, (on, b) => {
-        buttons.forEach(x => x.setAttribute('aria-pressed', 'false'));
-        b.setAttribute('aria-pressed', String(on));
-        state.filters[f.id] = on ? o.tags : null;
-      }));
-    } else {
-      f.options.forEach(o => mk(o.label, (on, b) => {
-        b.setAttribute('aria-pressed', String(on));
+    chips.forEach((b, i) => b.addEventListener('click', () => {
+      if (f.type === 'single') {
+        // Eine Auswahl ist immer gesetzt. Ein Klick auf die gewählte führt zurück
+        // auf die neutrale Antwort, sonst gäbe es keinen Weg zurück.
+        state.filters[f.id] = state.filters[f.id] === i ? nIdx : i;
+      } else {
         const set = state.filters[f.id];
-        o.tags.forEach(t => on ? set.add(t) : set.delete(t));
-      }));
-    }
+        if (f.options[i].neutral) set.clear();
+        else if (set.has(i)) set.delete(i);
+        else set.add(i);
+      }
+      zeigen();
+      applyHighlight();
+    }));
+    zeigen();
 
     group.append(q, opts);
     host.appendChild(group);
@@ -692,11 +690,28 @@ function buildProjectPanel() {
 /* Der Filterzustand wird aus den Daten aufgebaut und nicht im Code aufgezählt. Vorher
    stand jede Frage an vier Stellen: in state.filters, in activeTags, in filterActive und
    im Zurücksetzen. Eine neue Frage in landkarte.json brauchte damit vier Codeänderungen,
-   und drei davon vergisst man leicht. Jetzt genügt der Eintrag in den Daten. */
+   und drei davon vergisst man leicht. Jetzt genügt der Eintrag in den Daten.
+
+   Jede Frage hat eine Antwort mit `neutral: true`, die von Anfang an gewählt ist und
+   nichts einengt. Vorher war überhaupt nichts gewählt, und dann war nicht zu sehen, ob
+   die Karte alles zeigt oder ob die Auswahl nur noch nicht gewirkt hat.
+
+   Wichtig ist, dass die neutrale Antwort keine Tags trägt. Würde sie alle Tags ihres
+   Abschnitts tragen, wie es die naheliegende Lesart von "Alle" wäre, dann engte eine
+   einzelne Antwort kaum ein: gemessen brachte "Branche Automotive" dann 128 von 155
+   Kacheln statt 55, weil die übrigen sechs Fragen weiter alles zuließen. Der Filter
+   würde erst wirken, wenn alle sieben Fragen beantwortet sind.
+
+   Der Zustand wird als Index in options gehalten, nicht als Tag-Liste. Die Antwort
+   "andere" bei der Branche trägt nämlich auch keine Tags und wäre sonst von der
+   neutralen Antwort nicht zu unterscheiden, obwohl sie etwas völlig anderes bedeutet:
+   "meine Branche ist keine davon", also keine branchenspezifische Kachel. */
+const neutralIndex = q => q.options.findIndex(o => o.neutral);
+
 function initFilters() {
   const f = {};
   for (const q of state.data.filters) {
-    f[q.id] = q.type === 'toggle' ? false : q.type === 'single' ? null : new Set();
+    f[q.id] = q.type === 'single' ? neutralIndex(q) : new Set();
   }
   state.filters = f;
 }
@@ -705,18 +720,36 @@ function activeTags() {
   const tags = new Set();
   for (const q of state.data.filters) {
     const v = state.filters[q.id];
-    if (q.type === 'toggle') { if (v) (q.tags || []).forEach(t => tags.add(t)); }
-    else if (q.type === 'single') { if (v) v.forEach(t => tags.add(t)); }
-    else v.forEach(t => tags.add(t));
+    const gewaehlt = q.type === 'single' ? [q.options[v]] : [...v].map(i => q.options[i]);
+    for (const o of gewaehlt) {
+      if (!o || o.neutral) continue;
+      (o.tags || []).forEach(t => tags.add(t));
+    }
   }
   return tags;
 }
 
+// Eingeengt wird nur, wo die Antwort von der neutralen abweicht.
 function filterActive() {
   return state.data.filters.some(q => {
     const v = state.filters[q.id];
-    return q.type === 'toggle' ? !!v : q.type === 'single' ? v !== null : v.size > 0;
+    return q.type === 'single' ? v !== neutralIndex(q) : v.size > 0;
   });
+}
+
+// Was der Nutzer tatsächlich angegeben hat, für den Kopf des Agenten-Kontexts.
+function antworten() {
+  const out = [];
+  for (const q of state.data.filters) {
+    const v = state.filters[q.id];
+    const frage = q.label.replace(/\?$/, '').trim();
+    if (q.type === 'single') {
+      if (v !== neutralIndex(q)) out.push(frage + ': ' + q.options[v].label);
+    } else if (v.size) {
+      out.push(frage + ': ' + [...v].map(i => q.options[i].label).join(', '));
+    }
+  }
+  return out;
 }
 
 function matching() {
@@ -774,14 +807,14 @@ function exportAgentContext() {
   if (!hits.length) { status.textContent = 'Keine Kacheln ausgewählt.'; return; }
 
   const d = state.data;
-  const tags = [...activeTags()].map(tagLabel);
+  const tags = antworten();
   let md = `# Kontext: Umgang mit besonders schützenswerten Daten\n\n`;
   md += `Auszug aus der Landkarte, gefiltert auf dieses Vorhaben.\n`;
   if (d.meta.quelle) md += `Vollständige Daten: ${d.meta.quelle}\n`;
   md += `Ausgewählt: ${hits.length} von ${state.tiles.length} Kacheln.\n`;
   md += tags.length
-    ? `Als zutreffend angegeben: ${tags.join(', ')}.\n`
-    : `Kein Projektfilter gesetzt, es sind alle Kacheln enthalten.\n`;
+    ? `Angegeben: ${tags.join('; ')}.\n`
+    : `Keine Frage im Projektfilter beantwortet, es sind alle Kacheln enthalten.\n`;
   md += `\n${d.meta.disclaimer}\n`;
   md += `\nDas Feld „Wann relevant“ sagt, warum eine Kachel für dieses Vorhaben gilt.\n`;
 
@@ -832,8 +865,12 @@ function tagLabel(tag) {
   if (!TAG_LABELS) {
     TAG_LABELS = {};
     for (const f of state.data.filters) {
-      if (f.type === 'toggle') f.tags.forEach(t => TAG_LABELS[t] = f.label.replace(/\?$/, '').trim());
-      else f.options.forEach(o => o.tags.forEach(t => TAG_LABELS[t] = o.label));
+      for (const o of f.options) {
+        // Bei einer Ja-Nein-Frage sagt "ja" allein nichts, dort trägt die Frage die Bedeutung
+        const label = (o.label === 'ja' || o.label === 'nein')
+          ? f.label.replace(/\?$/, '').trim() : o.label;
+        (o.tags || []).forEach(t => TAG_LABELS[t] = label);
+      }
     }
   }
   return TAG_LABELS[tag] || tag;
@@ -1132,8 +1169,9 @@ function wireInteraction() {
   document.getElementById('btn-export').onclick = exportChecklist;
   document.getElementById('btn-agent').onclick = exportAgentContext;
   document.getElementById('btn-reset').onclick = () => {
-    initFilters();
-    panel.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    // Neu aufbauen, damit die neutralen Antworten wieder als gewählt erscheinen
+    document.getElementById('project-fields').textContent = '';
+    buildProjectPanel();
     document.getElementById('export-status').textContent = '';
     applyHighlight();
   };
