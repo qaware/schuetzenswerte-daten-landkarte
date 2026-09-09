@@ -2974,6 +2974,80 @@
       "what": "Die Daten, die im Schaden- oder Leistungsfall entstehen: Meldung, Prüfung, Gutachten, Zahlungen und der Schriftverkehr dazu.",
       "why": "In der Akte laufen Angaben Dritter, Gesundheitsangaben und Verdachtsmomente zusammen, und sie wird von vielen Rollen gelesen. Den Zugriff zu begrenzen ist hier schwerer als bei Vertragsdaten, weil die Bearbeitung Kontext braucht.",
       "when": "Beim Entwurf der Schadenbearbeitung. Zu klären ist, wer welche Teile der Akte sehen muss und wie Angaben Dritter davon getrennt bleiben."
+    },
+    "melderegisterdaten": {
+      "title": "Melde- & Registerdaten",
+      "area": "public-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:public"
+      ],
+      "aliases": [
+        "Melderegister",
+        "Bundesmeldegesetz",
+        "BMG",
+        "Auskunftssperre",
+        "Registerdaten",
+        "Einwohnermeldeamt"
+      ],
+      "what": "Daten aus öffentlichen Registern, etwa dem Melderegister sowie aus Fach- und Fahrzeugregistern. Für Übermittlung und Auskunft gelten eigene Regeln, im Meldewesen das Bundesmeldegesetz.",
+      "why": "Hier gibt die Fachnorm vor, wer welche Daten bekommt, und sie geht der allgemeinen Abwägung vor. Dazu kommen Auskunftssperren für einzelne Personen, die technisch durchgehalten werden müssen und sich nicht als Randfall behandeln lassen.",
+      "when": "Sobald Registerdaten gelesen oder weitergegeben werden. Zu klären ist, welche Fachnorm die Übermittlung regelt und wie eine Auskunftssperre im Datenmodell abgebildet ist."
+    },
+    "steuerdaten": {
+      "title": "Steuerdaten",
+      "area": "public-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:public"
+      ],
+      "aliases": [
+        "Steuergeheimnis",
+        "§ 30 AO",
+        "Abgabenordnung",
+        "Finanzbehörde",
+        "Besteuerungsverfahren"
+      ],
+      "what": "Daten aus dem Besteuerungsverfahren. Sie unterliegen dem Steuergeheimnis nach § 30 der Abgabenordnung, dessen Verletzung strafbar ist.",
+      "why": "Das Steuergeheimnis ist enger als der Datenschutz und erlaubt eine Offenbarung nur in gesetzlich benannten Fällen. Für Dienstleister heißt das, dass ein Zugriff schon vor jeder datenschutzrechtlichen Bewertung unzulässig sein kann.",
+      "when": "Bei jedem Zugriff auf Daten einer Finanzbehörde, auch bei Support und Fehleranalyse. Die Zulässigkeit ist getrennt von der datenschutzrechtlichen zu beurteilen."
+    },
+    "aktendaten": {
+      "title": "Vorgangs- & Aktendaten",
+      "area": "public-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:public"
+      ],
+      "aliases": [
+        "E-Akte",
+        "Aktenmäßigkeit",
+        "Verwaltungsvorgang",
+        "Vorgangsbearbeitung",
+        "Schriftgutverwaltung"
+      ],
+      "what": "Der elektronische Verwaltungsvorgang mit allem, was zu ihm gehört: Eingänge, Vermerke, Entscheidungen und Schriftverkehr, geführt nach dem Grundsatz der Aktenmäßigkeit.",
+      "why": "Die Akte muss vollständig und nachvollziehbar sein, und das steht dem Löschen entgegen. Einen Datensatz aus einer Akte zu entfernen ist kein Löschvorgang, sondern ein Eingriff in den Verwaltungsvorgang, der begründet und dokumentiert sein muss.",
+      "when": "Beim Entwurf der Vorgangsbearbeitung, zusammen mit dem Löschkonzept und der Anbietungspflicht ans Archiv. Die drei widersprechen sich sonst."
+    },
+    "polizei-justizdaten": {
+      "title": "Polizei- & Justizdaten",
+      "area": "public-daten",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "branche:public",
+        "daten:staatlich"
+      ],
+      "aliases": [
+        "JI-Richtlinie",
+        "Richtlinie 2016/680",
+        "Gefahrenabwehr",
+        "Strafverfolgung",
+        "Teil 3 BDSG"
+      ],
+      "what": "Daten, die zur Verhütung, Ermittlung oder Verfolgung von Straftaten sowie zur Gefahrenabwehr verarbeitet werden.",
+      "why": "Für sie gilt nicht die DSGVO, sondern die Richtlinie 2016/680 und deren Umsetzung, im Bund in Teil 3 des BDSG. Rechtsgrundlagen, Betroffenenrechte und Protokollpflichten weichen ab, und wer nach der DSGVO plant, plant hier am falschen Regime.",
+      "when": "Zu Beginn klären, ob die Verarbeitung in diesen Bereich fällt. Die Antwort verändert Rechtsgrundlage, Betroffenenrechte und Protokollierung, und sie ist nachträglich teuer."
     }
   }
 }

@@ -182,8 +182,8 @@ Aussage über die Wichtigkeit der Branche, sondern über den Stand der Arbeit:
 | Automotive | 22 | ausgearbeitet, vier Bereiche |
 | KI | 15 | ausgearbeitet, vier Bereiche |
 | Finanzdienstleistungen | 14 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
-| MedTech | 8 | tragfähig, Regulatorik Deutschland vollständig |
-| Public Sector | 8 | tragfähig, Datenarten noch dünn |
+| Public Sector | 12 | ausgearbeitet, beide Bereiche voll |
+| MedTech | 8 | tragfähig, Regulatorik Deutschland vollständig, Datenarten noch dünn |
 
 Bei den Finanzdienstleistungen sind Bank und Versicherung **eine Insel mit zwei
 Branchenoptionen**. Fünf der vierzehn Kacheln gelten für beide, drei nur für Banken und sechs
