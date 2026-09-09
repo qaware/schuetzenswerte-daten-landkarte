@@ -842,6 +842,9 @@ function openDetail(entry) {
   const area = d.areas[entry.area];
 
   const chip = document.getElementById('detail-dimension');
+  chip.hidden = false;                                  // die Hilfe versteckt ihn
+  document.getElementById('detail-place').hidden = false;
+  document.getElementById('detail-triggers').hidden = false;
   chip.textContent = dim.label;
   chip.style.background = dim.color;
 
@@ -879,6 +882,93 @@ function openDetail(entry) {
 
   document.getElementById('detail-triggers').textContent =
     'Wird relevant bei: ' + t.triggers.map(tagLabel).join(', ');
+
+  state.lastFocus = document.activeElement;
+  document.getElementById('overlay').hidden = false;
+  document.getElementById('detail').focus();
+}
+
+/* Die Hilfe benutzt dieselbe Karte wie die Kacheldetails. Damit gelten Escape, Klick
+   daneben, Fokusrückgabe und das Scrollen ohne zweite Umsetzung. Die Aufzählungen kommen
+   aus den Daten, eine neue Insel oder Dimension steht damit automatisch drin. */
+function openHelp() {
+  const d = state.data;
+  document.getElementById('detail-dimension').hidden = true;
+  document.getElementById('detail-place').hidden = true;
+  document.getElementById('detail-triggers').hidden = true;
+  document.getElementById('detail-title').textContent = 'Wie diese Karte funktioniert';
+
+  const body = document.getElementById('detail-body');
+  body.textContent = '';
+  const el = (name, text, cls) => {
+    const n = document.createElement(name);
+    if (text) n.textContent = text;
+    if (cls) n.className = cls;
+    return n;
+  };
+  const abschnitt = (titel, ...knoten) => {
+    body.append(el('h3', titel), ...knoten);
+  };
+
+  body.append(el('p', 'Die Karte hilft beim Einordnen. Sie ist kein Framework, kein Prozess '
+    + 'und kein Rechtsrat.'));
+
+  abschnitt('Drei Achsen',
+    el('p', 'Jede Kachel steht an drei Stellen zugleich, und die drei Achsen sind voneinander '
+      + 'unabhängig. Das ist der Kern des Modells: die Farbe sagt nichts darüber, wo eine Kachel '
+      + 'liegt, und die Lage nichts über ihre Farbe.'));
+
+  const liste = document.createElement('ul');
+  liste.className = 'helplist';
+  for (const dim of Object.values(d.dimensions)) {
+    const li = document.createElement('li');
+    const sw = el('span', '', 'swatch');
+    sw.style.background = dim.color;
+    li.append(sw, el('span', dim.label + ' — ' + dim.frage));
+    liste.appendChild(li);
+  }
+  abschnitt('Die Farbe ist die Dimension',
+    el('p', 'Sie sagt, um welche Art von Frage es geht.'),
+    liste,
+    el('p', 'Die Grenze zwischen Architektur und Betrieb verläuft an einer Testfrage: eine '
+      + 'Entwurfsentscheidung gehört zur Architektur, etwas das wiederkehren und nachweisbar '
+      + 'sein muss zum Betrieb. Deshalb liegt Audit Logging in der Architektur und die '
+      + 'Rechte-Rezertifizierung im Betrieb.'));
+
+  const inseln = document.createElement('ul');
+  inseln.className = 'helplist';
+  const zahl = {};
+  for (const t of Object.values(d.tiles)) {
+    const i = d.areas[t.area].island;
+    zahl[i] = (zahl[i] || 0) + 1;
+  }
+  for (const [iid, insel] of Object.entries(d.islands)) {
+    inseln.appendChild(el('li', plain(insel.label) + ', ' + zahl[iid] + ' Kacheln'));
+  }
+  abschnitt('Die Insel ist der fachliche Bereich',
+    el('p', 'Der Kern ist branchenneutral und gilt für jedes Vorhaben mit schützenswerten '
+      + 'Daten. Die Archipele enthalten nur, was durch eine Branche oder eine Technik zusätzlich '
+      + 'hinzukommt. Was allgemein gilt, bleibt im Kern.'),
+    inseln);
+
+  abschnitt('Der Bereich ist die zweite Ebene',
+    el('p', 'Innerhalb einer Insel gruppiert er zusammengehörende Kacheln. Auf der Karte ist er '
+      + 'das gestrichelte Sechseck in der Mitte einer Gruppe und trägt dort den Namen, die '
+      + 'Kacheln liegen im Ring darum.'));
+
+  abschnitt('Drei Zoomstufen',
+    el('p', 'Ganz herausgezoomt tragen nur die Inselnamen. Näher heran erscheinen die '
+      + 'Bereichsnamen, noch näher die Kacheltitel. Eine Beschriftung erscheint erst, wenn sie '
+      + 'lesbar ist und in ihr Sechseck passt.'));
+
+  abschnitt('Bedienung',
+    el('p', 'Ziehen verschiebt die Karte von jeder Stelle aus, Mausrad oder die Tasten + und − '
+      + 'zoomen, „Alles“ zeigt die Gesamtansicht. Ein Klick auf eine Kachel öffnet ihren Text. '
+      + 'Die Suche findet Titel, Synonyme und Kacheltexte. Unter „Mein Projekt“ beantwortest du, '
+      + 'was auf dein Vorhaben zutrifft; die Karte hebt dann hervor, was zu klären ist, und gibt '
+      + 'es als Checkliste oder als Kontext für einen KI-Agenten heraus.'));
+
+  body.append(el('p', d.meta.disclaimer, 'hint'));
 
   state.lastFocus = document.activeElement;
   document.getElementById('overlay').hidden = false;
@@ -1045,6 +1135,7 @@ function wireInteraction() {
     applyHighlight();
   };
 
+  document.getElementById('btn-help').onclick = openHelp;
   document.getElementById('detail-close').onclick = closeDetail;
   document.getElementById('overlay').addEventListener('click', e => {
     if (e.target.id === 'overlay') closeDetail();

@@ -330,6 +330,33 @@ steht dafür im README in einer Zeile.
 `plain()` läuft über jeden Text, der in den Export geht, sonst landen die weichen Trennzeichen aus
 den Daten im Prompt.
 
+## Beschriftungen über der Karte
+
+`#titleblock`, `#legend` und `#count` liegen über der Karte und standen deshalb mal auf dem
+dunklen Ozean und mal auf einer sandfarbenen Insel. Auf Sand waren sie unlesbar, gemessen in
+Kontrastverhältnissen: die Überschrift kam mit `#f4f0e6` auf `#e8dcc0` auf **1.20 zu 1**, die
+Legendeneinträge auf 1.02. Alle sieben Textfarben lagen unter 3.
+
+Sie tragen jetzt die Klasse `scrim`, einen Schleier aus `--ocean-deep` bei 82 Prozent. Damit
+liegt der schlechteste Wert bei 4.6 zu 1. Drei Farben mussten zusätzlich angehoben werden, weil
+sie bewusst dunkel gesetzt waren und selbst hinter dem Schleier nicht reichten: `#subtitle`,
+`.frage` und `#disclaimer`. **Wer eine Textfarbe dort ändert, rechnet den Kontrast gegen
+`#323d3e` nach**, das ist der Schleier über Sand.
+
+`#titleblock` behält `pointer-events: none`, damit man die Karte auch unter dem Titel greifen und
+ziehen kann.
+
+## Die Hilfe
+
+`openHelp` benutzt dieselbe Karte wie die Kacheldetails, `#overlay` und `#detail`. Damit gelten
+Escape, Klick daneben, Fokusrückgabe und das Scrollen ohne zweite Umsetzung. Dafür versteckt sie
+Dimensionschip, Ortsangabe und Trigger-Zeile, und `openDetail` zeigt sie wieder; beides ist
+zugesichert, weil sonst eine Kachel nach einem Blick in die Hilfe unvollständig aussähe.
+
+Die Aufzählungen der Dimensionen und Inseln kommen aus den Daten. Eine neue Insel oder Dimension
+steht damit automatisch in der Hilfe, und der Test prüft das: jede Dimension muss dort mit ihrer
+`frage` auftauchen und jede Insel mit ihrem Namen.
+
 ## Bedienung
 
 `#map` trägt `user-select: none`. Die Karte enthält Text, und beim Ziehen mit der Maus würde

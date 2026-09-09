@@ -27,7 +27,7 @@
 
   <div id="loading" role="status">Landkarte wird geladen</div>
 
-  <header id="titleblock">
+  <header id="titleblock" class="scrim">
     <h1>Umgang mit besonders schützenswerten Daten</h1>
     <p id="subtitle"></p>
   </header>
@@ -38,7 +38,8 @@
       <input id="search" type="search" placeholder="Suchen, etwa Verschlüsselung oder DSFA" autocomplete="off" spellcheck="false">
     </div>
     <button id="btn-project" type="button" aria-expanded="false" aria-controls="project">Mein Projekt</button>
-    <p id="count" aria-live="polite"></p>
+    <button id="btn-help" type="button">Hilfe</button>
+    <p id="count" class="scrim" aria-live="polite"></p>
   </div>
 
   <section id="project" hidden aria-labelledby="project-heading">
@@ -58,7 +59,7 @@
       unter „Für Agenten“.</p>
   </section>
 
-  <div id="legend">
+  <div id="legend" class="scrim">
     <h2>Fünf Dimensionen</h2>
     <ul id="legend-list"></ul>
     <p class="hint" id="disclaimer"></p>

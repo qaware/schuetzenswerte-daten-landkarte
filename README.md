@@ -22,6 +22,7 @@ statt sie zu doppeln.
 - Drei Zoomstufen: ganz herausgezoomt die Inselnamen, dann die Bereichsnamen, dann die Kacheltitel
 - Weiter heraus als die Gesamtansicht geht nicht, und die Karte lässt sich nicht aus dem Bild schieben
 - Klick oder Enter auf eine Kachel öffnet die Details
+- „Hilfe“ erklärt die drei Achsen: was die Farben, die Inseln und die Bereiche bedeuten
 - Die Suche findet Titel, Synonyme und Kacheltexte
 - „Mein Projekt“ hebt die Kacheln hervor, die für ein Vorhaben zu klären sind, und gibt sie als Markdown heraus: als Checkliste für Menschen oder als Kontext für einen KI-Agenten, siehe unten
 
