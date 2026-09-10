@@ -25,7 +25,8 @@ statt sie zu doppeln.
 - „Hilfe“ erklärt die drei Achsen: was die Farben, die Inseln und die Bereiche bedeuten
 - Die Suche findet Titel, Synonyme und Kacheltexte
 - „Mein Projekt“ hebt die Kacheln hervor, die für ein Vorhaben zu klären sind, und gibt sie als Markdown heraus: als Checkliste für Menschen oder als Kontext für einen KI-Agenten, siehe unten
-- Jede Frage dort steht anfangs auf „Alle“ beziehungsweise „egal“, engt also nichts ein. Ein Klick auf die gewählte Antwort führt dorthin zurück
+- Jede Frage dort steht anfangs auf „offen“, ist also noch nicht beantwortet und engt nichts ein. Ein Klick auf die gewählte Antwort führt dorthin zurück
+- Aus den Antworten ergeben sich drei Zustände: hervorgehoben heißt gesichert relevant, blass heißt ausgeschlossen, normal heißt offen, weil noch eine unbeantwortete Frage darüber entscheidet. „nein“ schließt aus und ist deshalb nicht dasselbe wie „offen“
 
 ## Lokal starten
 
@@ -147,6 +148,10 @@ auf Kern oder Archipel.
 **Die Filterregel in einer Zeile.** Eine Kachel ist relevant, wenn ihr `triggers` den Wert
 `immer` enthält oder eine Eigenschaft des Vorhabens. Welche Eigenschaften es gibt, steht in
 `filters` in derselben Datei, der Agent braucht also keine weitere Quelle.
+
+Wer eine Eigenschaft ausdrücklich verneint, schließt die Kacheln aus, deren Trigger *alle* an
+verneinten Fragen hängen. Alles dazwischen bleibt offen, weil eine unbeantwortete Frage darüber
+entscheidet; der Viewer zeigt diese Kacheln normal und nennt sie im Export als eigene Zeile.
 
 **Für die `CLAUDE.md` eines Projekt-Repos**, die Tags an das Vorhaben angepasst:
 

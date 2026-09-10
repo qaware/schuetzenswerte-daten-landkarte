@@ -399,7 +399,7 @@
       "type": "single",
       "options": [
         {
-          "label": "Alle",
+          "label": "offen",
           "neutral": true
         },
         {
@@ -444,7 +444,7 @@
       "type": "single",
       "options": [
         {
-          "label": "egal",
+          "label": "offen",
           "neutral": true
         },
         {
@@ -465,7 +465,7 @@
       "type": "multi",
       "options": [
         {
-          "label": "Alle",
+          "label": "offen",
           "neutral": true
         },
         {
@@ -524,7 +524,7 @@
       "type": "single",
       "options": [
         {
-          "label": "egal",
+          "label": "offen",
           "neutral": true
         },
         {
@@ -545,7 +545,7 @@
       "type": "single",
       "options": [
         {
-          "label": "egal",
+          "label": "offen",
           "neutral": true
         },
         {
@@ -566,7 +566,7 @@
       "type": "single",
       "options": [
         {
-          "label": "egal",
+          "label": "offen",
           "neutral": true
         },
         {
@@ -587,7 +587,7 @@
       "type": "single",
       "options": [
         {
-          "label": "egal",
+          "label": "offen",
           "neutral": true
         },
         {

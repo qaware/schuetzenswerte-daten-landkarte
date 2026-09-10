@@ -76,7 +76,8 @@ const state = {
   query: '',
   filters: {},        // wird in initFilters() aus data.filters aufgebaut
   lastFocus: null,
-  dragged: false     // wurde der letzte Zeigerzug zum Verschieben benutzt
+  dragged: false,    // wurde der letzte Zeigerzug zum Verschieben benutzt
+  antw: null         // Zwischenspeicher von answers() während eines Durchlaufs
 };
 
 /* ---------- Hexgeometrie (flat top, axiale Koordinaten) ---------- */
@@ -737,6 +738,64 @@ function filterActive() {
   });
 }
 
+/* Dreiwertige Auswertung. Rein additiv gedacht konnte "nein" nichts bedeuten, weil es
+   wie "egal" keine Tags beiträgt: gemessen lieferten beide in 10 von 15 Fällen genau
+   dieselben Kacheln. Hier wird stattdessen je Tag unterschieden, ob die Frage mit ja
+   beantwortet ist, mit nein, oder noch offen.
+
+   Bei einer Auswahl gilt: die gewählte Antwort ist ja, die übrigen sind nein. Trägt die
+   gewählte Antwort keine Tags, also "nein" bei einer Ja-Nein-Frage oder "andere" bei der
+   Branche, dann sind alle Tags der Frage nein. Auf der neutralen Antwort bleibt alles
+   offen. */
+function answers() {
+  const ja = new Set(), nein = new Set();
+  for (const q of state.data.filters) {
+    const v = state.filters[q.id];
+    const nIdx = neutralIndex(q);
+    const echte = q.options.filter(o => !o.neutral);
+    if (q.type === 'single') {
+      if (v === nIdx) continue;                                  // offen
+      const gewaehlt = q.options[v];
+      const ohneTags = !(gewaehlt.tags || []).length;
+      for (const o of echte) {
+        const ziel = (!ohneTags && o === gewaehlt) ? ja : nein;
+        (o.tags || []).forEach(t => ziel.add(t));
+      }
+    } else {
+      if (!v.size) continue;                                     // offen
+      q.options.forEach((o, i) => {
+        if (o.neutral) return;
+        (o.tags || []).forEach(t => (v.has(i) ? ja : nein).add(t));
+      });
+    }
+  }
+  return { ja, nein };
+}
+
+/* gesichert: gilt sicher, weil die Kachel immer gilt oder eine Frage mit ja beantwortet
+   ist. ausgeschlossen: jeder Grund für sie ist mit nein beantwortet. offen: es hängt an
+   einer Frage, die noch nicht beantwortet ist.
+
+   Ist keine Frage beantwortet, ist alles offen. Sonst wären die 33 immer-Kacheln von
+   Anfang an hervorgehoben, und die Karte sähe gefiltert aus, ohne dass jemand gefiltert
+   hat. */
+function classify(entry) {
+  if (!filterActive()) return 'offen';
+  const { ja, nein } = state.antw || answers();
+  const tr = entry.tile.triggers;
+  if (tr.indexOf('immer') >= 0 || tr.some(t => ja.has(t))) return 'gesichert';
+  if (tr.every(t => nein.has(t))) return 'ausgeschlossen';
+  return 'offen';
+}
+
+function zaehleKlassen() {
+  state.antw = answers();
+  const zahl = { gesichert: 0, offen: 0, ausgeschlossen: 0 };
+  for (const e of state.tiles) zahl[classify(e)]++;
+  state.antw = null;
+  return zahl;
+}
+
 // Was der Nutzer tatsächlich angegeben hat, für den Kopf des Agenten-Kontexts.
 function antworten() {
   const out = [];
@@ -764,17 +823,32 @@ function matching() {
 }
 
 function applyHighlight() {
-  const on = filterActive() || state.query.length > 0;
-  const set = new Set(matching().map(e => e.id));
+  const q = state.query;
+  const gefiltert = filterActive();
+  state.antw = answers();                       // einmal je Durchlauf, nicht je Kachel
+  const zahl = { gesichert: 0, offen: 0, ausgeschlossen: 0 };
   for (const e of state.tiles) {
-    const hit = set.has(e.id);
-    e.el.classList.toggle('faded', on && !hit);
-    e.el.classList.toggle('marked', on && hit);
+    const klasse = classify(e);
+    zahl[klasse]++;
+    const trifft = !q || e.haystack.includes(q);
+    // Ausgeschlossen wiegt schwerer als ein Suchtreffer: was ausgeschlossen ist,
+    // soll auch dann blass bleiben, wenn der Suchbegriff darin vorkommt.
+    const faded = klasse === 'ausgeschlossen' || (q && !trifft);
+    const marked = !faded && (klasse === 'gesichert' || !!q);
+    e.el.classList.toggle('faded', faded);
+    e.el.classList.toggle('marked', marked);
   }
+  state.antw = null;
+
   const count = document.getElementById('count');
-  count.textContent = on
-    ? `${set.size} von ${state.tiles.length} Kacheln`
-    : `${state.tiles.length} Kacheln`;
+  if (gefiltert) {
+    count.textContent = `${zahl.gesichert} gesichert, ${zahl.offen} offen, `
+      + `${zahl.ausgeschlossen} ausgeschlossen`;
+  } else if (q) {
+    count.textContent = `${matching().length} von ${state.tiles.length} Kacheln`;
+  } else {
+    count.textContent = `${state.tiles.length} Kacheln`;
+  }
 }
 
 function exportChecklist() {
@@ -787,6 +861,11 @@ function exportChecklist() {
 
   let md = `# Zu klärende Themen für dieses Projekt\n\n`;
   md += `Ausgewählt: ${hits.length} von ${state.tiles.length} Kacheln der Landkarte.\n`;
+  if (filterActive()) {
+    const z = zaehleKlassen();
+    if (z.offen) md += `Weitere ${z.offen} Kacheln hängen an Fragen, die im Projektfilter `
+      + `noch nicht beantwortet sind.\n`;
+  }
   md += `Das ist eine Orientierung, keine Vollständigkeitszusage und kein Rechtsrat.\n`;
   for (const [key, dim] of Object.entries(state.data.dimensions)) {
     const list = byDim[key];
@@ -815,6 +894,11 @@ function exportAgentContext() {
   md += tags.length
     ? `Angegeben: ${tags.join('; ')}.\n`
     : `Keine Frage im Projektfilter beantwortet, es sind alle Kacheln enthalten.\n`;
+  if (filterActive()) {
+    const z = zaehleKlassen();
+    if (z.offen) md += `Weitere ${z.offen} Kacheln der Landkarte hängen an Fragen, die noch `
+      + `nicht beantwortet sind, und fehlen hier deshalb.\n`;
+  }
   md += `\n${d.meta.disclaimer}\n`;
   md += `\nDas Feld „Wann relevant“ sagt, warum eine Kachel für dieses Vorhaben gilt.\n`;
 
@@ -1000,6 +1084,13 @@ function openHelp() {
     el('p', 'Ganz herausgezoomt tragen nur die Inselnamen. Näher heran erscheinen die '
       + 'Bereichsnamen, noch näher die Kacheltitel. Eine Beschriftung erscheint erst, wenn sie '
       + 'lesbar ist und in ihr Sechseck passt.'));
+
+  abschnitt('Drei Zustände unter „Mein Projekt“',
+    el('p', 'Jede Frage steht anfangs auf „offen“ und engt nichts ein. Wer antwortet, teilt die '
+      + 'Kacheln in drei Gruppen: hervorgehoben gilt für das Vorhaben sicher, blass ist '
+      + 'ausgeschlossen, und was normal bleibt, hängt an einer Frage, die noch offen ist. Die '
+      + 'Zahl der offenen Kacheln sinkt auf null, wenn alle Fragen beantwortet sind. Eine '
+      + 'Antwort mit „nein“ ist damit etwas anderes als eine offene Frage: sie schließt aus.'));
 
   abschnitt('Bedienung',
     el('p', 'Ziehen verschiebt die Karte von jeder Stelle aus, Mausrad oder die Tasten + und − '

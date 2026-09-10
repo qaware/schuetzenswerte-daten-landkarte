@@ -317,12 +317,19 @@ Die Fragen stehen in `landkarte.json` unter `filters`, und `initFilters`, `activ
 jede Frage an vier Stellen im Code, und drei davon vergisst man beim Ergänzen.
 
 **Jede Frage hat eine neutrale Antwort**, `neutral: true`, die von Anfang an gewählt ist und
-nichts einengt: „Alle" bei den Listen, „egal" bei den Ja-Nein-Fragen. Vorher war überhaupt nichts
-gewählt, und dann war nicht zu sehen, ob die Karte alles zeigt oder ob die Auswahl nur noch nicht
-gewirkt hat.
+nichts einengt. Vorher war überhaupt nichts gewählt, und dann war nicht zu sehen, ob die Karte
+alles zeigt oder ob die Auswahl nur noch nicht gewirkt hat.
 
-**Die neutrale Antwort trägt keine Tags.** Die naheliegende Lesart von „Alle" wäre, alle Tags des
-Abschnitts zu aktivieren. Gemessen brachte das aber für „Branche Automotive" **128 von 155**
+**Sie heißt „offen", nicht „Alle" und nicht „egal".** Beide früheren Beschriftungen behaupteten
+etwas Falsches. „Alle" liest sich als Mengenversprechen, und das hielt es nicht: bei „Branche
+offen" sind 155 Kacheln unmarkiert, bei „Branche MedTech" sind 55 hervorgehoben, und
+hervorgehoben ist die Farbe, die man als Auswahl liest. Wer „Alle" wählte, sah also weniger als
+wer eine einzelne Branche wählte. „egal" wiederum ist eine Aussage über die Frage, während die
+neutrale Antwort in Wahrheit sagt: **diese Frage ist noch nicht beantwortet.** Genau das heißt
+„offen", und dasselbe Wort steht für den mittleren der drei Kachelzustände darunter.
+
+**Die neutrale Antwort trägt keine Tags.** Die naheliegende Lesart eines „Alle" wäre, alle Tags
+des Abschnitts zu aktivieren. Gemessen brachte das aber für „Branche Automotive" **128 von 155**
 Kacheln statt 55, weil die übrigen sechs Fragen weiter alles zuließen: der Filter hätte erst
 gewirkt, wenn alle sieben Fragen beantwortet sind. So wirkt jede einzelne Antwort sofort.
 
@@ -333,8 +340,43 @@ Kachel. Der Test prüft beides gegeneinander.
 
 Ein Klick auf die schon gewählte Antwort führt zurück auf die neutrale, sonst gäbe es keinen Weg
 zurück. Es gibt keinen Typ `toggle` mehr; eine Ja-Nein-Frage ist eine Auswahl mit den drei
-Antworten „egal", „ja" und „nein". „nein" ist dabei nicht dasselbe wie „egal": es engt ein, denn
-wer alle Fragen mit „nein" beantwortet, will die 33 Kacheln sehen, die immer gelten.
+Antworten „offen", „ja" und „nein".
+
+### Drei Zustände, nicht zwei
+
+„nein" und „offen" sahen auf der Karte lange gleich aus. Der Hinweis kam von außen, und die
+Messung gab ihm recht: von 15 Antwortkombinationen zeigten **10 dieselben Kacheln**, egal ob eine
+Frage mit „nein" oder neutral beantwortet war. Der Grund war die Auswahl selbst. Sie kannte nur
+„trifft zu" und „trifft nicht zu", und eine Kachel traf zu, wenn einer ihrer Trigger gewählt war.
+„nein" wählt keinen Trigger, also war es wirkungslos, solange irgendeine andere Frage schon etwas
+ausgewählt hatte.
+
+Deshalb beantwortet `answers()` jetzt pro Trigger drei Fragen und nicht eine: **ja**, wenn eine
+gewählte Antwort ihn trägt; **nein**, wenn die Frage beantwortet ist und eine andere Antwort ihn
+trägt; sonst **offen**. Die Antwort „nein" bei einer Ja-Nein-Frage trägt selbst keine Tags und
+setzt darum alle Tags ihrer Frage auf nein, genauso „andere" bei der Branche. `classify()` ordnet
+daraus jede Kachel ein:
+
+- **gesichert**, wenn sie `immer` trägt oder einer ihrer Trigger auf ja steht. Hervorgehoben.
+- **ausgeschlossen**, wenn *alle* ihre Trigger auf nein stehen. Blass.
+- **offen** sonst, also wenn noch eine unbeantwortete Frage über sie entscheidet. Normal.
+
+Gemessen: „Branche Automotive" allein ergibt 55 gesichert, 73 offen, 27 ausgeschlossen. Kommt
+„personenbezogene Daten: nein" dazu, bleiben es 55 gesicherte, aber die Ausgeschlossenen steigen
+von 27 auf 48. „nein" tut jetzt sichtbar etwas, und es tut das Richtige: es räumt weg, statt
+hinzuzufügen.
+
+**Solange keine Frage beantwortet ist, ist alles offen**, nicht alles gesichert. `classify()`
+fragt dafür zuerst `filterActive()`. Sonst wäre die unberührte Karte vollständig hervorgehoben,
+und Hervorhebung hätte keine Bedeutung mehr.
+
+„ausgeschlossen" schlägt einen Suchtreffer. Wer nach einem Wort sucht und die Kachel für sein
+Projekt ausgeschlossen hat, soll nicht beides gleichzeitig behaupten bekommen.
+
+`matching()` blieb, wie es war: es liefert genau die gesicherten Kacheln, und die beiden Exporte
+nennen die offenen als eigene Zeile „Weitere N Kacheln hängen an Fragen, die noch nicht
+beantwortet sind". Die Zeile ist der Ersatz für das, was der Export vorher stillschweigend
+weggelassen hat.
 
 Zwei Regeln zu den Triggern, die aus einer Prüfung der Daten hervorgingen:
 
