@@ -23,6 +23,8 @@ SAFE_RING = (LATTICE - 1) // 2
 SAFE_CAPACITY = 3 * SAFE_RING * (SAFE_RING + 1)
 DIRS = [(1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1), (0, 1)]
 
+QAWARE_CONFLUENCE = "https://qaware-confluence.atlassian.net/wiki/"
+
 REQUIRED = ("title", "area", "dimension", "what", "why", "triggers")
 
 
@@ -64,6 +66,12 @@ def main(path=None):
             warnings.append(f"{tid}: aliases ist leer, die Kachel ist nur über ihren Titel zu finden")
         if not tile.get("when"):
             warnings.append(f"{tid}: when fehlt, im Checklisten-Export erscheint dann why als Begründung")
+
+    # Verweise ins interne Confluence: nur Titel und Adresse, nie Inhalt, das Repo ist öffentlich.
+    for tid, tile in sorted(data["tiles"].items()):
+        for ref in tile.get("qaware", []):
+            if not ref.get("label") or not ref.get("url", "").startswith(QAWARE_CONFLUENCE):
+                problems.append(f"{tid}: qaware-Verweis braucht label und eine url unter {QAWARE_CONFLUENCE}")
 
     for aid, area in sorted(data["areas"].items()):
         if area["island"] not in data["islands"]:

@@ -290,6 +290,29 @@ Der Preis ist sichtbar: die Farben bilden im Archipel keine Blöcke mehr, und th
 sind ungleich groß, wodurch die Ringe teils halb leer bleiben und mehr Sand zu sehen ist. Bei
 Automotive ist das umgesetzt, die übrigen Archipele sind noch nach Dimension gruppiert.
 
+## Berufsgeheimnisse liegen im Kern
+
+§ 203 StGB stand zweimal in Archipelen, als ärztliche Schweigepflicht bei MedTech und als
+Versicherungsgeheimnis bei Finanzdienstleistungen. Es ist aber ein Paragraf, und er trifft
+ebenso Rechtsanwaltschaft, Steuerberatung und Wirtschaftsprüfung. Er liegt deshalb als eine
+Kachel im Kern und wird über die Datenart „Daten von Berufsgeheimnisträgern" sowie die Branchen
+MedTech und Versicherung ausgelöst.
+
+## Zielgruppe und das eigene Managementsystem
+
+Die Zielgruppe steht in `meta.zielgruppe` und erscheint in der Hilfe: Projektmitglieder bei QAware,
+von Entwicklung bis Projektleitung. Kacheln zu Normen, Schutzbedarf und Klassifizierung verweisen
+deshalb auf das Modell des eigenen Unternehmens, nennen dessen Inhalte aber nicht, weil das Repo
+öffentlich ist.
+
+Die Brücke ins IMS ist das Feld `qaware`, eine Liste aus `label` und `url` je Kachel. Es zeigt in
+der Detailansicht unter „Bei QAware" und in beiden Exporten auf die Richtlinien und Leitfäden im
+internen Confluence. **Nur Seitentitel und Adresse, nie Inhalt aus diesen Seiten**, und keine
+Seiten, deren Titel einen Kunden nennt; davon gibt es im GRC-Bereich mehrere. Das Prüfskript
+lässt nur Adressen unter `qaware-confluence.atlassian.net/wiki/` zu. Verlinkt wird, was ein
+Projektmitglied tatsächlich befolgen muss, also Richtlinien, Leitfäden und Prozesse, nicht
+Notfallkontakte oder Risikoregister.
+
 ## Insel oder Filter, wenn eine Branche zwei Rollen hat
 
 Bank und Versicherung sind **eine Insel mit zwei Branchenoptionen**, nicht zwei Inseln und nicht
@@ -512,7 +535,8 @@ nur die Beschriftungen um. Mit berechneten Koordinaten ist der Schritt nachträg
 
 Der Data Act und der Zugang zu Reparatur- und Wartungsinformationen fehlen noch. Beides ist
 horizontales Recht und gehört deshalb in den Kern, nicht in den Automotive-Archipel, auch wenn
-Automotive dort der Paradefall ist. Im Kern hat `Sicherheits- & Geheimnisschutzrecht` Platz dafür.
+Automotive dort der Paradefall ist. `Sicherheits- & Geheimnisschutzrecht` hat seit SÜG und
+§ 203 nur noch einen freien Platz, für beide zusammen muss der Bereich geteilt werden.
 
 Reifegrad und Verantwortliche pro Kachel, sobald mehrere Personen pflegen.
 

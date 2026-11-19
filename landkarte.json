@@ -8,7 +8,8 @@
     "verwandt": {
       "label": "T-Landkarte (Engineering-Kompetenzen)",
       "url": "https://qa-thomas-kothmayr.github.io/t-landkarte/"
-    }
+    },
+    "zielgruppe": "Projektmitglieder bei QAware, von Entwicklung über Business-Analyse und Architektur bis Projektleitung. Die Karte setzt kein Vorwissen in Datenschutz oder Informationssicherheit voraus und hilft einzuschätzen, was im eigenen Vorhaben zu klären ist und wen man dazu fragt."
   },
   "dimensions": {
     "klassifizierung": {
@@ -487,6 +488,12 @@
           ]
         },
         {
+          "label": "Daten von Berufsgeheimnisträgern (§ 203)",
+          "tags": [
+            "daten:berufsgeheimnis"
+          ]
+        },
+        {
           "label": "Staatliche & kritische Daten",
           "tags": [
             "daten:staatlich"
@@ -780,12 +787,49 @@
       ],
       "aliases": [
         "normal hoch sehr hoch",
+        "vier Stufen",
         "Kritikalität",
-        "Einstufung"
+        "Einstufung",
+        "Schutzklasse"
       ],
-      "what": "Eine abgestufte Einstufung des Schadens bei Verletzung eines Schutzziels, üblicherweise in drei Stufen wie im BSI-Vorgehen.",
+      "what": "Eine abgestufte Einstufung des Schadens bei Verletzung eines Schutzziels. Die Zahl der Stufen ist nicht festgelegt: der BSI-Standard 200-2 nennt drei, viele Unternehmen arbeiten mit vier. Maßgeblich ist das Modell, das im eigenen Unternehmen und beim Kunden gilt.",
       "why": "Ohne Stufen wird alles gleich behandelt, und in der Praxis heißt das entweder überall Maximalschutz oder nirgends. Die Abstufung macht Aufwand verhandelbar und begründbar.",
-      "when": "Sinnvoll, sobald ein System mehrere Datenarten mit unterschiedlichem Risiko enthält."
+      "when": "Sinnvoll, sobald ein System mehrere Datenarten mit unterschiedlichem Risiko enthält. Zuerst klären, welches Stufenmodell gilt, statt ein eigenes zu erfinden; arbeiten Auftraggeber und Dienstleister mit verschiedenen Modellen, die Zuordnung ausdrücklich festhalten.",
+      "qaware": [
+        {
+          "label": "Richtlinie Informationsklassifizierung",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/6063980/Richtlinie+Informationsklassifizierung"
+        }
+      ]
+    },
+    "informationsklassifizierung": {
+      "title": "Informations­klassifizierung",
+      "area": "schutzbedarf",
+      "dimension": "klassifizierung",
+      "triggers": [
+        "immer"
+      ],
+      "aliases": [
+        "Klassifizierung",
+        "Vertraulichkeitsstufen",
+        "öffentlich intern vertraulich streng vertraulich",
+        "Kennzeichnung",
+        "Labeling",
+        "information classification"
+      ],
+      "what": "Die Einordnung von Informationen in festgelegte Vertraulichkeitsklassen samt Kennzeichnung und Regeln für Umgang, Weitergabe und Ablage. In ISO/IEC 27001 ist sie eine eigene Maßnahme im Anhang.",
+      "why": "Sie ist die Form, in der der Schutzbedarf im Alltag ankommt: an der Klasse eines Dokuments oder Datensatzes liest man ab, wo er liegen darf und wer ihn sehen darf, ohne jedes Mal neu zu bewerten.",
+      "when": "Beim Projektstart klären, welches Klassifizierungsschema gilt, das des eigenen Unternehmens, das des Kunden oder beide, und wie die Klassen zueinander passen.",
+      "qaware": [
+        {
+          "label": "Richtlinie Informationsklassifizierung",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/6063980/Richtlinie+Informationsklassifizierung"
+        },
+        {
+          "label": "Leitfaden: Klassifizierung von Informationen",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/23199855/Leitfaden+Klassifizierung+von+Informationen"
+        }
+      ]
     },
     "dsgvo": {
       "title": "DSGVO",
@@ -798,9 +842,15 @@
         "GDPR",
         "Datenschutzgrundverordnung"
       ],
-      "what": "Die europäische Grundverordnung für die Verarbeitung personenbezogener Daten, mit Grundsätzen wie Rechtmäßigkeit, Zweckbindung, Datenminimierung, Speicherbegrenzung und Rechenschaftspflicht.",
+      "what": "Die europäische Grundverordnung für die Verarbeitung personenbezogener Daten, mit Grundsätzen wie Rechtmäßigkeit, Zweckbindung, Datenminimierung, Speicherbegrenzung und Rechenschaftspflicht. Als Verordnung gilt sie unmittelbar in jedem Mitgliedstaat, ohne nationales Umsetzungsgesetz.",
       "why": "Sie ist der gemeinsame Bezugsrahmen für fast alles auf dieser Karte. Wer die Grundsätze aus Art. 5 kennt, kann die meisten Detailfragen selbst einordnen.",
-      "when": "Sobald personenbezogene Daten verarbeitet werden, unabhängig von Branche und Unternehmensgröße."
+      "when": "Sobald personenbezogene Daten verarbeitet werden, unabhängig von Branche und Unternehmensgröße.",
+      "qaware": [
+        {
+          "label": "Richtlinie Datenschutz",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/705626120/Richtlinie+Datenschutz"
+        }
+      ]
     },
     "bdsg": {
       "title": "BDSG",
@@ -810,10 +860,12 @@
         "pb:ja"
       ],
       "aliases": [
-        "Bundesdatenschutzgesetz"
+        "Bundesdatenschutzgesetz",
+        "Öffnungsklausel",
+        "nationales Datenschutzrecht"
       ],
-      "what": "Die deutsche Ergänzung zur DSGVO, unter anderem zu Beschäftigtendaten, Videoüberwachung, Datenschutzbeauftragten und einzelnen Verarbeitungsbefugnissen.",
-      "why": "Die DSGVO lässt nationale Spielräume. Bei Beschäftigtendaten oder Aufsichtsfragen steht die relevante Regel oft erst hier.",
+      "what": "Das deutsche Gesetz, das die DSGVO ergänzt und konkretisiert, wo sie den Mitgliedstaaten Spielraum lässt, etwa bei Beschäftigtendaten, Videoüberwachung, Datenschutzbeauftragten und einzelnen Verarbeitungsbefugnissen. Es wiederholt die DSGVO nicht und kann ihr nicht widersprechen.",
+      "why": "Die Reihenfolge beim Nachschlagen ist damit fest: zuerst die DSGVO, dann im BDSG prüfen, ob eine Öffnungsklausel genutzt wurde. Bei Beschäftigtendaten oder Aufsichtsfragen steht die entscheidende Regel oft erst dort. Für öffentliche Stellen der Länder treten die Landesdatenschutzgesetze an seine Stelle.",
       "when": "Relevant bei deutschem Verantwortlichen, besonders bei Mitarbeiterdaten."
     },
     "betroffenenrechte": {
@@ -849,7 +901,13 @@
       ],
       "what": "Der Vertrag zwischen Verantwortlichem und Dienstleister, der Zweck, Umfang, Weisungsbindung, Subunternehmer und Sicherheitsmaßnahmen der Verarbeitung festlegt.",
       "why": "Für Beratungsprojekte ist das der eigene Rollenrahmen. Jeder eingesetzte Cloud-Dienst, Monitoring-Anbieter oder KI-Endpunkt ist ein Auftragsverarbeiter oder Subunternehmer und muss abgedeckt sein.",
-      "when": "Vor jedem neuen Dienst im Datenpfad prüfen, ob er vertraglich abgedeckt ist."
+      "when": "Vor jedem neuen Dienst im Datenpfad prüfen, ob er vertraglich abgedeckt ist.",
+      "qaware": [
+        {
+          "label": "Ausfüllhilfe AVV-Vorlage",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/2341666832/Ausf+llhilfe+AVV-Vorlage+Auftragsverarbeitungsvertrag"
+        }
+      ]
     },
     "tom": {
       "title": "Technische & organisatorische Maßnahmen (Art. 32)",
@@ -897,7 +955,13 @@
       ],
       "what": "Die Pflicht, eine Verletzung des Schutzes personenbezogener Daten unverzüglich und möglichst innerhalb von 72 Stunden der Aufsichtsbehörde zu melden, bei hohem Risiko zusätzlich die Betroffenen zu informieren.",
       "why": "Die Frist zwingt zu Vorbereitung. Wer im Vorfall erst herausfinden muss, welche Datensätze betroffen sind, hält 72 Stunden nicht ein.",
-      "when": "Die Pflicht steht hier, der Prozess dazu liegt in Dimension 4 unter Incident Response."
+      "when": "Die Pflicht steht hier, der Prozess dazu liegt in Dimension 4 unter Incident Response.",
+      "qaware": [
+        {
+          "label": "Incidents erkennen und melden",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/2288058426/Incidents+erkennen+und+melden"
+        }
+      ]
     },
     "drittlandtransfer": {
       "title": "Drittlandtransfer (Schrems II, SCC)",
@@ -964,8 +1028,14 @@
         "NIS2UmsuCG"
       ],
       "what": "Die europäische Richtlinie zur Cybersicherheit, die für betroffene Einrichtungen Risikomanagement, Meldepflichten bei Sicherheitsvorfällen und Verantwortung der Leitungsebene vorschreibt.",
-      "why": "Sie erweitert den Kreis der betroffenen Unternehmen deutlich über die klassischen kritischen Infrastrukturen hinaus, und viele Kunden wissen selbst nicht, ob sie darunter fallen.",
-      "when": "Betroffenheit früh mit dem Kunden klären. Diese Kachel erscheint in jedem Projekt, weil die Betroffenheit zu prüfen ist, nicht weil NIS-2 überall gilt. Die nationale Umsetzung und deren Zeitplan bitte aktuell prüfen."
+      "why": "Sie erweitert den Kreis der betroffenen Unternehmen deutlich über die klassischen kritischen Infrastrukturen hinaus, und viele Kunden wissen selbst nicht, ob sie darunter fallen. Betroffen sein kann auch der Dienstleister selbst: IT-Dienstleister fallen je nach Leistung und Größe eigenständig darunter, und dann gelten Risikomanagement und Meldepflichten auch für die eigene Arbeit im Projekt.",
+      "when": "Betroffenheit früh mit dem Kunden klären. Diese Kachel erscheint in jedem Projekt, weil die Betroffenheit zu prüfen ist, nicht weil NIS-2 überall gilt. Die nationale Umsetzung und deren Zeitplan bitte aktuell prüfen.",
+      "qaware": [
+        {
+          "label": "Incidents erkennen und melden",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/2288058426/Incidents+erkennen+und+melden"
+        }
+      ]
     },
     "cra": {
       "title": "Cyber Resilience Act",
@@ -997,6 +1067,50 @@
       "why": "Ohne dokumentierte Schutzmaßnahmen ist ein Geheimnis rechtlich kein Geheimnis. Das macht Zugriffsbeschränkung und Vertraulichkeitsvereinbarungen zur Voraussetzung des Schutzes, nicht zur Kür.",
       "when": "Sobald Kunden-Know-how, Quellcode oder Kalkulationen im Projekt liegen."
     },
+    "geheimschutz": {
+      "title": "Staatlicher Geheimschutz (SÜG)",
+      "area": "sicherheitsrecht",
+      "dimension": "regulatorik",
+      "triggers": [
+        "daten:staatlich"
+      ],
+      "aliases": [
+        "SÜG",
+        "Sicherheitsüberprüfung",
+        "Sicherheitsüberprüfungsgesetz",
+        "Geheimschutz",
+        "Geheimschutzbetreuung",
+        "Geheimschutzhandbuch",
+        "VSA",
+        "Verschlusssachen"
+      ],
+      "what": "Die Regeln für den Umgang mit staatlichen Verschlusssachen: die Verschlusssachenanweisung für Behörden, das Sicherheitsüberprüfungsgesetz für Personen, die Zugang erhalten, und für Unternehmen die Geheimschutzbetreuung durch den Bund.",
+      "why": "Ab bestimmten Einstufungen darf nur arbeiten, wer sicherheitsüberprüft ist, und ein Unternehmen braucht dafür eine eigene Geheimschutzorganisation. Das bestimmt Teamzusammensetzung und Vorlaufzeit, bevor überhaupt eine Zeile Code entsteht.",
+      "when": "Sobald ein Auftrag Verschlusssachen berührt, auch außerhalb der Verwaltung, etwa in Verteidigung und Rüstung. Welche Stufe welche Überprüfung verlangt, bitte an der Quelle oder bei den Geheimschutzbeauftragten prüfen."
+    },
+    "berufsgeheimnis": {
+      "title": "Berufs­geheimnisse (§ 203 StGB)",
+      "area": "sicherheitsrecht",
+      "dimension": "regulatorik",
+      "triggers": [
+        "daten:berufsgeheimnis",
+        "branche:medtech",
+        "branche:versicherung"
+      ],
+      "aliases": [
+        "§ 203",
+        "§ 203 StGB",
+        "Berufsgeheimnisträger",
+        "Schweigepflicht",
+        "ärztliche Schweigepflicht",
+        "Versicherungsgeheimnis",
+        "Privatgeheimnis",
+        "mitwirkende Personen"
+      ],
+      "what": "Die strafrechtlich abgesicherte Verschwiegenheit von Berufsgeheimnisträgern, unter anderem Ärztinnen und Ärzten, Psychotherapie, Rechtsanwaltschaft, Steuerberatung und Wirtschaftsprüfung sowie Angehörigen privater Kranken-, Unfall- und Lebensversicherungen. Über die Regelung zu mitwirkenden Personen erfasst sie auch externe Dienstleister.",
+      "why": "Hier wird Datenschutz zu Strafrecht, und die Pflicht trifft die einzelne Person, nicht nur das Unternehmen. Ein Auftragsverarbeitungsvertrag reicht nicht: Dienstleister müssen zur Verschwiegenheit verpflichtet werden und diese Pflicht an jede weitere beteiligte Person weitergeben, und der Zugriff bleibt auf das Erforderliche begrenzt.",
+      "when": "Sobald ein Projekt für einen Berufsgeheimnisträger Daten berührt, die unter das Geheimnis fallen, auch nur bei Support und Fehlersuche. Die Verpflichtung gehört vor den ersten Zugriff."
+    },
     "tdddg": {
       "title": "TDDDG (Telemetrie & Einwilligung)",
       "area": "datenschutzrecht",
@@ -1027,8 +1141,14 @@
         "Informationssicherheitsmanagement"
       ],
       "what": "Die Norm für ein Managementsystem für Informationssicherheit, also den Rahmen, in dem Risiken erfasst, Maßnahmen beschlossen, dokumentiert und regelmäßig überprüft werden.",
-      "why": "Sie ist der Ort, an dem Regeln und Vorgaben eines Unternehmens überhaupt festgehalten werden. Für einzelne Projekte ist sie selten zentral, sie erklärt aber, warum der Kunde bestimmte Nachweise verlangt.",
-      "when": "Relevant, wenn der Kunde zertifiziert ist oder es werden will. Dann kommen Nachweispflichten ins Projekt."
+      "why": "Ein ISMS legt fest, wie ein Unternehmen Informationssicherheit steuert, und seine Vorgaben gelten für jedes Projekt, nicht nur für zertifizierungsnahe. Gut eingeführt, stecken sie in Prozessen und Arbeitsweisen und werden im Alltag kaum als eigene ISO-Vorgaben wahrgenommen. Beim Kunden erklärt dasselbe Prinzip, warum er bestimmte Nachweise verlangt.",
+      "when": "Immer dann, wenn man wissen will, woher eine Sicherheitsvorgabe im Projekt kommt: zuerst im Managementsystem des eigenen Unternehmens nachsehen. Ist der Kunde zertifiziert oder will es werden, kommen zusätzlich seine Nachweispflichten ins Projekt.",
+      "qaware": [
+        {
+          "label": "Integriertes Managementsystem",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QAWAREIMS/overview"
+        }
+      ]
     },
     "iso27701": {
       "title": "ISO/IEC 27701",
@@ -1043,9 +1163,9 @@
         "PIMS",
         "Datenschutzmanagement"
       ],
-      "what": "Die Erweiterung von ISO/IEC 27001 und 27002 auf den Schutz personenbezogener Daten, mit getrennten Anforderungen für Verantwortliche und Auftragsverarbeiter.",
+      "what": "Die Norm für ein Managementsystem zum Schutz personenbezogener Daten, mit getrennten Anforderungen für Verantwortliche und Auftragsverarbeiter. Ursprünglich eine Erweiterung von ISO/IEC 27001, in der aktuellen Fassung eine eigenständige Managementsystemnorm, die auch ohne ISO/IEC 27001 zertifiziert werden kann.",
       "why": "Sie übersetzt Datenschutzpflichten in die Sprache eines Managementsystems und ist damit die Brücke zwischen Datenschutzrecht und bestehender Sicherheitsorganisation.",
-      "when": "Nützlich, wenn ein Kunde ISO 27001 schon lebt und Datenschutz sauber anschließen will."
+      "when": "Wenn Datenschutz als Managementsystem nachgewiesen werden soll, allein oder zusammen mit einem ISMS. Welche Fassung ein Zertifikat zugrunde legt und welche Übergangsfristen gelten, bitte an der Quelle prüfen."
     },
     "bsi-c5": {
       "title": "BSI C5",
@@ -1062,6 +1182,31 @@
       "what": "Der Kriterienkatalog des BSI für Cloud-Dienste, gegen den Anbieter sich prüfen lassen und darüber einen Testatbericht vorlegen.",
       "why": "Er gibt eine belastbare Antwort auf die Frage, was ein Cloud-Anbieter tatsächlich zusichert, und ersetzt Marketingaussagen durch prüfbare Kriterien.",
       "when": "Bei der Auswahl von Cloud-Diensten für sensible Daten den C5-Bericht anfordern und die Zuständigkeitsgrenzen darin lesen."
+    },
+    "iso22301": {
+      "title": "ISO 22301 & BCMS",
+      "area": "normen",
+      "dimension": "regulatorik",
+      "triggers": [
+        "nachweis:ja"
+      ],
+      "aliases": [
+        "ISO 22301",
+        "BCM",
+        "BCMS",
+        "Business Continuity Management",
+        "Notfallmanagement",
+        "Geschäftsfortführung"
+      ],
+      "what": "Die Norm für ein Managementsystem zur Aufrechterhaltung des Geschäftsbetriebs, mit Business-Impact-Analyse, Notfall- und Wiederanlaufplänen sowie regelmäßigen Übungen.",
+      "why": "Sie deckt das Schutzziel Verfügbarkeit auf der Ebene der Organisation ab, das ein ISMS allein oft nur streift. Zusammen mit ISO/IEC 27001 und ISO/IEC 27701 bildet sie häufig ein integriertes Managementsystem, aus dem Vorgaben für Projekte folgen.",
+      "when": "Wenn das Projekt Systeme baut oder betreibt, deren Ausfall den Kunden in seinem Kerngeschäft trifft, oder wenn Wiederanlaufzeiten vertraglich zugesagt werden. Dann zuerst nachsehen, was das eigene Managementsystem und das des Kunden dazu vorgeben.",
+      "qaware": [
+        {
+          "label": "Business Continuity Strategie & Resilienzstrukturen",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QAWAREIMS/pages/650313735/Business+Continuity+Strategie+Resilienzstrukturen"
+        }
+      ]
     },
     "datenminimierung": {
       "title": "Datenminimierung",
@@ -1501,7 +1646,13 @@
       ],
       "what": "Der geübte Ablauf von Erkennung über Eingrenzung und Bewertung bis zur Meldung und Nachbereitung, mit benannten Rollen und Erreichbarkeiten.",
       "why": "Der Prozess entscheidet, ob die rechtliche Pflicht aus Art. 33 einhaltbar ist. Die Bewertung, welche Datensätze betroffen sind, ist dabei der aufwendigste Schritt.",
-      "when": "Einmal trocken durchspielen. Der Prozess gehört hierher, die Meldepflicht selbst steht in Dimension 2."
+      "when": "Einmal trocken durchspielen. Der Prozess gehört hierher, die Meldepflicht selbst steht in Dimension 2.",
+      "qaware": [
+        {
+          "label": "Incidents erkennen und melden",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/2288058426/Incidents+erkennen+und+melden"
+        }
+      ]
     },
     "aufbewahrungsfristen": {
       "title": "Aufbewahrungs- & Löschfristen",
@@ -1570,7 +1721,13 @@
       ],
       "what": "Die unterschriebene Verpflichtung einzelner Personen zur Vertraulichkeit und zur Einhaltung der einschlägigen Regeln, oft samt Belehrung über die Folgen.",
       "why": "Das ist keine Formalie, sondern eine Folge aus der Regulatorik und Voraussetzung dafür, dass Personen überhaupt ordentlich informiert sind. Beim Geheimnisschutz ist die dokumentierte Verpflichtung sogar Bedingung des rechtlichen Schutzes.",
-      "when": "Vor dem ersten Zugriff auf sensible Daten, nicht nach dem Projektstart."
+      "when": "Vor dem ersten Zugriff auf sensible Daten, nicht nach dem Projektstart.",
+      "qaware": [
+        {
+          "label": "Richtlinie Informationssicherheit in Projekten",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/7307349/Richtlinie+Informationssicherheit+in+Projekten"
+        }
+      ]
     },
     "schulungsnachweise": {
       "title": "Schulungs­nachweise",
@@ -1587,7 +1744,13 @@
       ],
       "what": "Regelmäßige Unterweisung der beteiligten Personen zu Datenschutz und Informationssicherheit samt nachvollziehbarer Dokumentation.",
       "why": "Im Audit ist die Frage nicht, ob geschult wurde, sondern ob es belegbar ist. Für das Projekt ist der eigentliche Wert, dass Beteiligte sensible Daten überhaupt erkennen.",
-      "when": "Vom Kunden häufig als Nachweis für externe Projektbeteiligte verlangt."
+      "when": "Vom Kunden häufig als Nachweis für externe Projektbeteiligte verlangt.",
+      "qaware": [
+        {
+          "label": "Training- und Awarenessprogramm",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/1053458434/Training-+und+Awarenessprogramm+zur+Informationssicherheit+Compliance+Business+Continuity"
+        }
+      ]
     },
     "schutzbedarfsfeststellung": {
       "title": "Schutzbedarfs­feststellung",
@@ -1603,7 +1766,17 @@
       ],
       "what": "Ein strukturiertes Vorgehen, um für jede Datenart und jedes Verfahren den Schutzbedarf entlang der Schutzziele zu bestimmen und zu begründen.",
       "why": "Es ist der Einstiegspunkt in diese Karte. Ohne diese Einordnung fehlt die Grundlage für jede Verhältnismäßigkeitsentscheidung, und die Diskussion endet bei Bauchgefühl.",
-      "when": "Ganz am Anfang, und erneut bei jeder neuen Datenquelle im Projekt."
+      "when": "Ganz am Anfang, und erneut bei jeder neuen Datenquelle im Projekt.",
+      "qaware": [
+        {
+          "label": "Richtlinie Informationssicherheit in Projekten",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/7307349/Richtlinie+Informationssicherheit+in+Projekten"
+        },
+        {
+          "label": "Projektsteckbrief für Kunden- und interne Projekte",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/691372063/Projektsteckbrief+f+r+Kunden-+und+interne+Projekte"
+        }
+      ]
     },
     "dsfa": {
       "title": "Datenschutz-Folgeabschätzung (DSFA)",
@@ -1726,7 +1899,13 @@
       "what": "Die Verankerung von Sicherheits- und Datenschutzschritten in den normalen Entwicklungsablauf, von Anforderung über Review bis Release.",
       "why": "Einmalige Prüfungen veralten mit dem nächsten Sprint. Verankert im Ablauf wird aus einer Prüfung eine Eigenschaft des Vorgehens.",
       "when": "Klein anfangen, etwa mit einer Frage zu sensiblen Daten in der Definition of Done.",
-      "tlandkarte": "Security-by-Design"
+      "tlandkarte": "Security-by-Design",
+      "qaware": [
+        {
+          "label": "Richtlinie Sichere Softwareentwicklung",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/671088641/Richtlinie+Sichere+Softwareentwicklung"
+        }
+      ]
     },
     "pipeline-werkzeuge": {
       "title": "Sicherheits­werkzeuge in der Pipeline",
@@ -1827,23 +2006,6 @@
       "what": "Alle Daten über den Gesundheitszustand einer Person, von Diagnose und Medikation über Vitalwerte bis zu Abrechnungsziffern, aus denen sich eine Behandlung ableiten lässt.",
       "why": "Sie fallen unter Art. 9 und zusätzlich unter berufsrechtliche Schweigepflicht. Die Kombination macht sie zum am strengsten geschützten Datentyp im Alltag von Softwareprojekten.",
       "when": "Auch Metadaten verraten viel. Der Termin bei einer Fachpraxis oder eine Abrechnungsziffer ist bereits ein Gesundheitsdatum."
-    },
-    "schweigepflicht": {
-      "title": "Ärztliche Schweigepflicht (§ 203 StGB)",
-      "area": "medtech-reg-de",
-      "dimension": "regulatorik",
-      "triggers": [
-        "branche:medtech"
-      ],
-      "aliases": [
-        "§ 203",
-        "Berufsgeheimnis",
-        "Schweigepflicht",
-        "mitwirkende Personen"
-      ],
-      "what": "Die strafrechtlich abgesicherte Verschwiegenheitspflicht von Berufsgeheimnisträgern, die über die Regelung zu mitwirkenden Personen auch externe Dienstleister erfasst.",
-      "why": "Das ist der Punkt, an dem Datenschutz von Verwaltungsrecht zu Strafrecht wird. Für Dienstleister und Entwicklungsteams bedeutet es eigene Verpflichtungserklärungen und sehr enge Zugriffsgrenzen.",
-      "when": "Sobald ein Projekt für Praxis, Klinik oder Berufsgeheimnisträger auf Patientendaten zugreift, auch nur zur Fehlersuche."
     },
     "sgbv": {
       "title": "SGB V",
@@ -2109,7 +2271,13 @@
       ],
       "what": "Alles, was einem Modell übergeben wird, also Nutzereingaben, angehängte Dokumente, abgerufene Wissensausschnitte, Werkzeugergebnisse und Verlaufsdaten.",
       "why": "Das ist der am leichtesten übersehene Datenabfluss. Ein Dokumentenanhang oder ein Suchtreffer aus dem internen Wissensspeicher verlässt damit das System, ohne dass es wie ein Export aussieht.",
-      "when": "Bei jeder Modellanbindung prüfen, was tatsächlich im Kontext landet, nicht nur was der Nutzer tippt."
+      "when": "Bei jeder Modellanbindung prüfen, was tatsächlich im Kontext landet, nicht nur was der Nutzer tippt.",
+      "qaware": [
+        {
+          "label": "Richtlinie Einsatz von KI-Tools",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/163446804/Richtlinie+Einsatz+von+KI-Tools"
+        }
+      ]
     },
     "trainingsdaten": {
       "title": "Trainings- & Feinabstimmungs­daten",
@@ -2762,7 +2930,13 @@
       ],
       "what": "Die wiederkehrende Prüfung, ob ein Auftragsverarbeiter die zugesagten Maßnahmen tatsächlich einhält, über eingeforderte Nachweise oder ein ausgeübtes Auditrecht.",
       "why": "Der Vertrag nach Art. 28 begründet ein Prüfrecht, aber kein Prüfergebnis. Wer nie prüft, hat die Pflicht auf dem Papier erfüllt und trägt die Verantwortung weiter. Bei Unterauftragnehmern reicht die Kette außerdem oft tiefer, als der Vertrag abbildet.",
-      "when": "Nach dem Vertragsschluss und dann in festem Takt. Beim Projektstart klären, welche Nachweise es schon gibt und wie alt sie sind."
+      "when": "Nach dem Vertragsschluss und dann in festem Takt. Beim Projektstart klären, welche Nachweise es schon gibt und wie alt sie sind.",
+      "qaware": [
+        {
+          "label": "Richtlinie Dienstleistermanagement",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/1359347713/Richtlinie+Dienstleistermanagement"
+        }
+      ]
     },
     "wirksamkeitspruefung": {
       "title": "Wirksamkeit der Maßnahmen prüfen",
@@ -2981,25 +3155,6 @@
       "what": "Das Recht des Versicherungsvertrags, unter anderem mit den Anzeige- und Informationspflichten und der Pflicht, die Beratung zu dokumentieren.",
       "why": "Es bestimmt, welche Angaben erhoben werden dürfen und müssen, in welcher Form Erklärungen wirksam sind und was aufzubewahren ist. Damit greift es direkt in Datenmodell und Aufbewahrung ein, unabhängig vom Datenschutz.",
       "when": "Beim Entwurf von Antrags-, Beratungs- und Vertragsstrecken. Die Dokumentationspflicht ist der Teil, der in der Architektur regelmäßig fehlt."
-    },
-    "versicherungsgeheimnis": {
-      "title": "Versicherungs­geheimnis (§ 203 StGB)",
-      "area": "finance-geheimnis",
-      "dimension": "regulatorik",
-      "triggers": [
-        "branche:versicherung",
-        "daten:art9"
-      ],
-      "aliases": [
-        "Versicherungsgeheimnis",
-        "§ 203 StGB",
-        "Privatgeheimnis",
-        "Schweigepflicht Versicherung",
-        "mitwirkende Personen"
-      ],
-      "what": "Die strafrechtlich bewehrte Schweigepflicht, die für Angehörige eines Unternehmens der privaten Kranken-, Unfall- oder Lebensversicherung gilt.",
-      "why": "Sie trifft die Personen und nicht nur das Unternehmen, und sie gilt zusätzlich zum Datenschutz. Für Dienstleister heißt das, dass ein Zugriff auf solche Daten strafrechtlich relevant werden kann und sich nicht allein über einen Auftragsverarbeitungsvertrag regeln lässt.",
-      "when": "Sobald Kranken-, Unfall- oder Lebensversicherungsdaten berührt werden, auch bei Support und Fehleranalyse. Wie Dienstleister einzubeziehen sind, gehört vorher geklärt."
     },
     "gdv-verhaltensregeln": {
       "title": "GDV-Verhaltensregeln",

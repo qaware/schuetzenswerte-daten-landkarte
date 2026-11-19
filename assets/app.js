@@ -871,7 +871,11 @@ function exportChecklist() {
     const list = byDim[key];
     if (!list) continue;
     md += `\n## ${dim.label}\n\n`;
-    for (const t of list) md += `- [ ] **${plain(t.title)}** — ${plain(t.when || t.why)}\n`;
+    for (const t of list) {
+      md += `- [ ] **${plain(t.title)}** — ${plain(t.when || t.why)}\n`;
+      if (t.qaware?.length) md += `  Bei QAware: `
+        + t.qaware.map(r => `[${r.label}](${r.url})`).join(', ') + `\n`;
+    }
   }
 
   liefern(md, 'checkliste-schuetzenswerte-daten.md', hits.length + ' Kacheln');
@@ -916,6 +920,8 @@ function exportAgentContext() {
       md += `Warum: ${plain(t.why)}\n`;
       if (t.when) md += `Wann relevant: ${plain(t.when)}\n`;
       if (t.tlandkarte) md += `Allgemeines Handwerkszeug dazu: T-Landkarte, ${t.tlandkarte}\n`;
+      if (t.qaware?.length) md += `Bei QAware geregelt (internes Confluence): `
+        + t.qaware.map(r => `${r.label} ${r.url}`).join('; ') + `\n`;
     }
   }
   liefern(md, 'agenten-kontext-schuetzenswerte-daten.md', hits.length + ' Kacheln');
@@ -1004,6 +1010,26 @@ function openDetail(entry) {
     body.append(h, p);
   }
 
+  /* Die Verweise nennen nur, wo es bei QAware geregelt ist, nicht was dort steht: das Repo
+     ist öffentlich, die Seiten dahinter nicht. */
+  if (t.qaware?.length) {
+    const h = document.createElement('h3');
+    h.textContent = 'Bei QAware';
+    const p = document.createElement('p');
+    p.append('Wie das bei uns geregelt ist, steht im Confluence: ');
+    t.qaware.forEach((ref, i) => {
+      if (i) p.append(', ');
+      const a = document.createElement('a');
+      a.href = ref.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = ref.label;
+      p.appendChild(a);
+    });
+    p.append('.');
+    body.append(h, p);
+  }
+
   document.getElementById('detail-triggers').textContent =
     'Wird relevant bei: ' + t.triggers.map(tagLabel).join(', ');
 
@@ -1036,6 +1062,8 @@ function openHelp() {
 
   body.append(el('p', 'Die Karte hilft beim Einordnen. Sie ist kein Framework, kein Prozess '
     + 'und kein Rechtsrat.'));
+
+  if (d.meta.zielgruppe) abschnitt('Für wen', el('p', d.meta.zielgruppe));
 
   abschnitt('Drei Achsen',
     el('p', 'Jede Kachel steht an drei Stellen zugleich, und die drei Achsen sind voneinander '

@@ -8,6 +8,10 @@ kennen sollte, ist es gut, wenn es auf der Karte steht.
 
 Das Ziel ist Orientierung und Wissensaufbau, kein Prozess und kein Framework.
 
+**Für wen:** Projektmitglieder bei QAware, von Entwicklung über Business-Analyse und Architektur bis
+Projektleitung. Die Karte setzt kein Vorwissen in Datenschutz oder Informationssicherheit voraus.
+Der Text dazu steht in `meta.zielgruppe` und erscheint in der Hilfe.
+
 **Kein Rechtsrat.** Verbindliche Aussagen kommen von Datenschutzbeauftragten, Legal und den
 zuständigen Aufsichtsbehörden. Regulatorik veraltet, Stand und Fristen bitte an der Quelle prüfen.
 
@@ -85,6 +89,16 @@ neue Frage ist deshalb eine reine Datenänderung, ohne Eingriff in den Code.
 `triggers` steuert den Projektfilter, mehrere Tags wirken als Oder-Verknüpfung. `immer` heißt, dass
 die Kachel in jedem Projekt mit schützenswerten Daten zu klären ist. `aliases` ist für die Suche da
 und der Grund, warum jemand die Kachel auch findet, wenn er ein anderes Wort benutzt.
+
+`qaware` ist optional und verweist auf die Seiten im internen Confluence, in denen QAware das
+Thema regelt, etwa die Richtlinie zur Informationsklassifizierung. Es stehen nur Titel und
+Adresse darin, kein Inhalt; ohne QAware-Zugang führen die Links ins Leere.
+
+```json
+"qaware": [
+  { "label": "Richtlinie Informationsklassifizierung", "url": "https://qaware-confluence.atlassian.net/wiki/spaces/..." }
+]
+```
 
 In `meta` steht neben Titel und Disclaimer die Adresse `quelle`, unter der die Datei öffentlich
 liegt. Sie ist Teil der Schnittstelle: der Agenten-Kontext gibt sie mit, damit ein Modell bei
