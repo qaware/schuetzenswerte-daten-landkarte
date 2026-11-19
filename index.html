@@ -30,12 +30,14 @@
   <header id="titleblock" class="scrim">
     <h1>Umgang mit besonders schützenswerten Daten</h1>
     <p id="subtitle"></p>
+    <p id="start-hint">Wo anfangen? Unter <strong>Mein Projekt</strong> beantworten, was du
+      über dein Vorhaben weißt. Die Karte zeigt dann, was gilt und wann es zu klären ist.</p>
   </header>
 
   <div id="toolbar">
     <div class="field">
       <label for="search" class="visually-hidden">Suchen</label>
-      <input id="search" type="search" placeholder="Suchen, etwa Verschlüsselung oder DSFA" autocomplete="off" spellcheck="false">
+      <input id="search" type="search" placeholder="Suchen, etwa DSFA" autocomplete="off" spellcheck="false">
     </div>
     <button id="btn-project" type="button" aria-expanded="false" aria-controls="project">Mein Projekt</button>
     <button id="btn-help" type="button">Hilfe</button>
@@ -44,14 +46,18 @@
 
   <section id="project" hidden aria-labelledby="project-heading">
     <h2 id="project-heading">Was gilt für mein Projekt?</h2>
-    <p class="hint">Beantworte, was auf dein Vorhaben zutrifft. Jede Frage steht anfangs auf
-      „offen“ und engt nichts ein. Danach zeigt die Karte drei Zustände:
-      <strong>hervorgehoben</strong> gilt für dein Vorhaben sicher, <strong>blass</strong> ist
-      ausgeschlossen, und was normal bleibt, hängt an einer Frage, die noch offen ist.</p>
+    <p class="hint">Beantworte, was du weißt, der Rest bleibt „offen“. Auf der Karte gilt
+      <strong>kräftig</strong> sicher, <strong>halb</strong> hängt an einer offenen Frage,
+      <strong>blass</strong> gilt nicht.</p>
+    <details id="result" hidden>
+      <summary id="result-summary"></summary>
+      <div id="result-list"></div>
+    </details>
     <div id="project-fields"></div>
     <div class="project-actions">
       <button id="btn-export" type="button">Als Checkliste kopieren</button>
       <button id="btn-agent" type="button">Als Agenten-Kontext kopieren</button>
+      <button id="btn-share" type="button">Link zu dieser Auswahl kopieren</button>
       <button id="btn-reset" type="button" class="ghost">Auswahl zurücksetzen</button>
     </div>
     <p class="hint" id="export-status" aria-live="polite"></p>
@@ -83,6 +89,7 @@
     <p id="detail-place"></p>
     <div id="detail-body"></div>
     <p id="detail-triggers"></p>
+    <button id="detail-link" type="button" class="ghost">Link zu dieser Kachel kopieren</button>
   </article>
 </div>
 

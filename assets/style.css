@@ -20,6 +20,10 @@
 
 * { box-sizing: border-box; }
 
+/* Mehrere Elemente setzen eine eigene display-Regel und würden das Attribut hidden damit
+   überstimmen. So stand in der Hilfe ein leerer Dimensionschip über dem Titel. */
+[hidden] { display: none !important; }
+
 html, body {
   height: 100%;
   margin: 0;
@@ -189,6 +193,9 @@ body.world .area-label { opacity: 0; }
    hervorgehobenen sind also ohnehin das Einzige, was noch kräftig zu sehen ist. Der
    dickere Rand genügt als Betonung. */
 .marked .hex { stroke-width: 4; }
+/* Offen, solange ein Filter wirkt: hängt noch an einer unbeantworteten Frage. Halb
+   zurückgenommen, damit die gesicherten Kacheln dagegen sichtbar hervortreten. */
+.pending { opacity: .45; transition: opacity .18s ease; }
 
 /* ---------- Panels ---------- */
 
@@ -219,6 +226,16 @@ body.world .area-label { opacity: 0; }
   color: var(--paper);
 }
 #subtitle { margin: 6px 0 0; font-size: 13px; color: #9fb4bb; }
+/* Kontrast gegen den Schleier über Sand, #323d3e: 5.1 zu 1 */
+#start-hint {
+  margin: 10px 0 0;
+  padding-top: 9px;
+  border-top: 1px solid #2c4650;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #9fb4bb;
+}
+#start-hint strong { color: #e4ecee; font-weight: 600; }
 
 #toolbar {
   position: absolute;
@@ -269,8 +286,9 @@ button.ghost { background: transparent; }
 #project {
   position: absolute;
   top: 74px; right: 24px;
-  width: 330px;
-  max-height: calc(100% - 110px);
+  width: 340px;
+  /* lässt unten Platz für die Zoomknöpfe */
+  max-height: calc(100% - 150px);
   overflow-y: auto;
   padding: 18px 20px 20px;
   background: var(--paper);
@@ -288,7 +306,7 @@ button.ghost { background: transparent; }
 }
 .hint { margin: 0 0 14px; font-size: 12.5px; color: #5f6b62; line-height: 1.45; }
 
-.qgroup { margin-bottom: 16px; }
+.qgroup { margin-bottom: 13px; }
 .qgroup > p {
   margin: 0 0 7px;
   font-size: 13px;
@@ -342,6 +360,48 @@ button.ghost { background: transparent; }
 }
 #project .project-actions button:hover { background: #eee9db; }
 #export-status { margin: 10px 0 0; min-height: 1.2em; }
+
+#result {
+  margin: 4px 0 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--paper-edge);
+  border-radius: 3px;
+  background: #fbf9f3;
+}
+#result summary {
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#result[open] { max-height: 46vh; overflow-y: auto; }
+#result h3 {
+  margin: 12px 0 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #6c766f;
+}
+#result ul { list-style: none; margin: 0; padding: 0; }
+#project .result-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+  padding: 3px 4px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-size: 13px;
+  text-align: left;
+}
+#project .result-item:hover { background: #eee9db; }
+.result-item .swatch {
+  flex: 0 0 auto;
+  width: 10px; height: 10px;
+  border: 1px solid var(--ink);
+  transform: translateY(1px);
+}
 
 #legend {
   position: absolute;
@@ -456,6 +516,7 @@ button.ghost { background: transparent; }
   color: #46524b;
 }
 #detail-body p { margin: 0; max-width: 62ch; }
+#detail-body p + p { margin-top: 8px; }
 
 /* Aufzählungen in der Hilfe: dieselben Farbfelder wie in der Legende, nur auf hellem
    Grund und deshalb ohne die dortigen Textfarben. */
@@ -482,13 +543,40 @@ button.ghost { background: transparent; }
   font-size: 12px;
   color: #6c766f;
 }
+#detail-link {
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-color: var(--paper-edge);
+  color: #3b4640;
+  font-size: 12.5px;
+}
+#detail-link:hover { background: #eee9db; }
+#detail-body .help-part {
+  margin-top: 30px;
+  padding-top: 16px;
+  border-top: 1px solid var(--paper-edge);
+  font-family: var(--font-map);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--ink);
+}
 
 @media (max-width: 900px) {
-  #titleblock { max-width: 20ch; }
-  #titleblock h1 { font-size: 19px; }
-  #toolbar { top: auto; bottom: 78px; left: 16px; right: 16px; flex-wrap: wrap; }
+  #titleblock { top: 12px; left: 12px; right: 12px; max-width: none; padding: 8px 12px 10px; }
+  #titleblock h1 { font-size: 18px; }
+  #subtitle { display: none; }
+  #start-hint { margin-top: 6px; padding-top: 6px; }
+  /* Suche über die ganze Breite, Knöpfe und Zähler darunter. Vorher lief die Zeile rechts
+     aus dem Bild und schob die Zoomknöpfe mit hinaus. */
+  #toolbar { top: auto; bottom: 64px; left: 12px; right: 12px; flex-wrap: wrap; gap: 8px; }
+  #toolbar .field { flex: 1 1 100%; }
   #search { width: 100%; }
-  #project { top: auto; bottom: 78px; left: 16px; right: 16px; width: auto; max-height: 60vh; }
+  #count { flex: 1 1 auto; min-width: 0; text-align: right; }
+  #project { top: auto; bottom: 156px; left: 12px; right: 12px; width: auto; max-height: calc(100% - 290px); }
+  /* Bei offenem Panel wird nicht gesucht. Ohne die Suchzeile bleibt die Leiste flach genug,
+     dass der Zähler nicht unter das Panel rutscht. */
+  #stage:has(#project:not([hidden])) #toolbar .field { display: none; }
   #legend { display: none; }
-  #zoombar { bottom: 16px; right: 16px; }
+  #zoombar { bottom: 12px; right: 12px; }
+  #overlay { padding: 12px; }
 }

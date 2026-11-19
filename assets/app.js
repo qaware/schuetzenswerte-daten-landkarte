@@ -453,10 +453,61 @@ function build(data) {
 
   buildSea(cellsByIsland);
   buildLegend();
-  buildProjectPanel();
+  state.byId = Object.fromEntries(state.tiles.map(e => [e.id, e]));
+  const kachel = readHash();
+  buildProjectPanel(true);
   fit();
   applyHighlight();
   document.getElementById('loading').hidden = true;
+  if (filterActive()) document.getElementById('btn-project').click();
+  if (kachel && state.byId[kachel]) openDetail(state.byId[kachel]);
+}
+
+/* ---------- Adresse ---------- */
+
+/* Kachel und Antworten stehen in der Adresse, damit man eine Kachel oder die Sicht eines
+   Projekts als Link weitergeben kann. Die Antworten stehen dort mit ihrer Beschriftung und
+   nicht als Index: ein Link bleibt damit gültig, wenn sich die Reihenfolge der Optionen
+   ändert, und man kann ihn lesen. Geschrieben wird mit replaceState, sonst füllt jeder
+   Klick auf eine Antwort den Verlauf. */
+function readHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  initFilters();
+  for (const q of state.data.filters) {
+    const werte = p.getAll(q.id);
+    if (!werte.length) continue;
+    const idx = werte.map(w => q.options.findIndex(o => o.label === w)).filter(i => i >= 0);
+    if (!idx.length) continue;
+    if (q.type === 'single') state.filters[q.id] = idx[0];
+    else idx.forEach(i => { if (!q.options[i].neutral) state.filters[q.id].add(i); });
+  }
+  return p.get('kachel');
+}
+
+function writeHash() {
+  const p = new URLSearchParams();
+  for (const q of state.data.filters) {
+    const v = state.filters[q.id];
+    if (q.type === 'single') {
+      if (v !== neutralIndex(q)) p.append(q.id, q.options[v].label);
+    } else {
+      [...v].sort((a, b) => a - b).forEach(i => p.append(q.id, q.options[i].label));
+    }
+  }
+  if (state.openTile) p.set('kachel', state.openTile);
+  const hash = p.toString();
+  history.replaceState(null, '', hash ? '#' + hash : location.pathname + location.search);
+}
+
+function copyLink(button) {
+  const fertig = text => {
+    const alt = button.textContent;
+    button.textContent = text;
+    setTimeout(() => { button.textContent = alt; }, 1600);
+  };
+  if (!navigator.clipboard) { fertig('Link steht in der Adresszeile'); return; }
+  navigator.clipboard.writeText(location.href).then(
+    () => fertig('Link kopiert'), () => fertig('Link steht in der Adresszeile'));
 }
 
 /* ---------- Belebtes Wasser ---------- */
@@ -640,8 +691,8 @@ function buildLegend() {
 
 /* ---------- Projektfilter ---------- */
 
-function buildProjectPanel() {
-  initFilters();
+function buildProjectPanel(keep = false) {
+  if (!keep) initFilters();
   const host = document.getElementById('project-fields');
   for (const f of state.data.filters) {
     const group = document.createElement('div');
@@ -680,6 +731,7 @@ function buildProjectPanel() {
       }
       zeigen();
       applyHighlight();
+      writeHash();
     }));
     zeigen();
 
@@ -689,7 +741,7 @@ function buildProjectPanel() {
 }
 
 /* Der Filterzustand wird aus den Daten aufgebaut und nicht im Code aufgezählt. Vorher
-   stand jede Frage an vier Stellen: in state.filters, in activeTags, in filterActive und
+   stand jede Frage an vier Stellen: in state.filters, in der Tag-Sammlung, in filterActive und
    im Zurücksetzen. Eine neue Frage in landkarte.json brauchte damit vier Codeänderungen,
    und drei davon vergisst man leicht. Jetzt genügt der Eintrag in den Daten.
 
@@ -715,19 +767,6 @@ function initFilters() {
     f[q.id] = q.type === 'single' ? neutralIndex(q) : new Set();
   }
   state.filters = f;
-}
-
-function activeTags() {
-  const tags = new Set();
-  for (const q of state.data.filters) {
-    const v = state.filters[q.id];
-    const gewaehlt = q.type === 'single' ? [q.options[v]] : [...v].map(i => q.options[i]);
-    for (const o of gewaehlt) {
-      if (!o || o.neutral) continue;
-      (o.tags || []).forEach(t => tags.add(t));
-    }
-  }
-  return tags;
 }
 
 // Eingeengt wird nur, wo die Antwort von der neutralen abweicht.
@@ -783,9 +822,25 @@ function classify(entry) {
   if (!filterActive()) return 'offen';
   const { ja, nein } = state.antw || answers();
   const tr = entry.tile.triggers;
+  // Eine Frage mit voraussetzung, also die Branche, wirkt als Bedingung und nicht als
+  // weiterer Grund. Sonst kam TISAX über "Nachweis nötig" in jedes Versicherungsprojekt:
+  // gemessen waren das 11 von 108 Kacheln aus fremden Branchen.
+  const bedingt = tr.filter(t => voraussetzungsTags().has(t));
+  if (bedingt.length && bedingt.every(t => nein.has(t))) return 'ausgeschlossen';
   if (tr.indexOf('immer') >= 0 || tr.some(t => ja.has(t))) return 'gesichert';
   if (tr.every(t => nein.has(t))) return 'ausgeschlossen';
   return 'offen';
+}
+
+let VORAUSSETZUNG = null;
+function voraussetzungsTags() {
+  if (!VORAUSSETZUNG) {
+    VORAUSSETZUNG = new Set();
+    for (const q of state.data.filters) {
+      if (q.voraussetzung) q.options.forEach(o => (o.tags || []).forEach(t => VORAUSSETZUNG.add(t)));
+    }
+  }
+  return VORAUSSETZUNG;
 }
 
 function zaehleKlassen() {
@@ -811,15 +866,18 @@ function antworten() {
   return out;
 }
 
+/* Die Auswahl für Liste und Exporte ist genau die Menge der gesicherten Kacheln. Sie
+   fragt deshalb classify() und bildet die Regel nicht ein zweites Mal nach. */
 function matching() {
-  const on = filterActive(), tags = activeTags();
-  if (on) tags.add('immer');
-  const q = state.query;
-  return state.tiles.filter(e => {
-    if (on && !e.tile.triggers.some(t => tags.has(t))) return false;
+  const on = filterActive(), q = state.query;
+  state.antw = answers();
+  const out = state.tiles.filter(e => {
+    if (on && classify(e) !== 'gesichert') return false;
     if (q && !e.haystack.includes(q)) return false;
     return true;
   });
+  state.antw = null;
+  return out;
 }
 
 function applyHighlight() {
@@ -835,10 +893,15 @@ function applyHighlight() {
     // soll auch dann blass bleiben, wenn der Suchbegriff darin vorkommt.
     const faded = klasse === 'ausgeschlossen' || (q && !trifft);
     const marked = !faded && (klasse === 'gesichert' || !!q);
+    // Offen wird nur halb zurückgenommen. Sonst sah eine gesicherte Kachel aus wie jede
+    // Kachel auf der unberührten Karte, und die Hervorhebung war nicht zu erkennen.
+    const pending = gefiltert && !faded && !marked;
     e.el.classList.toggle('faded', faded);
     e.el.classList.toggle('marked', marked);
+    e.el.classList.toggle('pending', pending);
   }
   state.antw = null;
+  renderResult(gefiltert);
 
   const count = document.getElementById('count');
   if (gefiltert) {
@@ -851,13 +914,50 @@ function applyHighlight() {
   }
 }
 
+/* Die Ergebnisliste neben der Karte, nach Phase geordnet. Die Karte ist zum Einordnen da,
+   die Liste zum Abarbeiten: vorher musste man die hervorgehobenen Sechsecke suchen. */
+function byPhase(hits) {
+  const groups = {};
+  for (const e of hits) (groups[e.tile.phase] ||= []).push(e);
+  return Object.entries(state.data.phases)
+    .filter(([key]) => groups[key])
+    .map(([key, ph]) => [ph, groups[key]]);
+}
+
+function renderResult(gefiltert) {
+  const box = document.getElementById('result');
+  if (!gefiltert) { box.hidden = true; return; }
+  const hits = matching();
+  box.hidden = false;
+  document.getElementById('result-summary').textContent =
+    `${hits.length} Kacheln gelten sicher · Liste nach Phase`;
+  const list = document.getElementById('result-list');
+  list.textContent = '';
+  for (const [ph, entries] of byPhase(hits)) {
+    const h = document.createElement('h3');
+    h.textContent = `${ph.label} (${entries.length})`;
+    const ul = document.createElement('ul');
+    for (const e of entries) {
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'result-item';
+      const sw = document.createElement('span');
+      sw.className = 'swatch';
+      sw.style.background = state.data.dimensions[e.tile.dimension].color;
+      b.append(sw, plain(e.tile.title));
+      b.onclick = () => openDetail(e);
+      li.appendChild(b);
+      ul.appendChild(li);
+    }
+    list.append(h, ul);
+  }
+}
+
 function exportChecklist() {
   const hits = matching();
   const status = document.getElementById('export-status');
   if (!hits.length) { status.textContent = 'Keine Kacheln ausgewählt.'; return; }
-
-  const byDim = {};
-  for (const e of hits) (byDim[e.tile.dimension] ||= []).push(e.tile);
 
   let md = `# Zu klärende Themen für dieses Projekt\n\n`;
   md += `Ausgewählt: ${hits.length} von ${state.tiles.length} Kacheln der Landkarte.\n`;
@@ -867,12 +967,11 @@ function exportChecklist() {
       + `noch nicht beantwortet sind.\n`;
   }
   md += `Das ist eine Orientierung, keine Vollständigkeitszusage und kein Rechtsrat.\n`;
-  for (const [key, dim] of Object.entries(state.data.dimensions)) {
-    const list = byDim[key];
-    if (!list) continue;
-    md += `\n## ${dim.label}\n\n`;
-    for (const t of list) {
+  for (const [ph, entries] of byPhase(hits)) {
+    md += `\n## ${ph.label}\n\n`;
+    for (const { tile: t } of entries) {
       md += `- [ ] **${plain(t.title)}** — ${plain(t.when || t.why)}\n`;
+      if (t.kundenfrage) md += `  Frage an den Kunden: ${plain(t.kundenfrage)}\n`;
       if (t.qaware?.length) md += `  Bei QAware: `
         + t.qaware.map(r => `[${r.label}](${r.url})`).join(', ') + `\n`;
     }
@@ -916,9 +1015,11 @@ function exportAgentContext() {
       const t = e.tile, area = d.areas[e.area];
       md += `\n### ${plain(t.title)}\n`;
       md += `Ort: ${plain(d.islands[area.island].label)}, Bereich ${plain(area.label)}\n`;
+      md += `Zuerst zu klären in: ${d.phases[t.phase].label}\n`;
       md += `Was: ${plain(t.what)}\n`;
       md += `Warum: ${plain(t.why)}\n`;
       if (t.when) md += `Wann relevant: ${plain(t.when)}\n`;
+      if (t.kundenfrage) md += `Frage an den Kunden: ${plain(t.kundenfrage)}\n`;
       if (t.tlandkarte) md += `Allgemeines Handwerkszeug dazu: T-Landkarte, ${t.tlandkarte}\n`;
       if (t.qaware?.length) md += `Bei QAware geregelt (internes Confluence): `
         + t.qaware.map(r => `${r.label} ${r.url}`).join('; ') + `\n`;
@@ -980,7 +1081,8 @@ function openDetail(entry) {
 
   document.getElementById('detail-title').textContent = plain(t.title);
   document.getElementById('detail-place').textContent =
-    `${plain(d.islands[area.island].label)}, Bereich ${plain(area.label)}`;
+    `${plain(d.islands[area.island].label)}, Bereich ${plain(area.label)}`
+    + ` · zuerst zu klären: ${d.phases[t.phase].label}`;
 
   const body = document.getElementById('detail-body');
   body.textContent = '';
@@ -995,6 +1097,7 @@ function openDetail(entry) {
   section('Was ist das?', t.what);
   section('Warum ist das wichtig?', t.why);
   section('Wann wird es relevant?', t.when);
+  section('Frage an den Kunden', t.kundenfrage);
 
   if (t.tlandkarte) {
     const h = document.createElement('h3');
@@ -1032,6 +1135,9 @@ function openDetail(entry) {
 
   document.getElementById('detail-triggers').textContent =
     'Wird relevant bei: ' + t.triggers.map(tagLabel).join(', ');
+  document.getElementById('detail-link').hidden = false;
+  state.openTile = entry.id;
+  writeHash();
 
   state.lastFocus = document.activeElement;
   document.getElementById('overlay').hidden = false;
@@ -1046,6 +1152,7 @@ function openHelp() {
   document.getElementById('detail-dimension').hidden = true;
   document.getElementById('detail-place').hidden = true;
   document.getElementById('detail-triggers').hidden = true;
+  document.getElementById('detail-link').hidden = true;
   document.getElementById('detail-title').textContent = 'Wie diese Karte funktioniert';
 
   const body = document.getElementById('detail-body');
@@ -1064,6 +1171,30 @@ function openHelp() {
     + 'und kein Rechtsrat.'));
 
   if (d.meta.zielgruppe) abschnitt('Für wen', el('p', d.meta.zielgruppe));
+
+  abschnitt('So fängst du an',
+    el('p', 'Öffne „Mein Projekt“ und beantworte, was du über dein Vorhaben schon weißt. '
+      + 'Jede Antwort wirkt sofort, du musst nicht alle Fragen beantworten. Oben im Panel '
+      + 'steht dann die Liste der Kacheln, die für dein Vorhaben sicher gelten, geordnet nach der '
+      + 'Projektphase, in der sie zuerst zu klären sind. Ein Klick öffnet den Text, mit '
+      + '„Frage an den Kunden“, wo es eine gibt, und dem Verweis auf die Regelung bei QAware.'),
+    el('p', 'Die Adresse im Browser enthält deine Antworten und die geöffnete Kachel. Wer '
+      + 'sie weitergibt, gibt die Sicht mit. Beide Exporte holen dieselbe Auswahl als '
+      + 'Checkliste oder als Kontext für einen KI-Agenten.'));
+
+  abschnitt('Was die Karte nach dem Filtern zeigt',
+    el('p', 'Kräftig gilt für dein Vorhaben sicher. Halb zurückgenommen hängt noch an einer '
+      + 'Frage, die offen ist. Blass gilt nicht. „nein“ ist damit etwas anderes als eine '
+      + 'offene Frage: es schließt aus. Die Branche ist eine Voraussetzung: eine Kachel aus '
+      + 'einer anderen Branche bleibt blass, auch wenn eine andere Antwort auf sie passt.'));
+
+  abschnitt('Bedienung',
+    el('p', 'Ziehen verschiebt die Karte, Mausrad oder die Tasten + und − zoomen, „Alles“ '
+      + 'zeigt die Gesamtansicht. Die Suche findet Titel, Synonyme und Kacheltexte. Ganz '
+      + 'herausgezoomt tragen nur die Inselnamen, näher heran die Bereichsnamen, noch näher '
+      + 'die Kacheltitel.'));
+
+  body.append(el('h3', 'Das Modell dahinter', 'help-part'));
 
   abschnitt('Drei Achsen',
     el('p', 'Jede Kachel steht an drei Stellen zugleich, und die drei Achsen sind voneinander '
@@ -1108,25 +1239,6 @@ function openHelp() {
       + 'das gestrichelte Sechseck in der Mitte einer Gruppe und trägt dort den Namen, die '
       + 'Kacheln liegen im Ring darum.'));
 
-  abschnitt('Drei Zoomstufen',
-    el('p', 'Ganz herausgezoomt tragen nur die Inselnamen. Näher heran erscheinen die '
-      + 'Bereichsnamen, noch näher die Kacheltitel. Eine Beschriftung erscheint erst, wenn sie '
-      + 'lesbar ist und in ihr Sechseck passt.'));
-
-  abschnitt('Drei Zustände unter „Mein Projekt“',
-    el('p', 'Jede Frage steht anfangs auf „offen“ und engt nichts ein. Wer antwortet, teilt die '
-      + 'Kacheln in drei Gruppen: hervorgehoben gilt für das Vorhaben sicher, blass ist '
-      + 'ausgeschlossen, und was normal bleibt, hängt an einer Frage, die noch offen ist. Die '
-      + 'Zahl der offenen Kacheln sinkt auf null, wenn alle Fragen beantwortet sind. Eine '
-      + 'Antwort mit „nein“ ist damit etwas anderes als eine offene Frage: sie schließt aus.'));
-
-  abschnitt('Bedienung',
-    el('p', 'Ziehen verschiebt die Karte von jeder Stelle aus, Mausrad oder die Tasten + und − '
-      + 'zoomen, „Alles“ zeigt die Gesamtansicht. Ein Klick auf eine Kachel öffnet ihren Text. '
-      + 'Die Suche findet Titel, Synonyme und Kacheltexte. Unter „Mein Projekt“ beantwortest du, '
-      + 'was auf dein Vorhaben zutrifft; die Karte hebt dann hervor, was zu klären ist, und gibt '
-      + 'es als Checkliste oder als Kontext für einen KI-Agenten heraus.'));
-
   body.append(el('p', d.meta.disclaimer, 'hint'));
 
   state.lastFocus = document.activeElement;
@@ -1136,6 +1248,7 @@ function openHelp() {
 
 function closeDetail() {
   document.getElementById('overlay').hidden = true;
+  if (state.openTile) { state.openTile = null; writeHash(); }
   state.lastFocus?.focus();
 }
 
@@ -1170,7 +1283,9 @@ function applyTransform() {
   // ein Schreiben würde dort die Stilberechnung aller Bereichstexte umsonst anstoßen.
   const root = document.documentElement.style;
   const areaFont = overview ? (15 / state.scale).toFixed(1) + 'px' : '13px';
-  const islandFont = overview ? (21 / state.scale).toFixed(1) + 'px' : '30px';
+  // Auf schmalen Schirmen sind die Inseln so klein, dass 21px-Namen ineinanderlaufen.
+  const islandPx = view.w < 600 ? 14 : 21;
+  const islandFont = overview ? (islandPx / state.scale).toFixed(1) + 'px' : '30px';
   if (areaFont !== lastAreaFont) { root.setProperty('--area-font', lastAreaFont = areaFont); }
   if (islandFont !== lastIslandFont) { root.setProperty('--island-font', lastIslandFont = islandFont); }
 }
@@ -1293,7 +1408,10 @@ function wireInteraction() {
     buildProjectPanel();
     document.getElementById('export-status').textContent = '';
     applyHighlight();
+    writeHash();
   };
+  document.getElementById('btn-share').onclick = e => copyLink(e.currentTarget);
+  document.getElementById('detail-link').onclick = e => copyLink(e.currentTarget);
 
   document.getElementById('btn-help').onclick = openHelp;
   document.getElementById('detail-close').onclick = closeDetail;

@@ -67,6 +67,13 @@ def main(path=None):
         if not tile.get("when"):
             warnings.append(f"{tid}: when fehlt, im Checklisten-Export erscheint dann why als Begründung")
 
+    phases = data.get("phases", {})
+    for tid, tile in sorted(data["tiles"].items()):
+        if tile.get("phase") not in phases:
+            problems.append(f"{tid}: phase '{tile.get('phase')}' gibt es nicht, erlaubt sind {', '.join(phases)}")
+        if "kundenfrage" in tile and not str(tile["kundenfrage"]).rstrip().endswith("?"):
+            problems.append(f"{tid}: kundenfrage ist keine Frage")
+
     # Verweise ins interne Confluence: nur Titel und Adresse, nie Inhalt, das Repo ist öffentlich.
     for tid, tile in sorted(data["tiles"].items()):
         for ref in tile.get("qaware", []):

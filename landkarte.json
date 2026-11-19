@@ -52,21 +52,21 @@
       ]
     },
     "medtech": {
-      "label": "MedTech Archipel",
+      "label": "MedTech",
       "origin": [
         8,
         -16
       ]
     },
     "public": {
-      "label": "Public Sector Archipel",
+      "label": "Public Sector",
       "origin": [
         -18,
         9
       ]
     },
     "ki": {
-      "label": "KI Archipel",
+      "label": "KI",
       "origin": [
         -7,
         14
@@ -80,7 +80,7 @@
       ]
     },
     "automotive": {
-      "label": "Automotive Archipel",
+      "label": "Automotive",
       "origin": [
         -14,
         -7
@@ -398,6 +398,7 @@
       "id": "branche",
       "label": "Branche",
       "type": "single",
+      "voraussetzung": true,
       "options": [
         {
           "label": "offen",
@@ -610,11 +611,30 @@
       ]
     }
   ],
+  "phases": {
+    "start": {
+      "label": "Angebot & Projektstart",
+      "frage": "Was muss geklärt sein, bevor gearbeitet wird?"
+    },
+    "entwurf": {
+      "label": "Anforderungen & Entwurf",
+      "frage": "Was muss in den Entwurf?"
+    },
+    "umsetzung": {
+      "label": "Umsetzung & Test",
+      "frage": "Worauf achte ich beim Bauen und Testen?"
+    },
+    "betrieb": {
+      "label": "Betrieb & Projektende",
+      "frage": "Was muss laufend nachweisbar sein, und was passiert am Ende?"
+    }
+  },
   "tiles": {
     "pii": {
       "title": "Personenbezogene Daten (PII)",
       "area": "personenbezug",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "pb:ja"
       ],
@@ -625,12 +645,14 @@
       ],
       "what": "Alle Angaben, die sich direkt oder indirekt auf eine identifizierbare natürliche Person beziehen. Dazu gehören auch technische Kennungen wie IP-Adressen, Geräte-IDs oder Kundennummern.",
       "why": "Sobald personenbezogene Daten im Spiel sind, greift die DSGVO mit Rechtsgrundlage, Zweckbindung, Betroffenenrechten und Löschpflichten. Fast alles andere auf dieser Karte hängt an dieser Feststellung.",
-      "when": "Der Begriff ist weiter, als die meisten denken. Auch ein Datensatz ohne Namen ist personenbezogen, wenn er über eine Kennung wieder einer Person zuzuordnen ist."
+      "when": "Der Begriff ist weiter, als die meisten denken. Auch ein Datensatz ohne Namen ist personenbezogen, wenn er über eine Kennung wieder einer Person zuzuordnen ist.",
+      "kundenfrage": "Welche personenbezogenen Daten verarbeitet das System, auch indirekt über Kennungen?"
     },
     "art9": {
       "title": "Besondere Kategorien (Art. 9 DSGVO)",
       "area": "personenbezug",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "daten:art9"
       ],
@@ -641,12 +663,14 @@
       ],
       "what": "Gesundheitsdaten, genetische und biometrische Daten, rassische oder ethnische Herkunft, politische Meinungen, religiöse oder philosophische Überzeugungen, Gewerkschaftszugehörigkeit sowie Daten zum Sexualleben.",
       "why": "Für diese Kategorien gilt ein grundsätzliches Verarbeitungsverbot mit engen Ausnahmen. Wer sie verarbeitet, braucht eine tragfähige Ausnahme und deutlich strengere Schutzmaßnahmen.",
-      "when": "Achtung bei Ableitbarkeit: eine Medikamentenliste, ein Fitness-Datensatz oder eine Vereinsmitgliedschaft können Art. 9 auslösen, ohne dass irgendwo Diagnose steht."
+      "when": "Achtung bei Ableitbarkeit: eine Medikamentenliste, ein Fitness-Datensatz oder eine Vereinsmitgliedschaft können Art. 9 auslösen, ohne dass irgendwo Diagnose steht.",
+      "kundenfrage": "Kommen Gesundheitsdaten oder andere besondere Kategorien vor, auch abgeleitet?"
     },
     "biometrie": {
       "title": "Biometrische Daten",
       "area": "personenbezug",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "daten:art9"
       ],
@@ -663,6 +687,7 @@
       "title": "Personenbezug nach Pseudonymisierung",
       "area": "personenbezug",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -679,6 +704,7 @@
       "title": "Geschäfts­geheimnisse & IP",
       "area": "weitere-datenarten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "daten:ip"
       ],
@@ -696,6 +722,7 @@
       "title": "Stammdaten & Mandantendaten",
       "area": "weitere-datenarten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "daten:stammdaten"
       ],
@@ -713,6 +740,7 @@
       "title": "Konfigurationsdaten & Secrets",
       "area": "weitere-datenarten",
       "dimension": "klassifizierung",
+      "phase": "umsetzung",
       "triggers": [
         "immer"
       ],
@@ -729,6 +757,7 @@
       "title": "Logs & Observability-Daten",
       "area": "weitere-datenarten",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "daten:logs",
         "immer"
@@ -741,12 +770,14 @@
       ],
       "what": "Anwendungs- und Zugriffslogs, Traces, Metriken und Fehlermeldungen samt allem, was unbeabsichtigt darin landet.",
       "why": "Logs sind der klassische Nebenausgang für sensible Daten. Ein Stacktrace mit dem vollständigen Request-Payload kopiert Gesundheitsdaten in ein System, das oft breiter zugänglich ist als die Datenbank selbst.",
-      "when": "Immer prüfen, sobald externe Log-Backends, längere Aufbewahrung oder weite Leserechte im Spiel sind."
+      "when": "Immer prüfen, sobald externe Log-Backends, längere Aufbewahrung oder weite Leserechte im Spiel sind.",
+      "kundenfrage": "Wo landen Logs, wie lange bleiben sie dort, und wer darf sie lesen?"
     },
     "analytische-daten": {
       "title": "Analytische & Reporting-Daten",
       "area": "weitere-datenarten",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "daten:analytisch"
       ],
@@ -764,6 +795,7 @@
       "title": "Schutzziele (Vertraulichkeit, Integrität, Verfügbarkeit)",
       "area": "schutzbedarf",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "immer"
       ],
@@ -782,6 +814,7 @@
       "title": "Schutzbedarfs­stufen",
       "area": "schutzbedarf",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "immer"
       ],
@@ -806,6 +839,7 @@
       "title": "Informations­klassifizierung",
       "area": "schutzbedarf",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "immer"
       ],
@@ -820,6 +854,7 @@
       "what": "Die Einordnung von Informationen in festgelegte Vertraulichkeitsklassen samt Kennzeichnung und Regeln für Umgang, Weitergabe und Ablage. In ISO/IEC 27001 ist sie eine eigene Maßnahme im Anhang.",
       "why": "Sie ist die Form, in der der Schutzbedarf im Alltag ankommt: an der Klasse eines Dokuments oder Datensatzes liest man ab, wo er liegen darf und wer ihn sehen darf, ohne jedes Mal neu zu bewerten.",
       "when": "Beim Projektstart klären, welches Klassifizierungsschema gilt, das des eigenen Unternehmens, das des Kunden oder beide, und wie die Klassen zueinander passen.",
+      "kundenfrage": "Nach welchem Schema stuft ihr Informationen ein, und wie sind die Daten dieses Vorhabens eingestuft?",
       "qaware": [
         {
           "label": "Richtlinie Informationsklassifizierung",
@@ -835,6 +870,7 @@
       "title": "DSGVO",
       "area": "datenschutzrecht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "pb:ja"
       ],
@@ -856,6 +892,7 @@
       "title": "BDSG",
       "area": "datenschutzrecht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "pb:ja"
       ],
@@ -872,6 +909,7 @@
       "title": "Betroffenenrechte (Art. 15–22)",
       "area": "datenschutzrecht",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -890,6 +928,7 @@
       "title": "Auftrags­verarbeitung (AVV, Art. 28)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "pb:ja"
       ],
@@ -902,6 +941,7 @@
       "what": "Der Vertrag zwischen Verantwortlichem und Dienstleister, der Zweck, Umfang, Weisungsbindung, Subunternehmer und Sicherheitsmaßnahmen der Verarbeitung festlegt.",
       "why": "Für Beratungsprojekte ist das der eigene Rollenrahmen. Jeder eingesetzte Cloud-Dienst, Monitoring-Anbieter oder KI-Endpunkt ist ein Auftragsverarbeiter oder Subunternehmer und muss abgedeckt sein.",
       "when": "Vor jedem neuen Dienst im Datenpfad prüfen, ob er vertraglich abgedeckt ist.",
+      "kundenfrage": "Verarbeiten wir personenbezogene Daten in eurem Auftrag, und gibt es dafür einen AVV mit vereinbarten TOM?",
       "qaware": [
         {
           "label": "Ausfüllhilfe AVV-Vorlage",
@@ -913,6 +953,7 @@
       "title": "Technische & organisatorische Maßnahmen (Art. 32)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -929,6 +970,7 @@
       "title": "Verarbeitungs­verzeichnis (Art. 30)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "pb:ja"
       ],
@@ -939,12 +981,14 @@
       ],
       "what": "Ein Verzeichnis aller Verarbeitungstätigkeiten mit Zweck, Datenkategorien, Empfängern, Fristen und Drittlandtransfers.",
       "why": "Es ist oft die einzige vollständige Übersicht, welche Daten wohin fließen, und damit für Entwicklungsteams eine überraschend nützliche Informationsquelle.",
-      "when": "Beim Projektstart nach dem bestehenden Verzeichnis fragen, statt die Datenflüsse neu zu erheben."
+      "when": "Beim Projektstart nach dem bestehenden Verzeichnis fragen, statt die Datenflüsse neu zu erheben.",
+      "kundenfrage": "Gibt es einen Eintrag im Verarbeitungsverzeichnis, den wir als Übersicht der Datenflüsse nutzen können?"
     },
     "meldepflichten": {
       "title": "Meldepflichten bei Datenschutz­verletzung (Art. 33/34)",
       "area": "dsgvo-pflichten",
       "dimension": "regulatorik",
+      "phase": "betrieb",
       "triggers": [
         "pb:ja"
       ],
@@ -967,6 +1011,7 @@
       "title": "Drittlandtransfer (Schrems II, SCC)",
       "area": "uebermittlung",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "drittland:ja"
       ],
@@ -979,12 +1024,14 @@
       ],
       "what": "Die Regeln für die Übermittlung personenbezogener Daten in Länder außerhalb der EU, über Angemessenheitsbeschluss, Standardvertragsklauseln oder andere Garantien samt Prüfung des Zielrechts.",
       "why": "Transfer beginnt nicht erst beim Datenexport. Auch ein Zugriff aus einem Drittland auf europäisch gespeicherte Daten ist eine Übermittlung, etwa im Support oder in der Rufbereitschaft.",
-      "when": "Bei jedem Dienstleister, Modellanbieter oder Support-Team außerhalb der EU."
+      "when": "Bei jedem Dienstleister, Modellanbieter oder Support-Team außerhalb der EU.",
+      "kundenfrage": "Welche Dienste, Betriebs- oder Supportzugriffe liegen außerhalb der EU?"
     },
     "cloud-act": {
       "title": "US CLOUD Act",
       "area": "uebermittlung",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "cloud:hyperscaler",
         "drittland:ja"
@@ -1002,6 +1049,7 @@
       "title": "Sozialdaten (SGB)",
       "area": "datenschutzrecht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech",
         "branche:public"
@@ -1019,6 +1067,7 @@
       "title": "NIS-2",
       "area": "sicherheitsrecht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "immer"
       ],
@@ -1030,6 +1079,7 @@
       "what": "Die europäische Richtlinie zur Cybersicherheit, die für betroffene Einrichtungen Risikomanagement, Meldepflichten bei Sicherheitsvorfällen und Verantwortung der Leitungsebene vorschreibt.",
       "why": "Sie erweitert den Kreis der betroffenen Unternehmen deutlich über die klassischen kritischen Infrastrukturen hinaus, und viele Kunden wissen selbst nicht, ob sie darunter fallen. Betroffen sein kann auch der Dienstleister selbst: IT-Dienstleister fallen je nach Leistung und Größe eigenständig darunter, und dann gelten Risikomanagement und Meldepflichten auch für die eigene Arbeit im Projekt.",
       "when": "Betroffenheit früh mit dem Kunden klären. Diese Kachel erscheint in jedem Projekt, weil die Betroffenheit zu prüfen ist, nicht weil NIS-2 überall gilt. Die nationale Umsetzung und deren Zeitplan bitte aktuell prüfen.",
+      "kundenfrage": "Fallt ihr unter NIS-2, und welche Melde- und Nachweispflichten gebt ihr an Dienstleister weiter?",
       "qaware": [
         {
           "label": "Incidents erkennen und melden",
@@ -1041,6 +1091,7 @@
       "title": "Cyber Resilience Act",
       "area": "sicherheitsrecht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "immer"
       ],
@@ -1050,12 +1101,14 @@
       ],
       "what": "Die EU-Verordnung mit Sicherheitsanforderungen an Produkte mit digitalen Elementen, unter anderem zu sicheren Voreinstellungen, Schwachstellenbehandlung und Updateversorgung über den Lebenszyklus.",
       "why": "Sie trifft Software als Produkt und macht Themen wie SBOM und Schwachstellenmeldung zur Pflicht statt zur guten Praxis.",
-      "when": "Relevant, wenn Software in Verkehr gebracht wird, nicht nur intern betrieben. Die Kachel erscheint in jedem Projekt, weil diese Frage zu beantworten ist, nicht weil der CRA überall gilt. Zeitplan bitte aktuell prüfen."
+      "when": "Relevant, wenn Software in Verkehr gebracht wird, nicht nur intern betrieben. Die Kachel erscheint in jedem Projekt, weil diese Frage zu beantworten ist, nicht weil der CRA überall gilt. Zeitplan bitte aktuell prüfen.",
+      "kundenfrage": "Wird die Software als Produkt in Verkehr gebracht oder nur selbst betrieben?"
     },
     "geschgehg": {
       "title": "Geschäfts­geheimnis­gesetz",
       "area": "sicherheitsrecht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "daten:ip"
       ],
@@ -1071,6 +1124,7 @@
       "title": "Staatlicher Geheimschutz (SÜG)",
       "area": "sicherheitsrecht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "daten:staatlich"
       ],
@@ -1086,12 +1140,14 @@
       ],
       "what": "Die Regeln für den Umgang mit staatlichen Verschlusssachen: die Verschlusssachenanweisung für Behörden, das Sicherheitsüberprüfungsgesetz für Personen, die Zugang erhalten, und für Unternehmen die Geheimschutzbetreuung durch den Bund.",
       "why": "Ab bestimmten Einstufungen darf nur arbeiten, wer sicherheitsüberprüft ist, und ein Unternehmen braucht dafür eine eigene Geheimschutzorganisation. Das bestimmt Teamzusammensetzung und Vorlaufzeit, bevor überhaupt eine Zeile Code entsteht.",
-      "when": "Sobald ein Auftrag Verschlusssachen berührt, auch außerhalb der Verwaltung, etwa in Verteidigung und Rüstung. Welche Stufe welche Überprüfung verlangt, bitte an der Quelle oder bei den Geheimschutzbeauftragten prüfen."
+      "when": "Sobald ein Auftrag Verschlusssachen berührt, auch außerhalb der Verwaltung, etwa in Verteidigung und Rüstung. Welche Stufe welche Überprüfung verlangt, bitte an der Quelle oder bei den Geheimschutzbeauftragten prüfen.",
+      "kundenfrage": "Sind Informationen als Verschlusssache eingestuft, und welche Überprüfung brauchen die Projektmitglieder?"
     },
     "berufsgeheimnis": {
       "title": "Berufs­geheimnisse (§ 203 StGB)",
       "area": "sicherheitsrecht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "daten:berufsgeheimnis",
         "branche:medtech",
@@ -1109,12 +1165,14 @@
       ],
       "what": "Die strafrechtlich abgesicherte Verschwiegenheit von Berufsgeheimnisträgern, unter anderem Ärztinnen und Ärzten, Psychotherapie, Rechtsanwaltschaft, Steuerberatung und Wirtschaftsprüfung sowie Angehörigen privater Kranken-, Unfall- und Lebensversicherungen. Über die Regelung zu mitwirkenden Personen erfasst sie auch externe Dienstleister.",
       "why": "Hier wird Datenschutz zu Strafrecht, und die Pflicht trifft die einzelne Person, nicht nur das Unternehmen. Ein Auftragsverarbeitungsvertrag reicht nicht: Dienstleister müssen zur Verschwiegenheit verpflichtet werden und diese Pflicht an jede weitere beteiligte Person weitergeben, und der Zugriff bleibt auf das Erforderliche begrenzt.",
-      "when": "Sobald ein Projekt für einen Berufsgeheimnisträger Daten berührt, die unter das Geheimnis fallen, auch nur bei Support und Fehlersuche. Die Verpflichtung gehört vor den ersten Zugriff."
+      "when": "Sobald ein Projekt für einen Berufsgeheimnisträger Daten berührt, die unter das Geheimnis fallen, auch nur bei Support und Fehlersuche. Die Verpflichtung gehört vor den ersten Zugriff.",
+      "kundenfrage": "Fallen die Daten unter ein Berufsgeheimnis, und wie werden wir zur Verschwiegenheit verpflichtet?"
     },
     "tdddg": {
       "title": "TDDDG (Telemetrie & Einwilligung)",
       "area": "datenschutzrecht",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -1132,6 +1190,7 @@
       "title": "ISO/IEC 27001 & ISMS",
       "area": "normen",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "nachweis:ja"
       ],
@@ -1143,6 +1202,7 @@
       "what": "Die Norm für ein Managementsystem für Informationssicherheit, also den Rahmen, in dem Risiken erfasst, Maßnahmen beschlossen, dokumentiert und regelmäßig überprüft werden.",
       "why": "Ein ISMS legt fest, wie ein Unternehmen Informationssicherheit steuert, und seine Vorgaben gelten für jedes Projekt, nicht nur für zertifizierungsnahe. Gut eingeführt, stecken sie in Prozessen und Arbeitsweisen und werden im Alltag kaum als eigene ISO-Vorgaben wahrgenommen. Beim Kunden erklärt dasselbe Prinzip, warum er bestimmte Nachweise verlangt.",
       "when": "Immer dann, wenn man wissen will, woher eine Sicherheitsvorgabe im Projekt kommt: zuerst im Managementsystem des eigenen Unternehmens nachsehen. Ist der Kunde zertifiziert oder will es werden, kommen zusätzlich seine Nachweispflichten ins Projekt.",
+      "kundenfrage": "Seid ihr zertifiziert, und welche Nachweise erwartet ihr von uns?",
       "qaware": [
         {
           "label": "Integriertes Managementsystem",
@@ -1154,6 +1214,7 @@
       "title": "ISO/IEC 27701",
       "area": "normen",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "pb:ja",
         "nachweis:ja"
@@ -1171,6 +1232,7 @@
       "title": "BSI C5",
       "area": "normen",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "cloud:hyperscaler",
         "nachweis:ja"
@@ -1187,6 +1249,7 @@
       "title": "ISO 22301 & BCMS",
       "area": "normen",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "nachweis:ja"
       ],
@@ -1201,6 +1264,7 @@
       "what": "Die Norm für ein Managementsystem zur Aufrechterhaltung des Geschäftsbetriebs, mit Business-Impact-Analyse, Notfall- und Wiederanlaufplänen sowie regelmäßigen Übungen.",
       "why": "Sie deckt das Schutzziel Verfügbarkeit auf der Ebene der Organisation ab, das ein ISMS allein oft nur streift. Zusammen mit ISO/IEC 27001 und ISO/IEC 27701 bildet sie häufig ein integriertes Managementsystem, aus dem Vorgaben für Projekte folgen.",
       "when": "Wenn das Projekt Systeme baut oder betreibt, deren Ausfall den Kunden in seinem Kerngeschäft trifft, oder wenn Wiederanlaufzeiten vertraglich zugesagt werden. Dann zuerst nachsehen, was das eigene Managementsystem und das des Kunden dazu vorgeben.",
+      "kundenfrage": "Welche Wiederanlaufzeiten gelten für das System, und sind sie vertraglich zugesagt?",
       "qaware": [
         {
           "label": "Business Continuity Strategie & Resilienzstrukturen",
@@ -1212,6 +1276,7 @@
       "title": "Datenminimierung",
       "area": "prinzipien",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1228,6 +1293,7 @@
       "title": "Privacy by Design & by Default",
       "area": "prinzipien",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1245,6 +1311,7 @@
       "title": "Least Privilege & Need-to-Know",
       "area": "prinzipien",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1261,6 +1328,7 @@
       "title": "Datentrennung & Mandantentrennung",
       "area": "prinzipien",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer",
         "daten:stammdaten"
@@ -1279,6 +1347,7 @@
       "title": "Anonymisierung",
       "area": "maskierung",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja",
         "daten:analytisch"
@@ -1296,6 +1365,7 @@
       "title": "Pseudonymisierung",
       "area": "maskierung",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja",
         "daten:analytisch"
@@ -1313,6 +1383,7 @@
       "title": "Tokenisierung",
       "area": "maskierung",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "daten:finanz",
         "pb:ja"
@@ -1330,6 +1401,7 @@
       "title": "Data Masking",
       "area": "maskierung",
       "dimension": "architektur",
+      "phase": "umsetzung",
       "triggers": [
         "pb:ja",
         "daten:analytisch"
@@ -1348,6 +1420,7 @@
       "title": "Testdaten & synthetische Daten",
       "area": "maskierung",
       "dimension": "architektur",
+      "phase": "umsetzung",
       "triggers": [
         "immer",
         "daten:analytisch"
@@ -1360,12 +1433,14 @@
       ],
       "what": "Erzeugte oder abgeleitete Datenbestände für Entwicklung, Test und Last, die realistisch genug sind, ohne echte Personendaten zu enthalten.",
       "why": "Der Produktionsabzug in die Testumgebung ist der häufigste Datenschutzverstoß in Softwareprojekten und passiert fast immer aus Bequemlichkeit, nicht aus Absicht.",
-      "when": "Steht hier als Maßnahme, nicht als Datenart. Die Verfügbarkeit brauchbarer Testdaten entscheidet, ob das Verbot des Prod-Abzugs eingehalten wird."
+      "when": "Steht hier als Maßnahme, nicht als Datenart. Die Verfügbarkeit brauchbarer Testdaten entscheidet, ob das Verbot des Prod-Abzugs eingehalten wird.",
+      "kundenfrage": "Dürfen Produktionsdaten in Test- und Entwicklungsumgebungen, und wenn ja, in welcher Form?"
     },
     "log-sanitization": {
       "title": "Log-Sanitization",
       "area": "maskierung",
       "dimension": "architektur",
+      "phase": "umsetzung",
       "triggers": [
         "daten:logs",
         "immer"
@@ -1384,6 +1459,7 @@
       "title": "Verschlüsselung at Rest",
       "area": "verschluesselung",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1401,6 +1477,7 @@
       "title": "Verschlüsselung in Transit",
       "area": "verschluesselung",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1419,6 +1496,7 @@
       "title": "Confidential Computing (in Use)",
       "area": "verschluesselung",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "daten:art9",
         "cloud:hyperscaler"
@@ -1437,6 +1515,7 @@
       "title": "Schlüssel­verwaltung (KMS, BYOK, HYOK)",
       "area": "verschluesselung",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1456,6 +1535,7 @@
       "title": "Access Control (RBAC, ABAC, Need-to-Know)",
       "area": "zugriff",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1476,6 +1556,7 @@
       "title": "Zero Trust & Mikro­segmentierung",
       "area": "zugriff",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1495,6 +1576,7 @@
       "title": "Data Loss Prevention",
       "area": "zugriff",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "daten:ip",
         "pb:ja"
@@ -1512,6 +1594,7 @@
       "title": "Umgang mit Hyperscalern",
       "area": "cloud",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "cloud:hyperscaler"
       ],
@@ -1524,12 +1607,14 @@
       ],
       "what": "Die Nutzung großer Cloud-Anbieter für sensible Daten, inklusive Verantwortungsteilung, Regionenwahl, Zugriffsprotokollierung und vertraglicher Absicherung.",
       "why": "Die Frage ist selten Cloud oder nicht, sondern welcher Dienst mit welchen Daten und unter welchen Zusatzmaßnahmen. Die Verantwortungsteilung wird dabei regelmäßig falsch eingeschätzt.",
-      "when": "Pro Dienst entscheiden, nicht pro Anbieter. Managed-Datenbank und Managed-KI-Endpunkt sind völlig verschiedene Diskussionen."
+      "when": "Pro Dienst entscheiden, nicht pro Anbieter. Managed-Datenbank und Managed-KI-Endpunkt sind völlig verschiedene Diskussionen.",
+      "kundenfrage": "Welche Cloud-Anbieter, Regionen und Dienste sind bei euch freigegeben?"
     },
     "souveraene-cloud": {
       "title": "Souveräne Clouds & Datenlokalisierung",
       "area": "cloud",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "cloud:hyperscaler",
         "drittland:ja"
@@ -1548,6 +1633,7 @@
       "title": "Audit Logging & Nachvollziehbarkeit",
       "area": "entwurf-nachweis",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "immer",
         "daten:logs"
@@ -1567,6 +1653,7 @@
       "title": "Löschkonzept & technische Umsetzung",
       "area": "entwurf-nachweis",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -1584,6 +1671,7 @@
       "title": "Betroffenenrechte technisch umsetzen",
       "area": "entwurf-nachweis",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -1601,6 +1689,7 @@
       "title": "Monitoring sensibler Datenflüsse",
       "area": "betrieb-vorfaelle",
       "dimension": "betrieb",
+      "phase": "betrieb",
       "triggers": [
         "immer",
         "daten:logs"
@@ -1619,6 +1708,7 @@
       "title": "Alerting auf Datenschutzvorfälle",
       "area": "betrieb-vorfaelle",
       "dimension": "betrieb",
+      "phase": "betrieb",
       "triggers": [
         "immer"
       ],
@@ -1635,6 +1725,7 @@
       "title": "Incident Response & Data-Breach-Prozess",
       "area": "betrieb-vorfaelle",
       "dimension": "betrieb",
+      "phase": "betrieb",
       "triggers": [
         "immer"
       ],
@@ -1647,6 +1738,7 @@
       "what": "Der geübte Ablauf von Erkennung über Eingrenzung und Bewertung bis zur Meldung und Nachbereitung, mit benannten Rollen und Erreichbarkeiten.",
       "why": "Der Prozess entscheidet, ob die rechtliche Pflicht aus Art. 33 einhaltbar ist. Die Bewertung, welche Datensätze betroffen sind, ist dabei der aufwendigste Schritt.",
       "when": "Einmal trocken durchspielen. Der Prozess gehört hierher, die Meldepflicht selbst steht in Dimension 2.",
+      "kundenfrage": "Wie und in welcher Frist sollen wir euch Sicherheitsvorfälle melden?",
       "qaware": [
         {
           "label": "Incidents erkennen und melden",
@@ -1658,6 +1750,7 @@
       "title": "Aufbewahrungs- & Löschfristen",
       "area": "lebenszyklus",
       "dimension": "betrieb",
+      "phase": "betrieb",
       "triggers": [
         "pb:ja",
         "daten:logs"
@@ -1670,12 +1763,14 @@
       ],
       "what": "Die konkreten Fristen pro Datenart, gespeist aus Zweckbindung auf der einen und handels- oder berufsrechtlichen Aufbewahrungspflichten auf der anderen Seite.",
       "why": "Löschpflicht und Aufbewahrungspflicht widersprechen sich regelmäßig, und die Auflösung ist eine fachliche Entscheidung, keine technische. Ohne Fristen bleibt alles für immer liegen.",
-      "when": "Fristen kommen vom Fachbereich und von Legal. Die Umsetzung braucht das Löschkonzept aus Dimension 3."
+      "when": "Fristen kommen vom Fachbereich und von Legal. Die Umsetzung braucht das Löschkonzept aus Dimension 3.",
+      "kundenfrage": "Welche Aufbewahrungs- und Löschfristen gelten für die Daten?"
     },
     "schluesselrotation": {
       "title": "Schlüsselrotation",
       "area": "lebenszyklus",
       "dimension": "betrieb",
+      "phase": "betrieb",
       "triggers": [
         "immer"
       ],
@@ -1692,6 +1787,7 @@
       "title": "Rechte-Rezertifizierung",
       "area": "lebenszyklus",
       "dimension": "betrieb",
+      "phase": "betrieb",
       "triggers": [
         "immer"
       ],
@@ -1708,6 +1804,7 @@
       "title": "Verpflichtungs­erklärungen (NDA)",
       "area": "organisation",
       "dimension": "betrieb",
+      "phase": "start",
       "triggers": [
         "daten:art9",
         "immer",
@@ -1733,6 +1830,7 @@
       "title": "Schulungs­nachweise",
       "area": "organisation",
       "dimension": "betrieb",
+      "phase": "start",
       "triggers": [
         "immer"
       ],
@@ -1756,6 +1854,7 @@
       "title": "Schutzbedarfs­feststellung",
       "area": "bewerten",
       "dimension": "methodik",
+      "phase": "start",
       "triggers": [
         "immer"
       ],
@@ -1767,6 +1866,7 @@
       "what": "Ein strukturiertes Vorgehen, um für jede Datenart und jedes Verfahren den Schutzbedarf entlang der Schutzziele zu bestimmen und zu begründen.",
       "why": "Es ist der Einstiegspunkt in diese Karte. Ohne diese Einordnung fehlt die Grundlage für jede Verhältnismäßigkeitsentscheidung, und die Diskussion endet bei Bauchgefühl.",
       "when": "Ganz am Anfang, und erneut bei jeder neuen Datenquelle im Projekt.",
+      "kundenfrage": "Gibt es für das System oder die Daten schon eine Schutzbedarfsfeststellung?",
       "qaware": [
         {
           "label": "Richtlinie Informationssicherheit in Projekten",
@@ -1782,6 +1882,7 @@
       "title": "Datenschutz-Folgeabschätzung (DSFA)",
       "area": "bewerten",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "daten:art9",
         "pb:ja"
@@ -1795,12 +1896,14 @@
       ],
       "what": "Eine vorherige Bewertung der Risiken für Betroffene bei voraussichtlich hohem Risiko, mit Beschreibung der Verarbeitung, Prüfung der Erforderlichkeit, Risikobewertung und geplanten Maßnahmen.",
       "why": "Sie liegt hier in der Methodik, weil es mehrere anerkannte Verfahren gibt, etwa nach ISO 29134, das CNIL-Vorgehen oder ein LINDDUN-gestütztes Modell. Die Pflicht selbst kommt aus Art. 35.",
-      "when": "Pflicht insbesondere bei umfangreicher Verarbeitung besonderer Kategorien, systematischer Überwachung oder automatisierten Entscheidungen mit erheblicher Wirkung."
+      "when": "Pflicht insbesondere bei umfangreicher Verarbeitung besonderer Kategorien, systematischer Überwachung oder automatisierten Entscheidungen mit erheblicher Wirkung.",
+      "kundenfrage": "Gibt es für die Verarbeitung schon eine Datenschutz-Folgenabschätzung?"
     },
     "threat-modeling": {
       "title": "Threat Modeling (STRIDE)",
       "area": "bewerten",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1818,6 +1921,7 @@
       "title": "Privacy Threat Modeling (LINDDUN)",
       "area": "bewerten",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -1835,6 +1939,7 @@
       "title": "Data Flow Diagrams",
       "area": "bewerten",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1853,6 +1958,7 @@
       "title": "Architektur­entscheidungen dokumentieren (ADR)",
       "area": "verankern",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "immer"
       ],
@@ -1870,6 +1976,7 @@
       "title": "Zusammenarbeit mit DSB, Legal & Compliance",
       "area": "verankern",
       "dimension": "methodik",
+      "phase": "start",
       "triggers": [
         "immer"
       ],
@@ -1882,12 +1989,14 @@
       ],
       "what": "Der praktische Umgang mit den Rollen, die verbindlich entscheiden, also Datenschutzbeauftragte, Rechtsabteilung, Informationssicherheit und je nach Thema der Betriebsrat.",
       "why": "Die beiden Extreme, Fahrlässigkeit und Lähmung, entstehen beide daraus, dass diese Rollen zu spät oder gar nicht eingebunden werden. Mit einem Datenflussbild in der Hand wird aus einem Nein oft ein Ja mit Bedingungen.",
-      "when": "Früh und mit konkreter Frage. Wer eine offene Erlaubnisanfrage stellt, bekommt ein Nein."
+      "when": "Früh und mit konkreter Frage. Wer eine offene Erlaubnisanfrage stellt, bekommt ein Nein.",
+      "kundenfrage": "Wer ist bei euch Ansprechperson für Datenschutz und Informationssicherheit?"
     },
     "ssdlc": {
       "title": "Secure SDLC",
       "area": "verankern",
       "dimension": "methodik",
+      "phase": "umsetzung",
       "triggers": [
         "immer"
       ],
@@ -1911,6 +2020,7 @@
       "title": "Sicherheits­werkzeuge in der Pipeline",
       "area": "verankern",
       "dimension": "methodik",
+      "phase": "umsetzung",
       "triggers": [
         "immer"
       ],
@@ -1930,6 +2040,7 @@
       "title": "OWASP Top 10 für APIs",
       "area": "quellen",
       "dimension": "methodik",
+      "phase": "umsetzung",
       "triggers": [
         "immer"
       ],
@@ -1945,6 +2056,7 @@
       "title": "OWASP Privacy Risks",
       "area": "quellen",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -1960,6 +2072,7 @@
       "title": "NIST Privacy Framework",
       "area": "quellen",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -1975,6 +2088,7 @@
       "title": "Aufsichtsbehörden & Orientierungshilfen",
       "area": "quellen",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "pb:ja"
       ],
@@ -1993,6 +2107,7 @@
       "title": "Gesundheits- & Behandlungsdaten",
       "area": "medtech-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:medtech",
         "daten:art9"
@@ -2011,6 +2126,7 @@
       "title": "SGB V",
       "area": "medtech-reg-de",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech"
       ],
@@ -2027,6 +2143,7 @@
       "title": "PDSG",
       "area": "medtech-reg-de",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech"
       ],
@@ -2043,6 +2160,7 @@
       "title": "DiGA-Anforderungen",
       "area": "medtech-reg-de",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech"
       ],
@@ -2060,6 +2178,7 @@
       "title": "MDR (Medizinprodukt)",
       "area": "medtech-reg-de",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech"
       ],
@@ -2078,6 +2197,7 @@
       "title": "Telematik­infrastruktur & gematik",
       "area": "medtech-reg-de",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech"
       ],
@@ -2096,6 +2216,7 @@
       "title": "HIPAA",
       "area": "medtech-reg-int",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech",
         "drittland:ja"
@@ -2114,6 +2235,7 @@
       "title": "Verschlusssachen (VS-NfD)",
       "area": "public-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:public",
         "daten:staatlich"
@@ -2132,6 +2254,7 @@
       "title": "KRITIS-relevante Systemdaten",
       "area": "public-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:public",
         "daten:staatlich"
@@ -2150,6 +2273,7 @@
       "title": "BSI IT-Grundschutz",
       "area": "public-reg",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:public",
         "nachweis:ja"
@@ -2168,6 +2292,7 @@
       "title": "BSIG & KRITIS-Pflichten",
       "area": "public-reg",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:public"
       ],
@@ -2185,6 +2310,7 @@
       "title": "Zahlungs- & Kontodaten",
       "area": "finance-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:bank",
         "branche:versicherung",
@@ -2205,6 +2331,7 @@
       "title": "PCI-DSS",
       "area": "finance-zahlung",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:bank",
         "branche:versicherung",
@@ -2224,6 +2351,7 @@
       "title": "DORA",
       "area": "finance-aufsicht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:bank",
         "branche:versicherung"
@@ -2235,12 +2363,14 @@
       ],
       "what": "Die EU-Verordnung zur digitalen operationalen Resilienz im Finanzsektor, mit Anforderungen an IKT-Risikomanagement, Vorfallmeldung, Resilienztests und die Steuerung von Drittanbietern.",
       "why": "Sie richtet den Blick auf Verfügbarkeit und Beherrschbarkeit von Abhängigkeiten statt nur auf Vertraulichkeit, und sie reicht vertraglich bis zu den Dienstleistern der Dienstleister.",
-      "when": "Relevant für Finanzunternehmen und deren IKT-Dienstleister, also häufig auch für das Beratungsprojekt selbst."
+      "when": "Relevant für Finanzunternehmen und deren IKT-Dienstleister, also häufig auch für das Beratungsprojekt selbst.",
+      "kundenfrage": "Gilt unsere Leistung für euch als IKT-Dienstleistung nach DORA, und welche Vertragsinhalte folgen daraus?"
     },
     "bait-marisk": {
       "title": "BAIT & MaRisk",
       "area": "finance-aufsicht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:bank"
       ],
@@ -2258,6 +2388,7 @@
       "title": "Prompt- & Kontextdaten",
       "area": "ki-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "ki:ja",
         "daten:prompts"
@@ -2272,6 +2403,7 @@
       "what": "Alles, was einem Modell übergeben wird, also Nutzereingaben, angehängte Dokumente, abgerufene Wissensausschnitte, Werkzeugergebnisse und Verlaufsdaten.",
       "why": "Das ist der am leichtesten übersehene Datenabfluss. Ein Dokumentenanhang oder ein Suchtreffer aus dem internen Wissensspeicher verlässt damit das System, ohne dass es wie ein Export aussieht.",
       "when": "Bei jeder Modellanbindung prüfen, was tatsächlich im Kontext landet, nicht nur was der Nutzer tippt.",
+      "kundenfrage": "Dürfen Projektdaten und Code in KI-Werkzeuge, und in welche?",
       "qaware": [
         {
           "label": "Richtlinie Einsatz von KI-Tools",
@@ -2283,6 +2415,7 @@
       "title": "Trainings- & Feinabstimmungs­daten",
       "area": "ki-daten",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "ki:ja"
       ],
@@ -2300,6 +2433,7 @@
       "title": "Embeddings & Vektordatenbanken",
       "area": "ki-daten",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "ki:ja"
       ],
@@ -2317,6 +2451,7 @@
       "title": "EU AI Act",
       "area": "ki-reg",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "ki:ja"
       ],
@@ -2333,6 +2468,7 @@
       "title": "KI-Risikoklassen nach AI Act",
       "area": "ki-reg",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "ki:ja"
       ],
@@ -2350,6 +2486,7 @@
       "title": "ISO/IEC 42001",
       "area": "ki-reg",
       "dimension": "regulatorik",
+      "phase": "betrieb",
       "triggers": [
         "ki:ja",
         "nachweis:ja"
@@ -2367,6 +2504,7 @@
       "title": "Prompt Masking & PII-Filter",
       "area": "ki-arch",
       "dimension": "architektur",
+      "phase": "umsetzung",
       "triggers": [
         "ki:ja",
         "daten:prompts"
@@ -2385,6 +2523,7 @@
       "title": "Guardrails & Output-Filter",
       "area": "ki-arch",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "ki:ja",
         "daten:prompts"
@@ -2403,6 +2542,7 @@
       "title": "Lokale & selbst gehostete Modelle",
       "area": "ki-arch",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "ki:ja"
       ],
@@ -2420,6 +2560,7 @@
       "title": "EU-gehostete Modell-APIs",
       "area": "ki-arch",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "ki:ja",
         "drittland:ja"
@@ -2437,6 +2578,7 @@
       "title": "Zero Data Retention & Trainings­ausschluss",
       "area": "ki-arch",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "ki:ja",
         "daten:prompts"
@@ -2455,6 +2597,7 @@
       "title": "Agenten- & Werkzeugzugriffe absichern",
       "area": "ki-arch",
       "dimension": "architektur",
+      "phase": "umsetzung",
       "triggers": [
         "ki:ja"
       ],
@@ -2473,6 +2616,7 @@
       "title": "NIST AI RMF",
       "area": "ki-quellen",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "ki:ja"
       ],
@@ -2489,6 +2633,7 @@
       "title": "SAIF",
       "area": "ki-quellen",
       "dimension": "methodik",
+      "phase": "entwurf",
       "triggers": [
         "ki:ja"
       ],
@@ -2504,6 +2649,7 @@
       "title": "OWASP Top 10 für LLMs",
       "area": "ki-quellen",
       "dimension": "methodik",
+      "phase": "umsetzung",
       "triggers": [
         "ki:ja"
       ],
@@ -2520,6 +2666,7 @@
       "title": "Fahrzeug- & Telemetriedaten",
       "area": "automotive-erfasst",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2539,6 +2686,7 @@
       "title": "Fahrzeug­identifikations­nummer (VIN)",
       "area": "automotive-identitaet",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:automotive"
       ],
@@ -2556,6 +2704,7 @@
       "title": "Standort- & Bewegungsdaten",
       "area": "automotive-erfasst",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2574,6 +2723,7 @@
       "title": "Innenraumsensorik (Kamera, Mikrofon)",
       "area": "automotive-erfasst",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive",
         "daten:art9"
@@ -2593,6 +2743,7 @@
       "title": "Diagnose- & Werkstattdaten",
       "area": "automotive-erfasst",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2611,6 +2762,7 @@
       "title": "Prototypen- & Erprobungsdaten",
       "area": "automotive-geheimnis",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:automotive",
         "daten:ip"
@@ -2630,6 +2782,7 @@
       "title": "TISAX",
       "area": "automotive-geheimnis",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:automotive",
         "nachweis:ja"
@@ -2650,6 +2803,7 @@
       "title": "ISO/SAE 21434",
       "area": "automotive-produkt",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2668,6 +2822,7 @@
       "title": "UNECE R155 (CSMS)",
       "area": "automotive-produkt",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2686,6 +2841,7 @@
       "title": "UNECE R156 (SUMS)",
       "area": "automotive-software",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2704,6 +2860,7 @@
       "title": "EDPB-Leitlinien zu Connected Vehicles",
       "area": "automotive-identitaet",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2721,6 +2878,7 @@
       "title": "Unfalldatenspeicher (EDR)",
       "area": "automotive-erfasst",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2738,6 +2896,7 @@
       "title": "Secure Onboard Communication",
       "area": "automotive-produkt",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2755,6 +2914,7 @@
       "title": "Vertrauensanker im Steuergerät",
       "area": "automotive-produkt",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2774,6 +2934,7 @@
       "title": "Signierte OTA-Updates & Rückrollbarkeit",
       "area": "automotive-software",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2793,6 +2954,7 @@
       "title": "Entkopplung der VIN im Backend",
       "area": "automotive-identitaet",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2809,6 +2971,7 @@
       "title": "Einwilligung im Fahrzeug",
       "area": "automotive-identitaet",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2827,6 +2990,7 @@
       "title": "Verarbeitung im Fahrzeug statt im Backend",
       "area": "automotive-erfasst",
       "dimension": "architektur",
+      "phase": "entwurf",
       "triggers": [
         "branche:automotive"
       ],
@@ -2844,6 +3008,7 @@
       "title": "VDA ISA Selbstauskunft",
       "area": "automotive-geheimnis",
       "dimension": "betrieb",
+      "phase": "start",
       "triggers": [
         "branche:automotive",
         "nachweis:ja"
@@ -2863,6 +3028,7 @@
       "title": "TISAX-Label & Austausch über ENX",
       "area": "automotive-geheimnis",
       "dimension": "betrieb",
+      "phase": "start",
       "triggers": [
         "branche:automotive",
         "nachweis:ja"
@@ -2882,6 +3048,7 @@
       "title": "Schwachstellen über die Fahrzeug­lebens­dauer",
       "area": "automotive-software",
       "dimension": "betrieb",
+      "phase": "betrieb",
       "triggers": [
         "branche:automotive"
       ],
@@ -2900,6 +3067,7 @@
       "title": "Nachweise in der Lieferkette",
       "area": "automotive-geheimnis",
       "dimension": "betrieb",
+      "phase": "start",
       "triggers": [
         "branche:automotive"
       ],
@@ -2918,6 +3086,7 @@
       "title": "Dienstleister­kontrolle",
       "area": "organisation",
       "dimension": "betrieb",
+      "phase": "start",
       "triggers": [
         "pb:ja"
       ],
@@ -2942,6 +3111,7 @@
       "title": "Wirksamkeit der Maßnahmen prüfen",
       "area": "organisation",
       "dimension": "betrieb",
+      "phase": "betrieb",
       "triggers": [
         "pb:ja"
       ],
@@ -2960,6 +3130,7 @@
       "title": "Betroffenen­anfragen nachweisen",
       "area": "organisation",
       "dimension": "betrieb",
+      "phase": "betrieb",
       "triggers": [
         "pb:ja"
       ],
@@ -2978,6 +3149,7 @@
       "title": "Landes­datenschutz­gesetze",
       "area": "public-reg",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:public"
       ],
@@ -2996,6 +3168,7 @@
       "title": "Archivrecht & Anbietungspflicht",
       "area": "public-reg",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:public"
       ],
@@ -3014,6 +3187,7 @@
       "title": "eIDAS & Vertrauensdienste",
       "area": "public-reg",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:public"
       ],
@@ -3032,6 +3206,7 @@
       "title": "EVB-IT & Vergaberecht",
       "area": "public-reg",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:public"
       ],
@@ -3050,6 +3225,7 @@
       "title": "Bonitäts- & Scoringdaten",
       "area": "finance-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:bank",
         "branche:versicherung",
@@ -3070,6 +3246,7 @@
       "title": "PSD2 & Zahlungsdienste­recht",
       "area": "finance-zahlung",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:bank",
         "daten:finanz"
@@ -3089,6 +3266,7 @@
       "title": "Bankgeheimnis",
       "area": "finance-geheimnis",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:bank"
       ],
@@ -3106,6 +3284,7 @@
       "title": "Auslagerung",
       "area": "finance-aufsicht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:bank",
         "branche:versicherung"
@@ -3125,6 +3304,7 @@
       "title": "VAIT",
       "area": "finance-aufsicht",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:versicherung"
       ],
@@ -3142,6 +3322,7 @@
       "title": "VVG",
       "area": "finance-geheimnis",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:versicherung"
       ],
@@ -3160,6 +3341,7 @@
       "title": "GDV-Verhaltensregeln",
       "area": "finance-geheimnis",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:versicherung",
         "pb:ja"
@@ -3178,6 +3360,7 @@
       "title": "Antrags- & Risikoprüfungs­daten",
       "area": "finance-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:versicherung",
         "daten:art9"
@@ -3197,6 +3380,7 @@
       "title": "Schaden- & Leistungsdaten",
       "area": "finance-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:versicherung"
       ],
@@ -3215,6 +3399,7 @@
       "title": "Melde- & Registerdaten",
       "area": "public-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:public"
       ],
@@ -3234,6 +3419,7 @@
       "title": "Steuerdaten",
       "area": "public-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:public"
       ],
@@ -3252,6 +3438,7 @@
       "title": "Vorgangs- & Aktendaten",
       "area": "public-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:public"
       ],
@@ -3270,6 +3457,7 @@
       "title": "Polizei- & Justizdaten",
       "area": "public-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:public",
         "daten:staatlich"
@@ -3289,6 +3477,7 @@
       "title": "Genetische Daten",
       "area": "medtech-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:medtech",
         "daten:art9"
@@ -3308,6 +3497,7 @@
       "title": "Forschungs- & Studiendaten",
       "area": "medtech-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:medtech"
       ],
@@ -3327,6 +3517,7 @@
       "title": "Bilddaten & Befunde (DICOM)",
       "area": "medtech-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:medtech"
       ],
@@ -3346,6 +3537,7 @@
       "title": "Gerätedaten aus dem Betrieb",
       "area": "medtech-daten",
       "dimension": "klassifizierung",
+      "phase": "entwurf",
       "triggers": [
         "branche:medtech"
       ],
@@ -3364,6 +3556,7 @@
       "title": "Abrechnungs- & Leistungsdaten",
       "area": "medtech-daten",
       "dimension": "klassifizierung",
+      "phase": "start",
       "triggers": [
         "branche:medtech"
       ],
@@ -3383,6 +3576,7 @@
       "title": "FDA 21 CFR Part 11",
       "area": "medtech-reg-int",
       "dimension": "regulatorik",
+      "phase": "entwurf",
       "triggers": [
         "branche:medtech",
         "nachweis:ja"
@@ -3403,6 +3597,7 @@
       "title": "Gute klinische Praxis (ICH E6)",
       "area": "medtech-reg-int",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech"
       ],
@@ -3422,6 +3617,7 @@
       "title": "IEC 81001-5-1",
       "area": "medtech-reg-int",
       "dimension": "regulatorik",
+      "phase": "umsetzung",
       "triggers": [
         "branche:medtech",
         "nachweis:ja"
@@ -3441,6 +3637,7 @@
       "title": "ISO 13485",
       "area": "medtech-reg-int",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech",
         "nachweis:ja"
@@ -3460,6 +3657,7 @@
       "title": "ISO 27799",
       "area": "medtech-reg-int",
       "dimension": "regulatorik",
+      "phase": "start",
       "triggers": [
         "branche:medtech",
         "nachweis:ja"

@@ -28,9 +28,10 @@ statt sie zu doppeln.
 - Klick oder Enter auf eine Kachel öffnet die Details
 - „Hilfe“ erklärt die drei Achsen: was die Farben, die Inseln und die Bereiche bedeuten
 - Die Suche findet Titel, Synonyme und Kacheltexte
-- „Mein Projekt“ hebt die Kacheln hervor, die für ein Vorhaben zu klären sind, und gibt sie als Markdown heraus: als Checkliste für Menschen oder als Kontext für einen KI-Agenten, siehe unten
+- „Mein Projekt“ hebt die Kacheln hervor, die für ein Vorhaben zu klären sind, listet sie nach Projektphase und gibt sie als Markdown heraus: als Checkliste für Menschen oder als Kontext für einen KI-Agenten, siehe unten
 - Jede Frage dort steht anfangs auf „offen“, ist also noch nicht beantwortet und engt nichts ein. Ein Klick auf die gewählte Antwort führt dorthin zurück
-- Aus den Antworten ergeben sich drei Zustände: hervorgehoben heißt gesichert relevant, blass heißt ausgeschlossen, normal heißt offen, weil noch eine unbeantwortete Frage darüber entscheidet. „nein“ schließt aus und ist deshalb nicht dasselbe wie „offen“
+- Aus den Antworten ergeben sich drei Zustände: kräftig heißt gesichert relevant, halb zurückgenommen heißt offen, weil noch eine unbeantwortete Frage darüber entscheidet, blass heißt ausgeschlossen. „nein“ schließt aus und ist deshalb nicht dasselbe wie „offen“
+- Die Adresse enthält die Antworten und die geöffnete Kachel, etwa `#branche=Versicherung&pb=ja&kachel=testdaten`. Wer sie weitergibt, gibt die Sicht mit
 
 ## Lokal starten
 
@@ -86,7 +87,17 @@ Domänenspezifisches. Was allgemein gilt, bleibt im Kern und wird von dort refer
 Die Fragen im Projektfilter stehen selbst in `filters`, und der Viewer liest sie von dort. Eine
 neue Frage ist deshalb eine reine Datenänderung, ohne Eingriff in den Code.
 
-`triggers` steuert den Projektfilter, mehrere Tags wirken als Oder-Verknüpfung. `immer` heißt, dass
+`phase` ist Pflicht und sagt, in welcher Projektphase eine Kachel zuerst zu klären ist. Die Phasen
+stehen in `phases`. Sie sind kein weiterer Filter, sondern ordnen nur die Ergebnisliste und die
+Checkliste, damit man sieht, was jetzt dran ist. Eine Kachel hat genau eine Phase, die früheste.
+
+`kundenfrage` ist optional: eine Frage, die man dem Kunden zu dieser Kachel stellt. Sie steht
+nur dort, wo die Antwort tatsächlich beim Kunden liegt, und erscheint in der Detailansicht und
+in beiden Exporten.
+
+`triggers` steuert den Projektfilter, mehrere Tags wirken als Oder-Verknüpfung. Ausnahme ist eine
+Frage mit `voraussetzung: true`, derzeit die Branche: ihre Tags sind eine Bedingung, kein weiterer
+Grund, siehe die Filterregel unten. `immer` heißt, dass
 die Kachel in jedem Projekt mit schützenswerten Daten zu klären ist. `aliases` ist für die Suche da
 und der Grund, warum jemand die Kachel auch findet, wenn er ein anderes Wort benutzt.
 
@@ -160,12 +171,13 @@ Kachel für ein Vorhaben gilt. `dimension` und `area` ordnen sie ein, `area` ver
 auf Kern oder Archipel.
 
 **Die Filterregel in einer Zeile.** Eine Kachel ist relevant, wenn ihr `triggers` den Wert
-`immer` enthält oder eine Eigenschaft des Vorhabens. Welche Eigenschaften es gibt, steht in
-`filters` in derselben Datei, der Agent braucht also keine weitere Quelle.
+`immer` enthält oder eine Eigenschaft des Vorhabens, es sei denn, sie trägt ein Branchen-Tag und
+keines davon passt zum Vorhaben. Welche Eigenschaften es gibt, steht in `filters` in derselben
+Datei, der Agent braucht also keine weitere Quelle.
 
 Wer eine Eigenschaft ausdrücklich verneint, schließt die Kacheln aus, deren Trigger *alle* an
 verneinten Fragen hängen. Alles dazwischen bleibt offen, weil eine unbeantwortete Frage darüber
-entscheidet; der Viewer zeigt diese Kacheln normal und nennt sie im Export als eigene Zeile.
+entscheidet; der Viewer nimmt diese Kacheln halb zurück und nennt sie im Export als eigene Zeile.
 
 **Für die `CLAUDE.md` eines Projekt-Repos**, die Tags an das Vorhaben angepasst:
 
@@ -173,7 +185,8 @@ entscheidet; der Viewer zeigt diese Kacheln normal und nennt sie im Export als e
 Bei Fragen zu Datenschutz, Datensicherheit und Regulatorik in diesem Projekt:
 lies https://qaware.github.io/schuetzenswerte-daten-landkarte/landkarte.json und
 berücksichtige die Kacheln, deren "triggers" den Wert "immer" enthalten oder eines
-von: branche:automotive, pb:ja, cloud:hyperscaler.
+von: branche:automotive, pb:ja, cloud:hyperscaler. Kacheln mit einem anderen
+branche:-Tag gelten nicht.
 Das Feld "when" sagt, warum eine Kachel hier gilt, "why" warum sie wichtig ist.
 Die Karte ist eine Orientierung, kein Rechtsrat und keine Vollständigkeitszusage;
 bei Fristen und Anwendbarkeit auf die Quelle verweisen statt etwas zu behaupten.
@@ -183,11 +196,11 @@ bei Fristen und Anwendbarkeit auf die Quelle verweisen statt etwas zu behaupten.
 
 Wer nicht möchte, dass der Agent selbst filtert: unter „Mein Projekt“ das Vorhaben beantworten
 und **Als Agenten-Kontext kopieren** drücken. In der Zwischenablage liegt dann Markdown mit den
-ausgewählten Kacheln samt `what`, `why` und `when`, gruppiert nach Dimension, mit Quellenangabe
+ausgewählten Kacheln samt `what`, `why`, `when`, Phase und Kundenfrage, gruppiert nach Dimension, mit Quellenangabe
 und Disclaimer im Kopf. Für ein typisches Vorhaben sind das etwa 12.000 Token.
 
-Der Unterschied zur Schaltfläche daneben: **Als Checkliste kopieren** gibt nur Titel und
-Begründung als Aufgabenliste für Menschen, der Agenten-Kontext gibt die Texte mit.
+Der Unterschied zur Schaltfläche daneben: **Als Checkliste kopieren** gibt Titel, Begründung
+und Kundenfrage als Aufgabenliste für Menschen, nach Projektphase geordnet, der Agenten-Kontext gibt die Texte mit.
 
 Beide Schaltflächen legen den Inhalt in die Zwischenablage und laden nur dann eine Datei
 herunter, wenn das Kopieren nicht möglich ist, etwa weil die Seite nicht über HTTPS läuft.

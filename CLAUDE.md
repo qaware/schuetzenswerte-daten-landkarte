@@ -382,7 +382,10 @@ daraus jede Kachel ein:
 
 - **gesichert**, wenn sie `immer` trägt oder einer ihrer Trigger auf ja steht. Hervorgehoben.
 - **ausgeschlossen**, wenn *alle* ihre Trigger auf nein stehen. Blass.
-- **offen** sonst, also wenn noch eine unbeantwortete Frage über sie entscheidet. Normal.
+- **offen** sonst, also wenn noch eine unbeantwortete Frage über sie entscheidet. Halb
+  zurückgenommen, solange ein Filter wirkt. Vorher stand offen normal da, und eine gesicherte
+  Kachel sah dann aus wie jede Kachel auf der unberührten Karte: die Hervorhebung war nur am
+  dickeren Rand zu erkennen und in der Gesamtansicht gar nicht.
 
 Gemessen: „Branche Automotive" allein ergibt 55 gesichert, 73 offen, 27 ausgeschlossen. Kommt
 „personenbezogene Daten: nein" dazu, bleiben es 55 gesicherte, aber die Ausgeschlossenen steigen
@@ -401,6 +404,18 @@ nennen die offenen als eigene Zeile „Weitere N Kacheln hängen an Fragen, die 
 beantwortet sind". Die Zeile ist der Ersatz für das, was der Export vorher stillschweigend
 weggelassen hat.
 
+### Die Branche ist eine Voraussetzung, kein weiterer Grund
+
+Trigger wirken als Oder. Ein Versicherungsprojekt mit Nachweispflicht bekam damit TISAX,
+ISO 13485, IT-Grundschutz und weitere Kacheln anderer Branchen, gemessen **11 von 108**, weil
+diese neben ihrem Branchen-Tag `nachweis:ja` oder `daten:art9` tragen. Selbst „Branche andere"
+zeigte TISAX, obwohl „andere" ausdrücklich heißt: keine branchenspezifische Kachel.
+
+Die Frage `branche` trägt deshalb `voraussetzung: true`. Trägt eine Kachel Tags einer solchen
+Frage und stehen alle auf nein, ist sie ausgeschlossen, egal was sonst passt. Ist die Branche
+offen, wirkt die Oder-Regel wie bisher. `matching()` fragt jetzt `classify()`, statt die Regel
+ein zweites Mal nachzubilden; vorher liefen beide getrennt und hätten auseinanderlaufen können.
+
 Zwei Regeln zu den Triggern, die aus einer Prüfung der Daten hervorgingen:
 
 **`immer` heißt immer.** DSGVO, Auftragsverarbeitung und Art.-32-Maßnahmen trugen `immer` und
@@ -418,6 +433,31 @@ echten Hinweise unsichtbar.
 **Ein Trigger reicht selten.** Die Datenart-Optionen zeigten fast nur auf die Kachel, die die
 Datenart benennt: „Analytische Daten" wählte genau eine von damals 124 Kacheln aus. Eine Kachel
 gehört an jede Eigenschaft, wegen der man sie klären muss.
+
+## Phase und Kundenfrage
+
+Für die Projektleitung fehlte die Frage „was ist jetzt dran", für die Analyse die Frage „was
+frage ich den Kunden". Beides ist bewusst klein gehalten, damit die Karte nicht kippt.
+
+`phase` ist **kein weiterer Filter**. Eine achte Frage hätte einen vierten Kachelzustand
+gebraucht, „gilt, aber nicht jetzt", und den hätte niemand auf Anhieb verstanden. Die Phase
+ordnet nur die Ergebnisliste und die Checkliste. Jede Kachel hat genau eine, die früheste, in
+der sie zu klären ist. Grundregel ist Klassifizierung und Regulatorik zum Projektstart,
+Architektur und Methodik in den Entwurf, Betrieb in den Betrieb, mit Ausnahmen. Die erste
+Fassung legte 89 von 157 Kacheln auf den Start und half damit niemandem; Datenarten, die erst
+im Entwurf auftauchen, wie Logs oder Embeddings, liegen deshalb im Entwurf.
+
+`kundenfrage` steht nur dort, wo die Antwort beim Kunden liegt, derzeit an 22 Kacheln. Wer
+eine ergänzt, prüft, ob die Frage wirklich nur der Kunde beantworten kann; sonst gehört der
+Gedanke in `when`. Das Prüfskript verlangt ein Fragezeichen.
+
+## Adresse und Weitergabe
+
+Antworten und geöffnete Kachel stehen im Fragment der Adresse, mit den Beschriftungen der
+Antworten statt Indizes: ein Link bleibt gültig, wenn sich die Reihenfolge der Optionen ändert,
+und er ist lesbar. Wer eine Antwort umbenennt, bricht damit alte Links auf diese Antwort; sie
+fallen dann still auf „offen" zurück. Geschrieben wird mit `replaceState`, sonst füllt jeder
+Klick den Verlauf.
 
 ## Trennhinweise in den Titeln
 
@@ -493,6 +533,12 @@ steht damit automatisch in der Hilfe, und der Test prüft das: jede Dimension mu
 `frage` auftauchen und jede Insel mit ihrem Namen.
 
 ## Bedienung
+
+Auf schmalen Schirmen unter 600px stehen die Inselnamen mit 14 statt 21px, sonst laufen sie
+ineinander. Bei offenem Panel wird dort die Suchzeile ausgeblendet, sonst schiebt der Zähler
+die Leiste unter das Panel. **Headless Chrome rendert nie schmaler als 500px** und schneidet
+den Screenshot nur ab; wer das Telefon prüfen will, lädt die Seite in einen 390px breiten
+iframe, sonst sieht man Fehler, die es nicht gibt.
 
 `#map` trägt `user-select: none`. Die Karte enthält Text, und beim Ziehen mit der Maus würde
 der Browser ihn sonst markieren, was den Zug unterbricht. Die Regel gilt nur für die Karte, in
