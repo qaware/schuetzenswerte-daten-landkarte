@@ -37,35 +37,55 @@
   <div id="toolbar">
     <div class="field">
       <label for="search" class="visually-hidden">Suchen</label>
+      <span class="field-icon" data-icon="search" aria-hidden="true"></span>
       <input id="search" type="search" placeholder="Suchen, etwa DSFA" autocomplete="off" spellcheck="false">
     </div>
-    <button id="btn-project" type="button" aria-expanded="false" aria-controls="project">Mein Projekt</button>
-    <button id="btn-help" type="button">Hilfe</button>
+    <button id="btn-project" type="button" aria-expanded="false" aria-controls="project" data-icon="sliders">Mein Projekt</button>
+    <button id="btn-help" type="button" data-icon="help">Hilfe</button>
     <p id="count" class="scrim" aria-live="polite"></p>
   </div>
 
   <section id="project" hidden aria-labelledby="project-heading">
-    <h2 id="project-heading">Was gilt für mein Projekt?</h2>
-    <p class="hint">Beantworte, was du weißt, der Rest bleibt „offen“. Auf der Karte gilt
-      <strong>kräftig</strong> sicher, <strong>halb</strong> hängt an einer offenen Frage,
-      <strong>blass</strong> gilt nicht.</p>
-    <details id="result" hidden>
-      <summary id="result-summary"></summary>
-      <div id="result-list"></div>
-    </details>
-    <div id="project-fields"></div>
-    <div class="project-actions">
-      <button id="btn-export" type="button">Als Checkliste kopieren</button>
-      <button id="btn-agent" type="button">Als Agenten-Kontext kopieren</button>
-      <button id="btn-share" type="button">Link zu dieser Auswahl kopieren</button>
-      <button id="btn-reset" type="button" class="ghost">Auswahl zurücksetzen</button>
+    <header class="sheet-head">
+      <div class="sheet-title">
+        <h2 id="project-heading">Was gilt für mein Projekt?</h2>
+        <button id="project-close" type="button" class="icon-btn" data-icon="x"
+                aria-label="Schließen" title="Schließen"></button>
+      </div>
+      <ul class="states" aria-label="Was die Karte zeigt">
+        <li><span class="st st-on" aria-hidden="true"></span>gilt sicher</li>
+        <li><span class="st st-mid" aria-hidden="true"></span>hängt an offener Frage</li>
+        <li><span class="st st-off" aria-hidden="true"></span>gilt nicht</li>
+      </ul>
+      <div class="tabs" role="tablist" aria-label="Mein Projekt">
+        <button id="tab-fragen" type="button" role="tab" aria-selected="true"
+                aria-controls="pane-fragen">Fragen <span class="badge" id="answered"></span></button>
+        <button id="tab-ergebnis" type="button" role="tab" aria-selected="false"
+                aria-controls="pane-ergebnis" tabindex="-1">Ergebnis <span class="badge" id="result-count"></span></button>
+        <button id="btn-reset" type="button" class="reset" data-icon="reset"
+                title="Alle Antworten auf „offen“ zurücksetzen">Zurücksetzen</button>
+      </div>
+    </header>
+    <div class="sheet-body">
+      <div id="pane-fragen" role="tabpanel" aria-labelledby="tab-fragen">
+        <p class="hint">Beantworte, was du weißt. Jede Antwort wirkt sofort, der Rest bleibt
+          „offen“.</p>
+        <div id="project-fields"></div>
+      </div>
+      <div id="pane-ergebnis" role="tabpanel" aria-labelledby="tab-ergebnis" hidden>
+        <p class="hint" id="result-empty">Noch keine Frage beantwortet. Sobald du unter
+          „Fragen“ etwas angibst, stehen hier die Kacheln, die sicher gelten, nach Projektphase.</p>
+        <div id="result-list"></div>
+      </div>
     </div>
-    <p class="hint" id="export-status" aria-live="polite"></p>
-    <p class="hint">Der Agenten-Kontext enthält die ausgewählten Kacheln mit Text, zum Einfügen
-      in einen Prompt. Wer die Karte lieber direkt lesen lässt: die Daten liegen offen unter
-      <a href="https://qaware.github.io/schuetzenswerte-daten-landkarte/landkarte.json"
-         target="_blank" rel="noopener">landkarte.json</a>, das Vorgehen steht im README
-      unter „Für Agenten“.</p>
+    <footer class="sheet-foot">
+      <button id="btn-export" type="button" class="primary" data-icon="clipboard">Checkliste kopieren</button>
+      <button id="btn-agent" type="button" data-icon="sparkles"
+              title="Ausgewählte Kacheln mit Text, zum Einfügen in einen Prompt">Für KI-Agent</button>
+      <button id="btn-share" type="button" class="icon-btn" data-icon="link"
+              aria-label="Link zu dieser Auswahl kopieren" title="Link zu dieser Auswahl kopieren"></button>
+      <p class="hint" id="export-status" aria-live="polite"></p>
+    </footer>
   </section>
 
   <div id="legend" class="scrim">
@@ -75,21 +95,21 @@
   </div>
 
   <div id="zoombar">
-    <button id="btn-zoom-in" type="button" aria-label="Hineinzoomen">+</button>
-    <button id="btn-zoom-out" type="button" aria-label="Herauszoomen">−</button>
-    <button id="btn-zoom-fit" type="button" aria-label="Ganze Karte zeigen">Alles</button>
+    <button id="btn-zoom-in" type="button" class="icon-btn" data-icon="plus" aria-label="Hineinzoomen" title="Hineinzoomen"></button>
+    <button id="btn-zoom-out" type="button" class="icon-btn" data-icon="minus" aria-label="Herauszoomen" title="Herauszoomen"></button>
+    <button id="btn-zoom-fit" type="button" class="icon-btn" data-icon="fit" aria-label="Ganze Karte zeigen" title="Ganze Karte zeigen"></button>
   </div>
 </main>
 
 <div id="overlay" hidden>
   <article id="detail" role="dialog" aria-modal="true" aria-labelledby="detail-title" tabindex="-1">
-    <button id="detail-close" type="button" aria-label="Schließen">×</button>
+    <button id="detail-close" type="button" class="icon-btn" data-icon="x" aria-label="Schließen" title="Schließen"></button>
     <p id="detail-dimension"></p>
     <h2 id="detail-title"></h2>
     <p id="detail-place"></p>
     <div id="detail-body"></div>
     <p id="detail-triggers"></p>
-    <button id="detail-link" type="button" class="ghost">Link zu dieser Kachel kopieren</button>
+    <button id="detail-link" type="button" class="ghost" data-icon="link">Link zu dieser Kachel kopieren</button>
   </article>
 </div>
 

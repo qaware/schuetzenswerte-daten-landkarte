@@ -521,6 +521,34 @@ sie bewusst dunkel gesetzt waren und selbst hinter dem Schleier nicht reichten: 
 `#titleblock` behält `pointer-events: none`, damit man die Karte auch unter dem Titel greifen und
 ziehen kann.
 
+## Das Panel „Mein Projekt“
+
+Ein Seitenpanel über die volle Höhe mit festem Kopf und Fuß, auf dem Telefon ein Blatt von
+unten. Vorher war es eine Spalte von 340px, gut doppelt so hoch wie sichtbar, und die Exporte
+standen erst nach zwei Bildschirmen Scrollen. Drei Regeln halten es lesbar:
+
+**Fragen und Ergebnis sind Reiter, keine gemeinsame Spalte.** Die Zähler daran, etwa „4/7“ und
+„78“, zeigen den Stand, ohne dass man wechseln muss.
+
+**Der Fuß trägt nur Exporte und ist immer sichtbar**, mit genau einer Hauptaktion, der
+Checkliste. Zurücksetzen steht in der Reiterzeile, weil es zu den Antworten gehört; im Fuß
+brach es bei 420px in eine zweite Zeile um.
+
+**Erklärender Text gehört in die Hilfe.** Der Absatz zum Agenten-Kontext stand unten im Panel,
+wo ihn niemand las; er steht jetzt in der Hilfe, und der Knopf trägt einen title.
+
+## Icons
+
+Wenige, und nur wo es ein eingeführtes Zeichen gibt: Kette für Link, Klemmbrett für die
+Checkliste, Funken für KI, Pfeil zurück, Lupe, Fragezeichen, Zoom, Pfeil nach draußen für
+Links, die die Karte verlassen. Sie stehen als Pfade in `ICONS` in `assets/app.js`, nach
+Lucide (ISC), und werden über `data-icon` gesetzt; kein Icon-Font und keine Bibliothek, weil
+es keinen Build-Schritt gibt. **Ein Icon ersetzt keine Beschriftung**, außer bei den
+Zoomknöpfen und dem Link-Knopf im Fuß, und die tragen `title` und `aria-label`. Nach dem
+Kopieren wird das Icon kurz zum Haken, weil eine Meldung an anderer Stelle niemand sieht.
+Safari fokussiert Knöpfe beim Klick nicht, deshalb wird der auslösende Knopf übergeben und
+nicht aus `activeElement` gelesen.
+
 ## Die Hilfe
 
 `openHelp` benutzt dieselbe Karte wie die Kacheldetails, `#overlay` und `#detail`. Damit gelten

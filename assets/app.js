@@ -499,15 +499,29 @@ function writeHash() {
   history.replaceState(null, '', hash ? '#' + hash : location.pathname + location.search);
 }
 
+/* Rückmeldung am Knopf selbst: das Icon wird kurz zum Haken. Bei den reinen Icon-Knöpfen
+   gibt es keinen Text, den man austauschen könnte, und eine Meldung woanders sieht man nicht. */
+function bestaetigen(button, ok, text) {
+  const svg = button.querySelector(':scope > svg.icon');
+  if (svg && ok) svg.innerHTML = ICONS.check;
+  button.classList.toggle('done', ok);
+  if (text) document.getElementById('export-status').textContent = text;
+  clearTimeout(button._t);
+  button._t = setTimeout(() => {
+    if (svg) svg.innerHTML = ICONS[button.dataset.icon];
+    button.classList.remove('done');
+  }, 1600);
+}
+
 function copyLink(button) {
-  const fertig = text => {
-    const alt = button.textContent;
-    button.textContent = text;
-    setTimeout(() => { button.textContent = alt; }, 1600);
-  };
-  if (!navigator.clipboard) { fertig('Link steht in der Adresszeile'); return; }
+  const inPanel = !!button.closest('#project');
+  if (!navigator.clipboard) {
+    bestaetigen(button, false, inPanel ? 'Der Link steht in der Adresszeile.' : '');
+    return;
+  }
   navigator.clipboard.writeText(location.href).then(
-    () => fertig('Link kopiert'), () => fertig('Link steht in der Adresszeile'));
+    () => bestaetigen(button, true, inPanel ? 'Link zu dieser Auswahl kopiert.' : ''),
+    () => bestaetigen(button, false, inPanel ? 'Der Link steht in der Adresszeile.' : ''));
 }
 
 /* ---------- Belebtes Wasser ---------- */
@@ -925,14 +939,17 @@ function byPhase(hits) {
 }
 
 function renderResult(gefiltert) {
-  const box = document.getElementById('result');
-  if (!gefiltert) { box.hidden = true; return; }
-  const hits = matching();
-  box.hidden = false;
-  document.getElementById('result-summary').textContent =
-    `${hits.length} Kacheln gelten sicher · Liste nach Phase`;
+  const beantwortet = state.data.filters.filter(q => {
+    const v = state.filters[q.id];
+    return q.type === 'single' ? v !== neutralIndex(q) : v.size > 0;
+  }).length;
+  document.getElementById('answered').textContent = `${beantwortet}/${state.data.filters.length}`;
   const list = document.getElementById('result-list');
   list.textContent = '';
+  document.getElementById('result-empty').hidden = gefiltert;
+  if (!gefiltert) { document.getElementById('result-count').textContent = ''; return; }
+  const hits = matching();
+  document.getElementById('result-count').textContent = String(hits.length);
   for (const [ph, entries] of byPhase(hits)) {
     const h = document.createElement('h3');
     h.textContent = `${ph.label} (${entries.length})`;
@@ -1041,9 +1058,13 @@ function liefern(md, dateiname, was) {
     URL.revokeObjectURL(a.href);
     status.textContent = was + ' als Datei ' + dateiname + ' gespeichert.';
   };
+  const knopf = state.exportKnopf;   // Safari fokussiert Knöpfe beim Klick nicht
   if (!navigator.clipboard) { herunterladen(); return; }
   navigator.clipboard.writeText(md).then(
-    () => status.textContent = was + ' in die Zwischenablage kopiert.',
+    () => {
+      status.textContent = was + ' in die Zwischenablage kopiert.';
+      if (knopf) bestaetigen(knopf, true);
+    },
     herunterladen
   );
 }
@@ -1104,12 +1125,7 @@ function openDetail(entry) {
     h.textContent = 'Vertiefung';
     const p = document.createElement('p');
     p.append(`Allgemeines Handwerkszeug dazu steht in der T-Landkarte unter „${t.tlandkarte}“. `);
-    const a = document.createElement('a');
-    a.href = d.meta.verwandt.url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.textContent = 'T-Landkarte öffnen';
-    p.appendChild(a);
+    p.appendChild(externalLink(d.meta.verwandt.url, 'T-Landkarte öffnen'));
     body.append(h, p);
   }
 
@@ -1122,12 +1138,7 @@ function openDetail(entry) {
     p.append('Wie das bei uns geregelt ist, steht im Confluence: ');
     t.qaware.forEach((ref, i) => {
       if (i) p.append(', ');
-      const a = document.createElement('a');
-      a.href = ref.url;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = ref.label;
-      p.appendChild(a);
+      p.appendChild(externalLink(ref.url, ref.label));
     });
     p.append('.');
     body.append(h, p);
@@ -1174,13 +1185,15 @@ function openHelp() {
 
   abschnitt('So fängst du an',
     el('p', 'Öffne „Mein Projekt“ und beantworte, was du über dein Vorhaben schon weißt. '
-      + 'Jede Antwort wirkt sofort, du musst nicht alle Fragen beantworten. Oben im Panel '
+      + 'Jede Antwort wirkt sofort, du musst nicht alle Fragen beantworten. Im Reiter „Ergebnis“ '
       + 'steht dann die Liste der Kacheln, die für dein Vorhaben sicher gelten, geordnet nach der '
       + 'Projektphase, in der sie zuerst zu klären sind. Ein Klick öffnet den Text, mit '
       + '„Frage an den Kunden“, wo es eine gibt, und dem Verweis auf die Regelung bei QAware.'),
     el('p', 'Die Adresse im Browser enthält deine Antworten und die geöffnete Kachel. Wer '
       + 'sie weitergibt, gibt die Sicht mit. Beide Exporte holen dieselbe Auswahl als '
-      + 'Checkliste oder als Kontext für einen KI-Agenten.'));
+      + 'Checkliste oder als Kontext für einen KI-Agenten. Wer einen Agenten die Karte selbst '
+      + 'lesen lassen will: die Daten liegen offen als landkarte.json, das Vorgehen steht im '
+      + 'README unter „Die Karte per KI-Agent abfragen“.'));
 
   abschnitt('Was die Karte nach dem Filtern zeigt',
     el('p', 'Kräftig gilt für dein Vorhaben sicher. Halb zurückgenommen hängt noch an einer '
@@ -1399,9 +1412,37 @@ function wireInteraction() {
     panel.hidden = !open;
     toggle.setAttribute('aria-expanded', String(open));
   };
+  document.getElementById('project-close').onclick = () => { toggle.click(); toggle.focus(); };
 
-  document.getElementById('btn-export').onclick = exportChecklist;
-  document.getElementById('btn-agent').onclick = exportAgentContext;
+  const tabs = ['fragen', 'ergebnis'];
+  const zeigeReiter = name => {
+    for (const t of tabs) {
+      const tab = document.getElementById('tab-' + t);
+      const an = t === name;
+      tab.setAttribute('aria-selected', String(an));
+      tab.tabIndex = an ? 0 : -1;
+      document.getElementById('pane-' + t).hidden = !an;
+    }
+    document.querySelector('#project .sheet-body').scrollTop = 0;
+  };
+  for (const t of tabs) {
+    const tab = document.getElementById('tab-' + t);
+    tab.onclick = () => zeigeReiter(t);
+    // Pfeiltasten wechseln den Reiter, wie es das Tab-Muster erwartet
+    tab.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      const next = tabs[(tabs.indexOf(t) + 1) % tabs.length];
+      zeigeReiter(next);
+      document.getElementById('tab-' + next).focus();
+    });
+  }
+
+  document.getElementById('btn-export').onclick = e => {
+    state.exportKnopf = e.currentTarget; exportChecklist();
+  };
+  document.getElementById('btn-agent').onclick = e => {
+    state.exportKnopf = e.currentTarget; exportAgentContext();
+  };
   document.getElementById('btn-reset').onclick = () => {
     // Neu aufbauen, damit die neutralen Antworten wieder als gewählt erscheinen
     document.getElementById('project-fields').textContent = '';
@@ -1435,9 +1476,68 @@ function wireInteraction() {
   });
 }
 
+/* ---------- Icons ---------- */
+
+/* Wenige Icons, nur wo es ein eingeführtes Zeichen gibt: Kette für Link, Klemmbrett für die
+   Checkliste, Funken für KI, Pfeil zurück für Zurücksetzen. Die Pfade folgen Lucide
+   (lucide.dev, ISC-Lizenz), die Funken sind eigene. Inline statt als Bibliothek, weil die
+   Seite ohne Build-Schritt aus drei Dateien besteht. Beschriftungen bleiben stehen; nur die
+   Zoomknöpfe und die beiden kleinen Knöpfe im Panel sind reine Icons, mit title. */
+const ICONS = {
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>'
+    + '<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  clipboard: '<rect width="8" height="4" x="8" y="2" rx="1"/>'
+    + '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>'
+    + '<path d="m9 14 2 2 4-4"/>',
+  sparkles: '<path d="M11 3l1.8 4.7L17.5 9.5l-4.7 1.8L11 16l-1.8-4.7L4.5 9.5l4.7-1.8z"/>'
+    + '<path d="M18.5 14.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/>',
+  reset: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  sliders: '<path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/>',
+  help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>'
+    + '<path d="M12 17h.01"/>',
+  plus: '<path d="M5 12h14M12 5v14"/>',
+  minus: '<path d="M5 12h14"/>',
+  fit: '<path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3'
+    + 'M16 21h3a2 2 0 0 0 2-2v-3"/>',
+  external: '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8'
+    + 'a2 2 0 0 1 2-2h6"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+};
+
+function svgIcon(name, cls = 'icon') {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('class', cls);
+  svg.setAttribute('aria-hidden', 'true');
+  svg.innerHTML = ICONS[name];
+  return svg;
+}
+
+// Setzt das Icon vor den Text. Bei data-icon auf einem leeren span ist das Icon allein.
+function paintIcons(root = document) {
+  for (const n of root.querySelectorAll('[data-icon]')) {
+    if (n.querySelector(':scope > svg.icon')) continue;
+    n.prepend(svgIcon(n.dataset.icon));
+  }
+}
+
+// Ein Link nach draußen bekommt den kleinen Pfeil, damit man weiß, dass er die Karte verlässt.
+function externalLink(href, text) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.append(text, svgIcon('external', 'icon icon-inline'));
+  return a;
+}
+
 /* ---------- Start ---------- */
 
 async function start() {
+  paintIcons();
   wireInteraction();
   if (window.LANDKARTE_DATA) { build(window.LANDKARTE_DATA); return; }
   try {
