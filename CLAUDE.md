@@ -176,9 +176,23 @@ westlichen Inseln, dann fuhren alle vier nach Osten.
 Die Kurse selbst sind unsichtbar. Eine sichtbare Linie zwischen zwei Inseln würde als modellierte
 Beziehung gelesen, und Beziehungen sind hier bewusst nicht modelliert.
 
-Die Wellen bewegen sich nicht, die Bewegung tragen allein die Schiffe. Der Grund ist nicht
-Geschmack, sondern die Zeichenlast, siehe unten. Bei `prefers-reduced-motion` bleiben auch die
-Schiffe stehen; sie müssen dafür in `buildSea` ohne `animateMotion` gebaut werden, weil SMIL
+Die meisten Wellen bewegen sich nicht. **Jede achte atmet**, `SWELL_EVERY`: ihre
+`stroke-opacity` schwillt über sieben bis dreizehn Sekunden an und ab, mit gesäter Dauer und
+gesätem Versatz, und nur innerhalb von `bounds`. Das sind rund zwanzig Striche. Mehr wird
+unruhig und kostet Zeichenzeit, siehe unten; es soll ein Detail am Rand des Blicks bleiben
+und kein Blickfang. Form und Atmen ziehen aus einem eigenen Zufallsstrom, `SEA_SEED + 1`,
+damit die Lage der Wellen und die Schiffskurse davon unberührt bleiben.
+
+Die Schiffe stampfen leicht um ihre Wasserlinie, ein `animateTransform` an der inneren
+Gruppe, und ziehen zwei kurze Striche Kielwasser hinter sich her. Das Kielwasser hängt an der
+gespiegelten Gruppe und liegt deshalb immer hinter dem Heck.
+
+`buildCompass` setzt eine Windrose ins offene Wasser. Sie steht still. Ihr Platz wird gesucht
+und nicht hinterlegt: der Punkt innerhalb der Karte mit dem größten Abstand zu jeder Insel,
+ohne das linke Drittel, das Titel und Legende gehört, und ohne das oberste Fünftel unter der
+Werkzeugleiste. Wächst eine Insel, wandert die Rose; findet sich kein Platz, gibt es keine.
+Ihre Deckkraft sitzt an den einzelnen Formen, nicht an der Gruppe. Bei `prefers-reduced-motion` atmet keine Welle, und auch die
+Schiffe bleiben stehen; sie müssen dafür in `buildSea` ohne `animateMotion` gebaut werden, weil SMIL
 nicht auf CSS hört, und liegen dann auf der Kursmitte.
 
 Ein Fehler in `buildSea` bricht `build` ab, und der Aufruf steht nicht in einem try. Wer dort

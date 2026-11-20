@@ -114,9 +114,35 @@ html, body {
   stroke-linecap: round;
 }
 
+/* Jede achte Welle atmet: ihre Deckkraft schwillt langsam an und ab. Das ist der Schimmer,
+   den der Kommentar oben erlaubt, an einzelnen Strichen und an wenigen. Es bleibt ein
+   Detail am Rand des Blicks; wer hinsieht, sieht Wasser, wer liest, wird nicht gestört.
+   Dauer und Versatz setzt buildSea je Strich. */
+.wave.swell { animation: swell 9s ease-in-out infinite; }
+@keyframes swell {
+  0%, 100% { stroke-opacity: .42; }
+  50% { stroke-opacity: .12; }
+}
+@media (prefers-reduced-motion: reduce) { .wave.swell { animation: none; } }
+
 /* Die Deckkraft steht als Attribut am Element, damit das SMIL-Ein- und Ausblenden
    sie überschreiben kann. Eine Regel hier würde gegen die Animation gewinnen. */
 .ship { fill: var(--ship); }
+.ship .wake { fill: none; stroke: var(--ship); stroke-width: 1; stroke-linecap: round; stroke-opacity: .6; }
+
+/* Windrose. Die Deckkraft sitzt an den Formen, nicht an der Gruppe. */
+.compass-ring { fill: none; stroke: var(--wave); stroke-width: 1.6; stroke-opacity: .5; }
+.compass-ring.thin { stroke-width: .8; stroke-opacity: .35; }
+.compass-dark { fill: var(--wave); fill-opacity: .6; }
+.compass-light { fill: var(--ship); fill-opacity: .28; }
+.compass-n {
+  fill: var(--wave);
+  fill-opacity: .8;
+  font-family: var(--font-map);
+  font-style: italic;
+  font-size: 30px;
+  text-anchor: middle;
+}
 
 .hex { stroke: var(--ink); stroke-width: 1.5; }
 

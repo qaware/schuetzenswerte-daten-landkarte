@@ -48,6 +48,7 @@ const WAVE_KEEP_OUTER = 0.10;
 const SEA_PAD_X = 2500;
 const SEA_PAD_Y = 600;
 const SEA_MARGIN = 3.3;        // Abstand zur Küste in Hexradien, Flachwasser reicht bis 3.0
+const SWELL_EVERY = 8;         // jede achte Welle atmet, mehr wird unruhig und kostet Zeichenzeit
 const SHIP_SPEED = 6;          // Nutzereinheiten je Sekunde, daraus folgt die Fahrtdauer
 
 const DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
@@ -544,6 +545,7 @@ function buildSea(cellsByIsland) {
     return n;
   };
   const rnd = seeded(SEA_SEED);
+  const look = seeded(SEA_SEED + 1);
   const still = window.matchMedia
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -579,12 +581,26 @@ function buildSea(cellsByIsland) {
       const keep = rnd() < (inner(px, py) ? WAVE_KEEP : WAVE_KEEP_OUTER);
       const scale = 0.75 + rnd() * 0.5;
       const tilt = (rnd() - 0.5) * 16;
+      // Eigener Zufallsstrom für Form und Atmen, damit die Lage der Wellen und die
+      // Schiffskurse dieselben bleiben wie vorher.
+      const kurz = look() < 0.3, takt = look(), versatz = look();
       if (!keep || !isWater(px, py)) continue;
-      layer.appendChild(el('path', {
+      const wave = el('path', {
         class: 'wave',
-        d: 'M-15 0q7.5 -5 15 0q7.5 5 15 0',
+        // zwei Formen: der lange Doppelbogen und ein kurzer einzelner
+        d: kurz ? 'M-9 0q4.5 -4.5 9 0q4.5 4.5 9 0' : 'M-15 0q7.5 -5 15 0q7.5 5 15 0',
         transform: `translate(${px.toFixed(1)} ${py.toFixed(1)}) rotate(${tilt.toFixed(1)}) scale(${scale.toFixed(2)})`
-      }));
+      });
+      /* Bewegtes Wasser, sparsam: nur jede achte Welle, und nur innerhalb der Karte, wo
+         man sie sieht. Animiert wird stroke-opacity am einzelnen Strich, nie eine Gruppe,
+         siehe .wave in style.css. Dauer und Versatz sind gesät, damit nichts im Takt
+         schlägt. Bei prefers-reduced-motion bleibt alles still. */
+      if (!still && inner(px, py) && waves % SWELL_EVERY === 0) {
+        wave.classList.add('swell');
+        wave.style.animationDuration = (7 + takt * 6).toFixed(1) + 's';
+        wave.style.animationDelay = (-versatz * 13).toFixed(1) + 's';
+      }
+      layer.appendChild(wave);
       waves++;
     }
   }
@@ -650,9 +666,23 @@ function buildSea(cellsByIsland) {
        führe das Schiff rückwärts. Die Richtung zeigt stattdessen die Spiegelung,
        so wie Schiffe auf gezeichneten Karten gehalten werden. */
     const ship = el('g', { class: 'ship', opacity: '0.72' });
-    const rumpf = el('g', e.x < a.x ? { transform: 'scale(-1 1)' } : {});
-    rumpf.appendChild(el('path', { d: 'M-11 2L11 2L8 6L-8 6Z' }));    // Rumpf
-    rumpf.appendChild(el('path', { d: 'M0 2L0-11L9-2Z' }));           // Segel
+    const rumpf = el('g', { transform: (e.x < a.x ? 'scale(-1.5 1.5)' : 'scale(1.5)') });
+    const boot = el('g');
+    boot.appendChild(el('path', { d: 'M-12 2Q0 4 12 2L8.5 7Q0 8.5 -8.5 7Z' }));   // Rumpf, leicht gebaucht
+    boot.appendChild(el('path', { d: 'M1 1L1-13Q9-7 10 1Z' }));                   // Großsegel
+    boot.appendChild(el('path', { d: 'M-1 1L-1-9Q-6-4 -8 1Z' }));                 // Vorsegel
+    boot.appendChild(el('path', { d: 'M1-13L1-16L5-14.5Z' }));                    // Wimpel
+    // Kielwasser hinter dem Heck, zwei kurze Striche
+    rumpf.appendChild(el('path', { class: 'wake', d: 'M-15 7q-3 -1.5 -6 0M-17 4q-2.5 -1.2 -5 0' }));
+    if (!still) {
+      // Leichtes Stampfen um die Wasserlinie. Vier Schiffe, also vier kleine Animationen.
+      boot.appendChild(el('animateTransform', {
+        attributeName: 'transform', type: 'rotate', dur: (3.6 + rnd() * 1.2).toFixed(1) + 's',
+        repeatCount: 'indefinite', values: '-2.5 0 5;2.5 0 5;-2.5 0 5',
+        calcMode: 'spline', keyTimes: '0;0.5;1', keySplines: '.45 0 .55 1;.45 0 .55 1'
+      }));
+    }
+    rumpf.appendChild(boot);
     ship.appendChild(rumpf);
 
     if (still) {
@@ -681,7 +711,54 @@ function buildSea(cellsByIsland) {
     layer.appendChild(ship);
     ships++;
   }
+  buildCompass(layer, el, isWater);
   return { waves, ships };
+}
+
+/* Eine Windrose im offenen Wasser, wie auf gezeichneten Seekarten. Sie steht still, liegt in
+   layer-sea unter der Küste und trägt ihre Deckkraft an den einzelnen Formen. Der Platz wird
+   gesucht und nicht hinterlegt: der Punkt innerhalb der Karte, der am weitesten von jeder
+   Insel entfernt ist und nicht unter Titel oder Legende liegt. Wächst eine Insel, wandert
+   die Rose mit. Findet sich kein freier Platz, gibt es keine. */
+const COMPASS_R = 105;
+function buildCompass(layer, el, isWater) {
+  const b = state.bounds;
+  const frei = (x, y, r) => {
+    for (let a = 0; a < 12; a++) {
+      const w = a * Math.PI / 6;
+      if (!isWater(x + Math.cos(w) * r, y + Math.sin(w) * r)) return false;
+    }
+    return isWater(x, y);
+  };
+  let best = null;
+  const step = R * 1.5;
+  // Die linke Spalte gehört Titel und Legende, der obere Rand der Werkzeugleiste: deshalb
+  // nur die rechten zwei Drittel und nicht das oberste Fünftel.
+  for (let y = b.y0 + (b.y1 - b.y0) / 5; y <= b.y1; y += step) {
+    for (let x = b.x0 + (b.x1 - b.x0) / 3; x <= b.x1; x += step) {
+      let r = 0;
+      while (r < 12 * R && frei(x, y, r + R)) r += R;
+      if (r >= COMPASS_R * 1.5 && (!best || r > best.r)) best = { x, y, r };
+    }
+  }
+  if (!best) return;
+
+  const g = el('g', { class: 'compass', transform: `translate(${best.x.toFixed(1)} ${best.y.toFixed(1)})` });
+  const r = COMPASS_R;
+  g.appendChild(el('circle', { r: r * 0.78, class: 'compass-ring' }));
+  g.appendChild(el('circle', { r: r * 0.72, class: 'compass-ring thin' }));
+  // Acht Strahlen: vier lange für die Haupt-, vier kurze für die Nebenrichtungen.
+  for (let i = 0; i < 8; i++) {
+    const lang = i % 2 === 0, len = lang ? r : r * 0.55, w = lang ? r * 0.13 : r * 0.09;
+    const ray = el('g', { transform: `rotate(${i * 45})` });
+    ray.appendChild(el('path', { d: `M0 ${-len}L${w} 0L0 0Z`, class: 'compass-dark' }));
+    ray.appendChild(el('path', { d: `M0 ${-len}L${-w} 0L0 0Z`, class: 'compass-light' }));
+    g.appendChild(ray);
+  }
+  const n = el('text', { y: -r - 12, class: 'compass-n' });
+  n.textContent = 'N';
+  g.appendChild(n);
+  layer.appendChild(g);
 }
 
 function buildLegend() {

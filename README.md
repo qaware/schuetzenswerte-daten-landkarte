@@ -50,7 +50,7 @@ Dann `http://localhost:8000` öffnen. Ein Webserver ist nötig, weil der Viewer
 | `landkarte.json` | die Daten, einzige Quelle der Wahrheit |
 | `index.html` | die Seite |
 | `assets/app.js`, `assets/style.css` | der Viewer |
-| | darin `layer-sea`: Wellen und Schiffe, gesät gestreut, unter der Küste und ohne Ereignisse |
+| | darin `layer-sea`: Wellen, von denen einige langsam atmen, Schiffe und eine Windrose, gesät gestreut, unter der Küste und ohne Ereignisse |
 | `tools/check-landkarte.py` | prüft die Daten, von Hand laufen lassen |
 | `tools/check-quellen.py` | ruft alle Quellen ab und meldet tote Adressen, von Hand laufen lassen |
 
