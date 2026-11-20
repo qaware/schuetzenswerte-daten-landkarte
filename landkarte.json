@@ -480,6 +480,12 @@
           ]
         },
         {
+          "label": "Beschäftigtendaten",
+          "tags": [
+            "daten:beschaeftigte"
+          ]
+        },
+        {
           "label": "Zahlungs- & Kontodaten",
           "tags": [
             "daten:finanz"
@@ -662,29 +668,16 @@
       "aliases": [
         "Art. 9",
         "sensible Daten",
-        "special categories"
-      ],
-      "what": "Gesundheitsdaten, genetische und biometrische Daten, rassische oder ethnische Herkunft, politische Meinungen, religiöse oder philosophische Überzeugungen, Gewerkschaftszugehörigkeit sowie Daten zum Sexualleben.",
-      "why": "Für diese Kategorien gilt ein grundsätzliches Verarbeitungsverbot mit engen Ausnahmen. Wer sie verarbeitet, braucht eine tragfähige Ausnahme und deutlich strengere Schutzmaßnahmen.",
-      "when": "Achtung bei Ableitbarkeit: eine Medikamentenliste, ein Fitness-Datensatz oder eine Vereinsmitgliedschaft können Art. 9 auslösen, ohne dass irgendwo Diagnose steht.",
-      "kundenfrage": "Kommen Gesundheitsdaten oder andere besondere Kategorien vor, auch abgeleitet?"
-    },
-    "biometrie": {
-      "title": "Biometrische Daten",
-      "area": "personenbezug",
-      "dimension": "klassifizierung",
-      "phase": "start",
-      "triggers": [
-        "daten:art9"
-      ],
-      "aliases": [
+        "special categories",
         "Biometrie",
+        "biometrische Daten",
         "Fingerabdruck",
         "Gesichtserkennung"
       ],
-      "what": "Merkmale wie Fingerabdruck, Gesichtsgeometrie, Iris oder Stimmprofil, die zur eindeutigen Identifizierung einer Person verarbeitet werden.",
-      "why": "Biometrie ist nicht widerrufbar. Ein geleaktes Passwort tauscht man aus, ein geleaktes Gesichtsmerkmal nicht. Das verschiebt die Risikobewertung deutlich.",
-      "when": "Nur die Verarbeitung zur eindeutigen Identifizierung fällt unter Art. 9. Ein Foto allein ist noch keine biometrische Verarbeitung."
+      "what": "Gesundheitsdaten, genetische und biometrische Daten, rassische oder ethnische Herkunft, politische Meinungen, religiöse oder philosophische Überzeugungen, Gewerkschaftszugehörigkeit sowie Daten zum Sexualleben.",
+      "why": "Für diese Kategorien gilt ein grundsätzliches Verarbeitungsverbot mit engen Ausnahmen. Wer sie verarbeitet, braucht eine tragfähige Ausnahme und deutlich strengere Schutzmaßnahmen. Biometrie wiegt dabei besonders schwer, weil sie nicht widerrufbar ist: ein geleaktes Passwort tauscht man aus, ein Gesichtsmerkmal nicht.",
+      "when": "Achtung bei Ableitbarkeit: eine Medikamentenliste, ein Fitness-Datensatz oder eine Vereinsmitgliedschaft können Art. 9 auslösen, ohne dass irgendwo Diagnose steht. Biometrische Daten fallen nur darunter, wenn sie zur eindeutigen Identifizierung verarbeitet werden; ein Foto allein ist das noch nicht.",
+      "kundenfrage": "Kommen Gesundheitsdaten oder andere besondere Kategorien vor, auch abgeleitet?"
     },
     "personenbezug-pseudonym": {
       "title": "Personenbezug nach Pseudonymisierung",
@@ -703,6 +696,27 @@
       "what": "Die Frage, ob ein Datensatz nach der Bearbeitung noch personenbezogen ist. Anonymisierte Daten sind es nicht mehr. Pseudonymisierte bleiben es für jeden, der die Zuordnung herstellen kann, also in aller Regel für den, der pseudonymisiert hat; für einen Empfänger ohne realistischen Weg zur Zuordnung können sie es nach der Rechtsprechung des EuGH nicht sein.",
       "why": "Hier passiert der häufigste Denkfehler in Projekten. Nach dem Entfernen von Namen gilt der Datensatz oft als unkritisch, obwohl er über Quasi-Identifikatoren wie Postleitzahl, Geburtsdatum und Zeitstempel wieder zuordenbar ist.",
       "when": "Immer prüfen, bevor Daten in Analytics, Testumgebungen oder zu Dritten wandern."
+    },
+    "beschaeftigtendaten": {
+      "title": "Beschäftigten­daten",
+      "area": "personenbezug",
+      "dimension": "klassifizierung",
+      "phase": "start",
+      "triggers": [
+        "daten:beschaeftigte"
+      ],
+      "aliases": [
+        "Mitarbeiterdaten",
+        "Personaldaten",
+        "HR-Daten",
+        "Leistungs- und Verhaltenskontrolle",
+        "Betriebsrat",
+        "Mitbestimmung"
+      ],
+      "what": "Daten über Beschäftigte, von Personalstammdaten und Gehalt über Arbeitszeiten und Bewertungen bis zu allem, was ein System nebenbei über das Verhalten seiner Nutzer aufzeichnet.",
+      "why": "Sie entstehen in fast jedem Unternehmenssystem, auch wenn es kein Personalsystem ist: ein Zeitstempel je Bearbeitungsschritt reicht, um Leistung und Verhalten auswertbar zu machen. Dann redet neben dem Datenschutz der Betriebsrat mit, und ohne seine Zustimmung geht das System nicht in Betrieb.",
+      "when": "Sobald Beschäftigte des Kunden das System benutzen oder darin vorkommen. Früh klären, welche Auswertungen möglich wären, nicht nur welche geplant sind.",
+      "kundenfrage": "Gibt es einen Betriebsrat, und ist er für das Vorhaben schon eingebunden?"
     },
     "ip-geheimnisse": {
       "title": "Geschäfts­geheimnisse & IP",
@@ -1219,6 +1233,28 @@
       "why": "Die Einwilligungspflicht knüpft am Zugriff auf das Endgerät an, nicht am Personenbezug. Auch technisch harmlose Telemetrie und Produktanalytik fallen darunter.",
       "when": "Bei Web- und App-Frontends, Analytics und Crash-Reporting."
     },
+    "rechtsgrundlage": {
+      "title": "Rechtsgrundlage & Zweckbindung (Art. 6)",
+      "area": "datenschutzrecht",
+      "dimension": "regulatorik",
+      "phase": "start",
+      "triggers": [
+        "pb:ja"
+      ],
+      "aliases": [
+        "Art. 6",
+        "Rechtsgrundlage",
+        "Zweckbindung",
+        "Zweckänderung",
+        "Einwilligung",
+        "berechtigtes Interesse",
+        "Vertragserfüllung"
+      ],
+      "what": "Jede Verarbeitung personenbezogener Daten braucht eine Rechtsgrundlage, etwa Vertrag, gesetzliche Pflicht, Einwilligung oder berechtigtes Interesse, und einen festgelegten Zweck. Für einen anderen Zweck dürfen die Daten nur unter engen Bedingungen verwendet werden.",
+      "why": "Die Frage stellt sich bei jeder neuen Verwendung vorhandener Daten neu: Auswertung, Test, Training eines Modells. Dass die Daten schon im Haus sind, beantwortet sie nicht. Die gewählte Grundlage hat zudem technische Folgen, eine Einwilligung etwa muss widerrufbar sein.",
+      "when": "Bei jeder Anforderung, die Daten für etwas anderes nutzt als das, wofür sie erhoben wurden. Die Antwort gibt der Verantwortliche, meist mit seinem Datenschutzbeauftragten.",
+      "kundenfrage": "Für welchen Zweck und auf welcher Rechtsgrundlage wurden die Daten erhoben, die wir verwenden sollen?"
+    },
     "iso27001": {
       "title": "ISO/IEC 27001 & ISMS",
       "area": "normen",
@@ -1633,6 +1669,34 @@
       "why": "Die meisten Datenabflüsse sind keine Angriffe, sondern Bequemlichkeit. Ein Export nach Excel, ein Upload in ein fremdes Werkzeug, ein Screenshot im Chat.",
       "when": "Relevant überall, wo Menschen legitimen Zugriff haben und Daten das System verlassen können."
     },
+    "privilegierte-zugriffe": {
+      "title": "Privilegierte & Notfall­zugriffe",
+      "area": "zugriff",
+      "dimension": "architektur",
+      "phase": "entwurf",
+      "triggers": [
+        "pb:ja",
+        "daten:art9",
+        "daten:finanz",
+        "daten:staatlich",
+        "daten:berufsgeheimnis",
+        "daten:ip"
+      ],
+      "aliases": [
+        "PAM",
+        "Privileged Access",
+        "Break-Glass",
+        "Notfallzugriff",
+        "Admin-Zugriff",
+        "Support-Zugriff",
+        "Produktionszugriff",
+        "Just-in-Time"
+      ],
+      "what": "Die Wege, auf denen Betrieb, Support und Entwicklung an Produktionsdaten kommen, vorbei am fachlichen Berechtigungsmodell: Administrationsrechte, Datenbankzugänge, Fehleranalyse und der Zugriff im Notfall.",
+      "why": "Hier sehen die Projektmitglieder selbst echte Daten. Ein sauberes Rollenmodell in der Anwendung hilft wenig, wenn daneben ein dauerhafter Datenbankzugang für das ganze Team besteht. Bei Berufsgeheimnissen und in beaufsichtigten Branchen ist genau dieser Zugriff der Punkt, an dem geprüft wird.",
+      "when": "Vor dem ersten Produktivgang festlegen: beantragt, befristet, begründet und protokolliert, mit einem geregelten Weg für den Notfall. Nachträglich einschränken heißt, eingespielte Arbeitsweisen zu ändern.",
+      "kundenfrage": "Wer von uns braucht Zugriff auf Produktionsdaten, und wie wird er beantragt, befristet und protokolliert?"
+    },
     "hyperscaler": {
       "title": "Umgang mit Hyperscalern",
       "area": "cloud",
@@ -1670,7 +1734,7 @@
       ],
       "what": "Betriebsmodelle, die Speicherort, Betriebspersonal und rechtliche Kontrolle innerhalb der EU halten, von EU-Regionen über treuhänderische Modelle bis zu europäischen Anbietern.",
       "why": "Datenlokalisierung allein löst die Zugriffsfrage nicht, weil Betrieb und Support ebenso zählen. Souveränität ist eine Skala mit Kostenfolgen, keine Ja-Nein-Eigenschaft.",
-      "when": "Aufkommend, sobald der Kunde nach CLOUD Act oder Drittlandzugriff fragt."
+      "when": "Sobald der Kunde nach CLOUD Act, Drittlandzugriff oder Abhängigkeit von einem Anbieter fragt. Die Angebote unterscheiden sich stark darin, was sie zusichern; pro Dienst prüfen, wer betreibt, wer Support leistet und welchem Recht der Betreiber unterliegt."
     },
     "audit-logging": {
       "title": "Audit Logging & Nachvollziehbarkeit",
@@ -1729,7 +1793,7 @@
       "when": "Braucht eine durchgängige Personenkennung oder ein Register, welches System welche Daten zu einer Person hält."
     },
     "monitoring-datenfluesse": {
-      "title": "Monitoring sensibler Datenflüsse",
+      "title": "Monitoring & Alerting auf sensible Daten",
       "area": "betrieb-vorfaelle",
       "dimension": "betrieb",
       "phase": "betrieb",
@@ -1742,31 +1806,16 @@
       ],
       "aliases": [
         "Monitoring",
+        "Alerting",
+        "Alarmierung",
+        "Schwellwerte",
         "Tracing",
         "Observability",
         "Zugriffsüberwachung"
       ],
-      "what": "Die laufende Beobachtung, wo sensible Daten fließen und wer darauf zugreift, inklusive Auffälligkeiten wie Massenexporten oder untypischen Abfragen.",
-      "why": "Zugriffsrechte sagen, was erlaubt ist, das Monitoring sagt, was tatsächlich passiert. Missbrauch legitimer Zugänge lässt sich nur so entdecken.",
-      "when": "Achtung auf die Rückkopplung: das Monitoring selbst darf keine neue Kopie sensibler Daten erzeugen."
-    },
-    "alerting": {
-      "title": "Alerting auf Datenschutzvorfälle",
-      "area": "betrieb-vorfaelle",
-      "dimension": "betrieb",
-      "phase": "betrieb",
-      "triggers": [
-        "pb:ja",
-        "daten:art9"
-      ],
-      "aliases": [
-        "Alerting",
-        "Alarmierung",
-        "Schwellwerte"
-      ],
-      "what": "Definierte Signale, die auf einen möglichen Datenschutzvorfall hinweisen, mit klarer Zuständigkeit und Eskalationsweg.",
-      "why": "Die 72-Stunden-Frist läuft ab Kenntnis. Ohne Alarmierung beginnt die Kenntnis oft erst mit dem Anruf eines Betroffenen, und dann ist viel Zeit verloren.",
-      "when": "Mindestens für fehlgeschlagene Massenzugriffe, ungewöhnliche Exporte und Konfigurationsänderungen an Zugriffsrechten."
+      "what": "Die laufende Beobachtung, wo sensible Daten fließen und wer darauf zugreift, samt definierter Signale für Auffälligkeiten wie Massenexporte oder untypische Abfragen, mit klarer Zuständigkeit und Eskalationsweg.",
+      "why": "Zugriffsrechte sagen, was erlaubt ist, das Monitoring sagt, was tatsächlich passiert; Missbrauch legitimer Zugänge lässt sich nur so entdecken. Und die 72-Stunden-Frist einer Datenschutzmeldung läuft ab Kenntnis: ohne Alarmierung beginnt die Kenntnis oft erst mit dem Anruf eines Betroffenen.",
+      "when": "Mindestens für fehlgeschlagene Massenzugriffe, ungewöhnliche Exporte und Änderungen an Zugriffsrechten alarmieren. Achtung auf die Rückkopplung: das Monitoring selbst darf keine neue Kopie sensibler Daten erzeugen."
     },
     "incident-response": {
       "title": "Incident Response & Data-Breach-Prozess",
@@ -1846,6 +1895,33 @@
       "what": "Die wiederkehrende Überprüfung, ob vergebene Berechtigungen noch erforderlich sind, bestätigt durch die fachlich verantwortliche Person.",
       "why": "Berechtigungen wachsen nur in eine Richtung. Nach zwei Jahren Projektlaufzeit hat typischerweise die halbe Organisation Zugriff auf die Produktionsdaten.",
       "when": "Besonders wichtig bei wechselnden Projektbesetzungen und externen Beteiligten."
+    },
+    "projektende": {
+      "title": "Projektende: Rückgabe & Löschung",
+      "area": "lebenszyklus",
+      "dimension": "betrieb",
+      "phase": "betrieb",
+      "triggers": [
+        "immer"
+      ],
+      "aliases": [
+        "Offboarding",
+        "Projektabschluss",
+        "Datenrückgabe",
+        "Zugänge entziehen",
+        "Übergabe",
+        "Exit"
+      ],
+      "what": "Der geordnete Abschluss: Zugänge der Projektmitglieder entziehen, überlassene und entstandene Daten zurückgeben oder löschen, auch auf Arbeitsgeräten, in Testumgebungen, Wikis und Werkzeugen des Dienstleisters.",
+      "why": "Am Projektende ist die Aufmerksamkeit schon woanders, und genau dann bleiben Zugänge, Datenabzüge und Zugangsdaten liegen. Dasselbe gilt im Kleinen, wenn eine einzelne Person das Projekt verlässt.",
+      "when": "Bei jedem Wechsel im Team und am Ende des Projekts. Am einfachsten, wenn von Beginn an festgehalten wird, wo Kundendaten liegen und wer welchen Zugang hat.",
+      "kundenfrage": "Welche Daten und Unterlagen wollt ihr am Ende zurück, und was sollen wir nachweislich löschen?",
+      "qaware": [
+        {
+          "label": "Richtlinie Informationssicherheit in Projekten",
+          "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/7307349/Richtlinie+Informationssicherheit+in+Projekten"
+        }
+      ]
     },
     "nda": {
       "title": "Verpflichtungs­erklärungen (NDA)",
@@ -2453,11 +2529,13 @@
         "Kontext",
         "Payload",
         "RAG-Kontext",
-        "Chatverlauf"
+        "Chatverlauf",
+        "Coding-Assistent",
+        "KI-Werkzeuge in der Entwicklung"
       ],
       "what": "Alles, was einem Modell übergeben wird, also Nutzereingaben, angehängte Dokumente, abgerufene Wissensausschnitte, Werkzeugergebnisse und Verlaufsdaten.",
       "why": "Das ist der am leichtesten übersehene Datenabfluss. Ein Dokumentenanhang oder ein Suchtreffer aus dem internen Wissensspeicher verlässt damit das System, ohne dass es wie ein Export aussieht.",
-      "when": "Bei jeder Modellanbindung prüfen, was tatsächlich im Kontext landet, nicht nur was der Nutzer tippt.",
+      "when": "Bei jeder Modellanbindung prüfen, was tatsächlich im Kontext landet, nicht nur was der Nutzer tippt. Das gilt genauso für die eigenen Werkzeuge: ein Coding-Assistent liest Quellcode, Konfiguration und Testdaten des Kunden mit.",
       "kundenfrage": "Dürfen Projektdaten und Code in KI-Werkzeuge, und in welche?",
       "qaware": [
         {
@@ -2513,9 +2591,11 @@
       "aliases": [
         "AI Act",
         "KI-Verordnung",
-        "KI-VO"
+        "KI-VO",
+        "KI-Kompetenz",
+        "AI Literacy"
       ],
-      "what": "Die europäische Verordnung über künstliche Intelligenz, die Pflichten nach Risikoklasse staffelt und Rollen wie Anbieter und Betreiber unterscheidet.",
+      "what": "Die europäische Verordnung über künstliche Intelligenz, die Pflichten nach Risikoklasse staffelt und Rollen wie Anbieter und Betreiber unterscheidet. Unabhängig von der Risikoklasse verlangt sie, dass alle, die KI-Systeme einsetzen, dafür ausreichend geschult sind.",
       "why": "Sie liegt hier auf dem Archipel, weil sie KI-spezifisch ist. Inhaltlich ist sie aber eine Regulierung unter vielen und wird am besten wie die übrigen behandelt, statt als eigenes Thema.",
       "when": "Anwendbarkeit und Fristen bitte aktuell prüfen, die Anwendung erfolgt gestaffelt. Die Fristen für Hochrisiko-Systeme wurden 2026 nach hinten verschoben, andere Pflichten wie die zur Transparenz nicht; ältere Übersichten nennen deshalb oft überholte Termine."
     },
@@ -2848,13 +2928,16 @@
         "TISAX",
         "VDA ISA",
         "ENX",
+        "ENX-Portal",
         "Prototypenschutz",
         "Label",
-        "Assessment"
+        "Assessment",
+        "Geltungsbereich",
+        "Scope"
       ],
-      "what": "Ein Prüf- und Austauschverfahren der ENX Association für den VDA. Grundlage ist der Fragebogen VDA ISA; das Ergebnis eines Assessments wird als Label über die ENX-Plattform mit Partnern geteilt.",
+      "what": "Ein Prüf- und Austauschverfahren der ENX Association für den VDA. Grundlage ist der Fragebogen VDA ISA; das Ergebnis eines Assessments wird als Label mit Geltungsbereich und Laufzeit in der ENX-Plattform hinterlegt und dort gezielt für Partner freigegeben.",
       "why": "Ohne Label kommt man bei vielen Herstellern und Zulieferern nicht in die Lieferkette. Es ist aber keine Zertifizierung im engen Sinn, und es deckt die Informationssicherheit der Organisation ab, nicht die Cybersicherheit des Fahrzeugs. Welches Prüfniveau und welche Schutzziele gelten, hängt davon ab, welche Daten man verarbeitet.",
-      "when": "Sobald ein Hersteller oder Zulieferer es verlangt, und das ist meist früher als der Projektstart. Prüfniveau und Schutzziele stehen im Vertrag, den aktuellen Stand des Verfahrens bei der ENX nachsehen."
+      "when": "Sobald ein Hersteller oder Zulieferer es verlangt, und das ist meist früher als der Projektstart. Vor der Beauftragung klären, welches Prüfniveau und welcher Geltungsbereich gebraucht werden: passt das vorhandene Label nicht zu Standort oder Prozess des Projekts, hilft es nicht. Den aktuellen Stand des Verfahrens bei der ENX nachsehen."
     },
     "iso-sae-21434": {
       "title": "ISO/SAE 21434",
@@ -3081,26 +3164,6 @@
       "why": "Die Selbstauskunft ist die Grundlage jedes Assessments und gleichzeitig das Arbeitsmittel dazwischen. Ungepflegt veraltet sie, und dann steht kurz vor der Prüfung ein Berg Arbeit, der über Monate hätte laufen können.",
       "when": "Fortlaufend, nicht erst vor dem Assessment. Wer sie jährlich durchgeht und Maßnahmen nachzieht, hat den Termin im Griff."
     },
-    "tisax-label-austausch": {
-      "title": "TISAX-Label & Austausch über ENX",
-      "area": "automotive-geheimnis",
-      "dimension": "betrieb",
-      "phase": "start",
-      "triggers": [
-        "branche:automotive",
-        "nachweis:ja"
-      ],
-      "aliases": [
-        "Label",
-        "ENX-Portal",
-        "Geltungsbereich",
-        "Scope",
-        "Ergebnis teilen"
-      ],
-      "what": "Das Ergebnis eines Assessments wird als Label in der ENX-Plattform hinterlegt und dort gezielt für Partner freigegeben. Der Geltungsbereich, also Standorte und Prozesse, ist Teil des Ergebnisses.",
-      "why": "Das Label ist kein Zertifikat an der Wand, sondern ein Eintrag mit Geltungsbereich und Laufzeit, den man aktiv teilen muss. Passt der Geltungsbereich nicht zum Projektstandort oder zum Prozess, hilft ein vorhandenes Label nicht.",
-      "when": "Vor der Beauftragung klären, welcher Geltungsbereich gebraucht wird, und beim Projektstart prüfen, ob der vorhandene passt. Laufzeiten und Verfahren bei der ENX nachsehen."
-    },
     "feld-schwachstellen": {
       "title": "Schwachstellen über die Fahrzeug­lebens­dauer",
       "area": "automotive-software",
@@ -3250,6 +3313,9 @@
       ],
       "aliases": [
         "eIDAS",
+        "eIDAS 2.0",
+        "EUDI-Wallet",
+        "digitale Brieftasche",
         "qualifizierte Signatur",
         "Siegel",
         "Zeitstempel",

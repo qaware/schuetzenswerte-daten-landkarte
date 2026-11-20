@@ -829,7 +829,7 @@ function answers() {
    ist. ausgeschlossen: jeder Grund für sie ist mit nein beantwortet. offen: es hängt an
    einer Frage, die noch nicht beantwortet ist.
 
-   Ist keine Frage beantwortet, ist alles offen. Sonst wären die 28 immer-Kacheln von
+   Ist keine Frage beantwortet, ist alles offen. Sonst wären die 29 immer-Kacheln von
    Anfang an hervorgehoben, und die Karte sähe gefiltert aus, ohne dass jemand gefiltert
    hat. */
 function classify(entry) {

@@ -448,6 +448,19 @@ bleiben 28. Für ein Projekt, das ohnehin personenbezogene Daten und Nachweispfl
 Datenart benennt: „Analytische Daten" wählte genau eine von damals 124 Kacheln aus. Eine Kachel
 gehört an jede Eigenschaft, wegen der man sie klären muss.
 
+## Durchsicht der übrigen Kategorien
+
+Nach der Regulatorik wurden Datenarten, Architektur, Betrieb und die Archipele durchgesehen.
+Vier Lücken kamen dazu, alle aus der Sicht eines Dienstleisters im Projekt: Beschäftigtendaten,
+Rechtsgrundlage und Zweckbindung, privilegierte und Notfallzugriffe, und das Projektende mit
+Rückgabe und Löschung. Die Phase hieß schon „Betrieb & Projektende", ohne dass eine Kachel das
+Ende behandelte.
+
+Dafür gingen drei Kacheln in Nachbarn auf, nach der Regel, dass Varianten in den Text gehören:
+Biometrische Daten in Besondere Kategorien, Alerting in Monitoring, das TISAX-Label in TISAX.
+Die alten Titel stehen dort als `aliases`. Wer ergänzt, sucht zuerst nach einer Kachel, die
+dafür weichen kann.
+
 ## Phase und Kundenfrage
 
 Für die Projektleitung fehlte die Frage „was ist jetzt dran", für die Analyse die Frage „was
@@ -461,7 +474,7 @@ Architektur und Methodik in den Entwurf, Betrieb in den Betrieb, mit Ausnahmen. 
 Fassung legte 89 von 157 Kacheln auf den Start und half damit niemandem; Datenarten, die erst
 im Entwurf auftauchen, wie Logs oder Embeddings, liegen deshalb im Entwurf.
 
-`kundenfrage` steht nur dort, wo die Antwort beim Kunden liegt, derzeit an 22 Kacheln. Wer
+`kundenfrage` steht nur dort, wo die Antwort beim Kunden liegt, derzeit an 28 Kacheln. Wer
 eine ergänzt, prüft, ob die Frage wirklich nur der Kunde beantworten kann; sonst gehört der
 Gedanke in `when`. Das Prüfskript verlangt ein Fragezeichen.
 
