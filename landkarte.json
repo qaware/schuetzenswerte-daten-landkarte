@@ -75,7 +75,7 @@
       ]
     },
     "finance": {
-      "label": "Finanzdienstleistungen",
+      "label": "Finanzen",
       "origin": [
         14,
         0
@@ -830,7 +830,7 @@
       ],
       "what": "Eine abgestufte Einstufung des Schadens bei Verletzung eines Schutzziels. Die Zahl der Stufen ist nicht festgelegt: der BSI-Standard 200-2 nennt drei, viele Unternehmen arbeiten mit vier. Maßgeblich ist das Modell, das im eigenen Unternehmen und beim Kunden gilt.",
       "why": "Ohne Stufen wird alles gleich behandelt, und in der Praxis heißt das entweder überall Maximalschutz oder nirgends. Die Abstufung macht Aufwand verhandelbar und begründbar.",
-      "when": "Sinnvoll, sobald ein System mehrere Datenarten mit unterschiedlichem Risiko enthält. Zuerst klären, welches Stufenmodell gilt, statt ein eigenes zu erfinden; arbeiten Auftraggeber und Dienstleister mit verschiedenen Modellen, die Zuordnung ausdrücklich festhalten.",
+      "when": "In jedem Projekt zuerst klären, welches Stufenmodell gilt, statt ein eigenes zu erfinden; arbeiten Auftraggeber und Dienstleister mit verschiedenen Modellen, die Zuordnung ausdrücklich festhalten. Die Abstufung zahlt sich aus, sobald ein System mehrere Datenarten mit unterschiedlichem Risiko enthält.",
       "qaware": [
         {
           "label": "Richtlinie Informationsklassifizierung",
@@ -1298,7 +1298,7 @@
       "dimension": "architektur",
       "phase": "entwurf",
       "triggers": [
-        "immer"
+        "pb:ja"
       ],
       "aliases": [
         "Privacy by Design",
@@ -1425,7 +1425,8 @@
       "dimension": "architektur",
       "phase": "umsetzung",
       "triggers": [
-        "immer",
+        "pb:ja",
+        "daten:finanz",
         "daten:analytisch"
       ],
       "aliases": [
@@ -1561,7 +1562,10 @@
       "dimension": "architektur",
       "phase": "entwurf",
       "triggers": [
-        "immer"
+        "cloud:hyperscaler",
+        "daten:art9",
+        "daten:finanz",
+        "daten:staatlich"
       ],
       "aliases": [
         "Zero Trust",
@@ -1694,7 +1698,10 @@
       "dimension": "betrieb",
       "phase": "betrieb",
       "triggers": [
-        "immer",
+        "pb:ja",
+        "daten:art9",
+        "daten:finanz",
+        "daten:staatlich",
         "daten:logs"
       ],
       "aliases": [
@@ -1713,7 +1720,8 @@
       "dimension": "betrieb",
       "phase": "betrieb",
       "triggers": [
-        "immer"
+        "pb:ja",
+        "daten:art9"
       ],
       "aliases": [
         "Alerting",
@@ -1835,7 +1843,7 @@
       "dimension": "betrieb",
       "phase": "start",
       "triggers": [
-        "immer"
+        "nachweis:ja"
       ],
       "aliases": [
         "Schulung",

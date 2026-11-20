@@ -293,7 +293,7 @@ Automotive ist das umgesetzt, die übrigen Archipele sind noch nach Dimension gr
 ## Berufsgeheimnisse liegen im Kern
 
 § 203 StGB stand zweimal in Archipelen, als ärztliche Schweigepflicht bei MedTech und als
-Versicherungsgeheimnis bei Finanzdienstleistungen. Es ist aber ein Paragraf, und er trifft
+Versicherungsgeheimnis bei Finanzen. Es ist aber ein Paragraf, und er trifft
 ebenso Rechtsanwaltschaft, Steuerberatung und Wirtschaftsprüfung. Er liegt deshalb als eine
 Kachel im Kern und wird über die Datenart „Daten von Berufsgeheimnisträgern" sowie die Branchen
 MedTech und Versicherung ausgelöst.
@@ -330,7 +330,7 @@ falschen `immer`.
 weitere Fälle übertragbar: wenn zwei Rollen sich den größeren Teil des Stoffs teilen, gehören sie
 auf eine Insel und bekommen zwei Optionen, deren Tags die geteilten Kacheln beide tragen.
 
-Die Insel heißt `finance` im Datenmodell und „Finanzdienstleistungen" in der Anzeige. Der
+Die Insel heißt `finance` im Datenmodell und „Finanzen" in der Anzeige. Der
 Schlüssel blieb, weil er nur ein interner Handgriff ist und ein Umbenennen alle Bereiche
 angefasst hätte.
 
@@ -437,6 +437,13 @@ Ich habe versucht, diese Regel im Prüfskript zu automatisieren, über Signalwö
 deshalb nicht im Skript, sondern hier. Eine Prüfung, die nur Fehlalarme liefert, macht die
 echten Hinweise unsichtbar.
 
+Bei einer Durchsicht aller 34 `immer`-Kacheln fielen sechs heraus, weil Titel oder `when` eine
+Bedingung nennen: Privacy by Design, Alerting auf Datenschutzvorfälle und Testdaten hängen an
+personenbezogenen oder vergleichbar heiklen Daten, Monitoring sensibler Datenflüsse und Zero
+Trust an bestimmten Datenarten oder der Cloud, Schulungsnachweise an der Nachweispflicht. Es
+bleiben 28. Für ein Projekt, das ohnehin personenbezogene Daten und Nachweispflicht angibt,
+ändert das die Zahl kaum; es entlastet die Projekte ohne Personenbezug.
+
 **Ein Trigger reicht selten.** Die Datenart-Optionen zeigten fast nur auf die Kachel, die die
 Datenart benennt: „Analytische Daten" wählte genau eine von damals 124 Kacheln aus. Eine Kachel
 gehört an jede Eigenschaft, wegen der man sie klären muss.
@@ -526,7 +533,9 @@ sie bewusst dunkel gesetzt waren und selbst hinter dem Schleier nicht reichten: 
 `#323d3e` nach**, das ist der Schleier über Sand.
 
 `#titleblock` behält `pointer-events: none`, damit man die Karte auch unter dem Titel greifen und
-ziehen kann.
+ziehen kann. Der Knopf „Mein Projekt einordnen" darin nimmt Zeiger wieder an; er ist der
+Einstieg für alle, die die Karte zum ersten Mal sehen, und verschwindet, solange das Panel
+offen ist.
 
 ## Das Panel „Mein Projekt“
 
@@ -555,6 +564,18 @@ Zoomknöpfen und dem Link-Knopf im Fuß, und die tragen `title` und `aria-label`
 Kopieren wird das Icon kurz zum Haken, weil eine Meldung an anderer Stelle niemand sieht.
 Safari fokussiert Knöpfe beim Klick nicht, deshalb wird der auslösende Knopf übergeben und
 nicht aus `activeElement` gelesen.
+
+## Suche und der Weg zurück auf die Karte
+
+Die Suche zeigt ihre Treffer als Liste unter dem Feld, höchstens acht, Treffer in Titel und
+Synonymen vor Treffern im Text. Vorher hob sie nur Sechsecke hervor, die man dann finden
+musste. Die Liste folgt nur der Suche und nicht dem Projektfilter: wer ein Wort sucht, will
+die Kachel finden, auch wenn sie für sein Vorhaben ausgeschlossen ist.
+
+`locate()` hinter „Auf der Karte zeigen" ist der Rückweg von Ergebnis- und Trefferliste auf
+die Karte. Ohne ihn blieben Insel, Bereich und Nachbarschaft im Hauptweg ungenutzt. Die Kachel
+leuchtet dreimal auf; das ist eine Animation an genau einem Element und deshalb unbedenklich,
+anders als bei den Wellen.
 
 ## Die Hilfe
 

@@ -30,15 +30,20 @@
   <header id="titleblock" class="scrim">
     <h1>Umgang mit besonders schützenswerten Daten</h1>
     <p id="subtitle"></p>
-    <p id="start-hint">Wo anfangen? Unter <strong>Mein Projekt</strong> beantworten, was du
-      über dein Vorhaben weißt. Die Karte zeigt dann, was gilt und wann es zu klären ist.</p>
+    <div id="start-hint">
+      <p>Wo anfangen? Sag, was du über dein Vorhaben weißt. Die Karte zeigt dann, was gilt und
+        wann es zu klären ist.</p>
+      <button id="btn-start" type="button" data-icon="sliders">Mein Projekt einordnen</button>
+    </div>
   </header>
 
   <div id="toolbar">
     <div class="field">
       <label for="search" class="visually-hidden">Suchen</label>
       <span class="field-icon" data-icon="search" aria-hidden="true"></span>
-      <input id="search" type="search" placeholder="Suchen, etwa DSFA" autocomplete="off" spellcheck="false">
+      <input id="search" type="search" placeholder="Suchen, etwa DSFA" autocomplete="off" spellcheck="false"
+             aria-controls="search-results">
+      <div id="search-results" hidden></div>
     </div>
     <button id="btn-project" type="button" aria-expanded="false" aria-controls="project" data-icon="sliders">Mein Projekt</button>
     <button id="btn-help" type="button" data-icon="help">Hilfe</button>
@@ -111,7 +116,10 @@
     <p id="detail-place"></p>
     <div id="detail-body"></div>
     <p id="detail-triggers"></p>
-    <button id="detail-link" type="button" class="ghost" data-icon="link">Link zu dieser Kachel kopieren</button>
+    <div id="detail-actions">
+      <button id="detail-locate" type="button" class="ghost" data-icon="pin">Auf der Karte zeigen</button>
+      <button id="detail-link" type="button" class="ghost" data-icon="link">Link kopieren</button>
+    </div>
   </article>
 </div>
 

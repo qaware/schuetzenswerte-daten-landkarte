@@ -27,7 +27,8 @@ statt sie zu doppeln.
 - Weiter heraus als die Gesamtansicht geht nicht, und die Karte lässt sich nicht aus dem Bild schieben
 - Klick oder Enter auf eine Kachel öffnet die Details
 - „Hilfe“ erklärt die drei Achsen: was die Farben, die Inseln und die Bereiche bedeuten
-- Die Suche findet Titel, Synonyme und Kacheltexte
+- Die Suche findet Titel, Synonyme und Kacheltexte und zeigt die Treffer als Liste unter dem Suchfeld, Enter öffnet den ersten
+- „Auf der Karte zeigen“ in der Detailansicht zoomt auf die Kachel und lässt sie aufleuchten
 - „Mein Projekt“ hebt die Kacheln hervor, die für ein Vorhaben zu klären sind, listet sie nach Projektphase und gibt sie als Markdown heraus: als Checkliste für Menschen oder als Kontext für einen KI-Agenten, siehe unten
 - Jede Frage dort steht anfangs auf „offen“, ist also noch nicht beantwortet und engt nichts ein. Ein Klick auf die gewählte Antwort führt dorthin zurück
 - Aus den Antworten ergeben sich drei Zustände: kräftig heißt gesichert relevant, halb zurückgenommen heißt offen, weil noch eine unbeantwortete Frage darüber entscheidet, blass heißt ausgeschlossen. „nein“ schließt aus und ist deshalb nicht dasselbe wie „offen“
@@ -214,11 +215,11 @@ Aussage über die Wichtigkeit der Branche, sondern über den Stand der Arbeit:
 | --- | --- | --- |
 | Automotive | 22 | ausgearbeitet, fünf Bereiche nach Thema statt nach Dimension |
 | KI | 15 | ausgearbeitet, vier Bereiche |
-| Finanzdienstleistungen | 13 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
+| Finanzen | 13 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
 | MedTech | 17 | ausgearbeitet, drei Bereiche |
 | Public Sector | 12 | ausgearbeitet, beide Bereiche voll |
 
-Bei den Finanzdienstleistungen sind Bank und Versicherung **eine Insel mit zwei
+Bei Finanzen sind Bank und Versicherung **eine Insel mit zwei
 Branchenoptionen**. Fünf der dreizehn Kacheln gelten für beide, drei nur für Banken und fünf
 nur für Versicherer; das Versicherungsgeheimnis liegt seit der Zusammenführung von § 203 im Kern. Zwei getrennte Inseln hätten die gemeinsamen Kacheln gedoppelt, eine
 gemeinsame Option hätte einem Versicherer Bankgeheimnis und PSD2 vorgesetzt.

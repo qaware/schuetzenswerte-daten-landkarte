@@ -415,7 +415,7 @@ function build(data) {
     g('layer-tiles').appendChild(grp);
 
     const entry = {
-      id: tile.id, tile, area, el: grp,
+      id: tile.id, tile, area, el: grp, x: c.x, y: c.y,
       haystack: [tile.title, ...(tile.aliases || []), tile.what, tile.why, tile.when || '']
         .map(plain).join(' ').toLowerCase()
     };
@@ -829,7 +829,7 @@ function answers() {
    ist. ausgeschlossen: jeder Grund für sie ist mit nein beantwortet. offen: es hängt an
    einer Frage, die noch nicht beantwortet ist.
 
-   Ist keine Frage beantwortet, ist alles offen. Sonst wären die 34 immer-Kacheln von
+   Ist keine Frage beantwortet, ist alles offen. Sonst wären die 28 immer-Kacheln von
    Anfang an hervorgehoben, und die Karte sähe gefiltert aus, ohne dass jemand gefiltert
    hat. */
 function classify(entry) {
@@ -975,6 +975,50 @@ function renderResult(gefiltert) {
       ul.appendChild(li);
     }
     list.append(h, ul);
+  }
+}
+
+/* Trefferliste unter dem Suchfeld. Vorher hob die Suche nur Sechsecke hervor, die man dann
+   auf der Karte finden musste. Treffer im Titel oder in den Synonymen stehen vor Treffern
+   im Text. Die Liste folgt nur der Suche, nicht dem Projektfilter: wer ein Wort sucht, will
+   die Kachel finden, auch wenn sie für sein Vorhaben ausgeschlossen ist. */
+const SEARCH_MAX = 8;
+function renderSearch() {
+  const box = document.getElementById('search-results');
+  const q = state.query;
+  box.textContent = '';
+  if (!q) { box.hidden = true; return; }
+  const rang = e => {
+    const kopf = [e.tile.title, ...(e.tile.aliases || [])].map(plain).join(' ').toLowerCase();
+    return plain(e.tile.title).toLowerCase().startsWith(q) ? 0 : kopf.includes(q) ? 1 : 2;
+  };
+  const hits = state.tiles.filter(e => e.haystack.includes(q))
+    .map(e => [rang(e), e]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+  box.hidden = false;
+  if (!hits.length) {
+    const p = document.createElement('p');
+    p.textContent = 'Kein Treffer.';
+    box.appendChild(p);
+    return;
+  }
+  for (const e of hits.slice(0, SEARCH_MAX)) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'result-item';
+    const sw = document.createElement('span');
+    sw.className = 'swatch';
+    sw.style.background = state.data.dimensions[e.tile.dimension].color;
+    const ort = document.createElement('span');
+    ort.className = 'ort';
+    ort.textContent = plain(state.data.islands[state.data.areas[e.area].island].label);
+    b.append(sw, plain(e.tile.title), ort);
+    b.onclick = () => openDetail(e);
+    box.appendChild(b);
+  }
+  if (hits.length > SEARCH_MAX) {
+    const p = document.createElement('p');
+    p.textContent = `${hits.length - SEARCH_MAX} weitere Treffer sind auf der Karte hervorgehoben.`;
+    box.appendChild(p);
   }
 }
 
@@ -1153,7 +1197,7 @@ function openDetail(entry) {
 
   document.getElementById('detail-triggers').textContent =
     'Wird relevant bei: ' + t.triggers.map(tagLabel).join(', ');
-  document.getElementById('detail-link').hidden = false;
+  document.getElementById('detail-actions').hidden = false;
   state.openTile = entry.id;
   writeHash();
 
@@ -1170,7 +1214,7 @@ function openHelp() {
   document.getElementById('detail-dimension').hidden = true;
   document.getElementById('detail-place').hidden = true;
   document.getElementById('detail-triggers').hidden = true;
-  document.getElementById('detail-link').hidden = true;
+  document.getElementById('detail-actions').hidden = true;
   document.getElementById('detail-title').textContent = 'Wie diese Karte funktioniert';
 
   const body = document.getElementById('detail-body');
@@ -1265,6 +1309,30 @@ function openHelp() {
   state.lastFocus = document.activeElement;
   document.getElementById('overlay').hidden = false;
   document.getElementById('detail').focus();
+}
+
+/* Der Weg von der Liste zurück auf die Karte. Ohne ihn öffnete ein Klick in der Ergebnis-
+   oder Trefferliste nur den Text, und wo die Kachel liegt, also Insel, Bereich und
+   Nachbarschaft, blieb im Hauptweg ungenutzt. Gezoomt wird mindestens bis zur Stufe der
+   Kacheltitel, zentriert im Teil der Karte, den das Panel nicht verdeckt. */
+const LOCATE_SCALE = 1.3;
+function locate(entry) {
+  closeDetail();
+  const panel = document.getElementById('project');
+  const schmal = view.w < 1000;
+  if (schmal && !panel.hidden) document.getElementById('btn-project').click();
+  const frei = !schmal && !panel.hidden ? view.w - panel.offsetWidth - 16 : view.w;
+  state.scale = Math.max(state.scale, LOCATE_SCALE);
+  state.tx = frei / 2 - entry.x * state.scale;
+  state.ty = view.h / 2 - entry.y * state.scale;
+  applyTransform();
+  // Einmal aufleuchten lassen. Die Klasse wird neu gesetzt, damit ein zweiter Klick auf
+  // dieselbe Kachel die Animation wieder startet.
+  entry.el.classList.remove('located');
+  void entry.el.getBoundingClientRect();
+  entry.el.classList.add('located');
+  clearTimeout(locate.t);
+  locate.t = setTimeout(() => entry.el.classList.remove('located'), 2600);
 }
 
 function closeDetail() {
@@ -1408,10 +1476,34 @@ function wireInteraction() {
   document.getElementById('btn-zoom-fit').onclick = fit;
 
   const search = document.getElementById('search');
+  const treffer = document.getElementById('search-results');
   search.addEventListener('input', () => {
     state.query = search.value.trim().toLowerCase();
     applyHighlight();
+    renderSearch();
   });
+  // Enter öffnet den ersten Treffer, Escape leert die Suche.
+  search.addEventListener('keydown', e => {
+    if (e.key === 'Enter') treffer.querySelector('.result-item')?.click();
+    if (e.key === 'Escape' && search.value) {
+      e.stopPropagation();
+      search.value = '';
+      search.dispatchEvent(new Event('input'));
+    }
+  });
+  // Die Liste bleibt, solange der Fokus im Suchfeld oder in der Liste ist.
+  const feld = search.closest('.field');
+  feld.addEventListener('focusin', renderSearch);
+  feld.addEventListener('focusout', e => {
+    if (!feld.contains(e.relatedTarget)) treffer.hidden = true;
+  });
+  document.getElementById('btn-start').onclick = () => {
+    if (document.getElementById('project').hidden) document.getElementById('btn-project').click();
+  };
+  document.getElementById('detail-locate').onclick = () => {
+    const e = state.byId[state.openTile];
+    if (e) locate(e);
+  };
 
   const panel = document.getElementById('project');
   const toggle = document.getElementById('btn-project');
@@ -1512,6 +1604,7 @@ const ICONS = {
   external: '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8'
     + 'a2 2 0 0 1 2-2h6"/>',
   check: '<path d="M20 6 9 17l-5-5"/>',
+  pin: '<path d="M20 10c0 5-8 12-8 12s-8-7-8-12a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
 };
 
 function svgIcon(name, cls = 'icon') {
