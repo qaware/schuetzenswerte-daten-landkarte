@@ -316,8 +316,9 @@ Notfallkontakte oder Risikoregister.
 ## Insel oder Filter, wenn eine Branche zwei Rollen hat
 
 Bank und Versicherung sind **eine Insel mit zwei Branchenoptionen**, nicht zwei Inseln und nicht
-eine Option. Die Entscheidung war nicht Geschmack, sie folgt aus den Zahlen: von vierzehn
-Kacheln gelten fünf für beide, drei nur für Banken, sechs nur für Versicherer.
+eine Option. Die Entscheidung war nicht Geschmack, sie folgt aus den Zahlen: von damals vierzehn
+Kacheln galten fünf für beide, drei nur für Banken, sechs nur für Versicherer. Seit § 203 im
+Kern liegt, sind es dreizehn, fünf davon nur für Versicherer.
 
 Zwei Inseln hätten die fünf gemeinsamen Kacheln gedoppelt, also DORA, Auslagerung, Zahlungs- und
 Kontodaten, Bonitätsdaten und PCI-DSS. Dopplung zwischen Inseln ist genau das, was die Regel
@@ -335,7 +336,7 @@ angefasst hätte.
 
 ## Der Projektfilter
 
-Die Fragen stehen in `landkarte.json` unter `filters`, und `initFilters`, `activeTags` und
+Die Fragen stehen in `landkarte.json` unter `filters`, und `initFilters`, `answers` und
 `filterActive` lesen sie von dort. **Eine neue Frage ist eine reine Datenänderung.** Vorher stand
 jede Frage an vier Stellen im Code, und drei davon vergisst man beim Ergänzen.
 
@@ -411,9 +412,15 @@ ISO 13485, IT-Grundschutz und weitere Kacheln anderer Branchen, gemessen **11 vo
 diese neben ihrem Branchen-Tag `nachweis:ja` oder `daten:art9` tragen. Selbst „Branche andere"
 zeigte TISAX, obwohl „andere" ausdrücklich heißt: keine branchenspezifische Kachel.
 
-Die Frage `branche` trägt deshalb `voraussetzung: true`. Trägt eine Kachel Tags einer solchen
-Frage und stehen alle auf nein, ist sie ausgeschlossen, egal was sonst passt. Ist die Branche
-offen, wirkt die Oder-Regel wie bisher. `matching()` fragt jetzt `classify()`, statt die Regel
+Die vier Brancheninseln tragen deshalb in `islands` `voraussetzung: "branche"`. Dort
+entscheidet allein das Branchen-Tag einer Kachel: steht eines auf ja, ist sie gesichert, stehen
+alle auf nein, ausgeschlossen, sonst offen. Die übrigen Trigger zählen dort nicht mehr.
+
+**Die Voraussetzung hängt an der Insel, nicht an der Frage.** Die erste Fassung hing sie an die
+Frage und traf damit auch den Kern: § 203 trägt dort `branche:medtech` und
+`branche:versicherung` neben der Datenart, und eine Kanzlei mit „Branche andere" bekam die
+Kachel ausgeschlossen, obwohl sie Daten von Berufsgeheimnisträgern angegeben hatte. Im Kern ist
+ein Branchen-Tag ein Grund unter mehreren, auf einer Brancheninsel die Bedingung. `matching()` fragt jetzt `classify()`, statt die Regel
 ein zweites Mal nachzubilden; vorher liefen beide getrennt und hätten auseinanderlaufen können.
 
 Zwei Regeln zu den Triggern, die aus einer Prüfung der Daten hervorgingen:

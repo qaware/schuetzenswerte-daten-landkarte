@@ -318,8 +318,9 @@ button.ghost { background: transparent; }
    doppelt so hoch wie sichtbar: die Exporte standen erst nach zwei Bildschirmen Scrollen, und
    vier gleich große Knöpfe ließen nicht erkennen, welcher der wichtige ist. Jetzt teilen sich
    Fragen und Ergebnis zwei Reiter, der Fuß mit den Aktionen bleibt immer sichtbar. */
+/* Die Breite steht an #stage, weil auch die Zoomknöpfe sie brauchen, um auszuweichen. */
+#stage { --sheet-w: min(420px, calc(100vw - 32px)); }
 #project {
-  --sheet-w: min(420px, calc(100vw - 32px));
   position: absolute;
   top: 74px; right: 16px; bottom: 16px;
   width: var(--sheet-w);
@@ -334,7 +335,7 @@ button.ghost { background: transparent; }
 }
 #project[hidden] { display: none; }
 /* Die Zoomknöpfe weichen dem Panel aus, statt darunter zu verschwinden. */
-#stage:has(#project:not([hidden])) #zoombar { right: calc(var(--sheet-w, 420px) + 32px); }
+#stage:has(#project:not([hidden])) #zoombar { right: calc(var(--sheet-w) + 32px); }
 
 .sheet-head {
   flex: 0 0 auto;
@@ -371,7 +372,10 @@ button.ghost { background: transparent; }
 .st-mid { opacity: .45; }
 .st-off { opacity: .25; }
 
-.tabs { display: flex; align-items: center; gap: 4px; margin-bottom: -1px; }
+.tabs { display: flex; align-items: center; margin-bottom: -1px; }
+.tablist { display: flex; gap: 4px; }
+/* Der helle Fokusring der Karte ist auf Papier kaum zu sehen. */
+#project :focus-visible, #detail :focus-visible { outline-color: #1f5f7a; }
 /* Zurücksetzen gehört zu den Antworten, nicht zu den Exporten, und steht deshalb hier. */
 #project .tabs .reset {
   margin-left: auto;
@@ -690,7 +694,11 @@ button.ghost { background: transparent; }
   color: var(--ink);
 }
 
-@media (max-width: 900px) {
+/* Mit Icons und dem dreiteiligen Zähler ist die Leiste rund 760px breit und lief bei
+   schmalen Fenstern über den Titelblock. */
+@media (max-width: 1200px) { #search { width: 150px; } }
+
+@media (max-width: 1000px) {
   #titleblock { top: 12px; left: 12px; right: 12px; max-width: none; padding: 8px 12px 10px; }
   #titleblock h1 { font-size: 18px; }
   #subtitle { display: none; }
@@ -702,8 +710,9 @@ button.ghost { background: transparent; }
   #search { width: 100%; }
   #count { flex: 1 1 auto; min-width: 0; text-align: right; }
   /* Auf dem Telefon ein Blatt von unten über der Leiste, mit eigenem Schließen-Knopf. */
+  /* Das Blatt verdeckt die Zoomknöpfe ohnehin, sie müssen nicht ausweichen. */
+  #stage:has(#project:not([hidden])) #zoombar { right: 12px; }
   #project {
-    --sheet-w: 100vw;
     top: auto; left: 0; right: 0; bottom: 0;
     width: auto; height: 82%;
     border-radius: 12px 12px 0 0;

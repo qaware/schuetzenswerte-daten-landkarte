@@ -56,14 +56,16 @@
       "origin": [
         8,
         -16
-      ]
+      ],
+      "voraussetzung": "branche"
     },
     "public": {
       "label": "Public Sector",
       "origin": [
         -18,
         9
-      ]
+      ],
+      "voraussetzung": "branche"
     },
     "ki": {
       "label": "KI",
@@ -77,14 +79,16 @@
       "origin": [
         14,
         0
-      ]
+      ],
+      "voraussetzung": "branche"
     },
     "automotive": {
       "label": "Automotive",
       "origin": [
         -14,
         -7
-      ]
+      ],
+      "voraussetzung": "branche"
     }
   },
   "areas": {
@@ -398,7 +402,6 @@
       "id": "branche",
       "label": "Branche",
       "type": "single",
-      "voraussetzung": true,
       "options": [
         {
           "label": "offen",

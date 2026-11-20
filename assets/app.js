@@ -829,32 +829,39 @@ function answers() {
    ist. ausgeschlossen: jeder Grund für sie ist mit nein beantwortet. offen: es hängt an
    einer Frage, die noch nicht beantwortet ist.
 
-   Ist keine Frage beantwortet, ist alles offen. Sonst wären die 33 immer-Kacheln von
+   Ist keine Frage beantwortet, ist alles offen. Sonst wären die 34 immer-Kacheln von
    Anfang an hervorgehoben, und die Karte sähe gefiltert aus, ohne dass jemand gefiltert
    hat. */
 function classify(entry) {
   if (!filterActive()) return 'offen';
   const { ja, nein } = state.antw || answers();
   const tr = entry.tile.triggers;
-  // Eine Frage mit voraussetzung, also die Branche, wirkt als Bedingung und nicht als
-  // weiterer Grund. Sonst kam TISAX über "Nachweis nötig" in jedes Versicherungsprojekt:
-  // gemessen waren das 11 von 108 Kacheln aus fremden Branchen.
-  const bedingt = tr.filter(t => voraussetzungsTags().has(t));
-  if (bedingt.length && bedingt.every(t => nein.has(t))) return 'ausgeschlossen';
+  // Auf einer Brancheninsel entscheidet allein die Branche, die übrigen Trigger sind dort
+  // kein weiterer Grund. Sonst kam TISAX über "Nachweis nötig" in jedes Versicherungsprojekt:
+  // gemessen waren das 11 von 108 Kacheln aus fremden Branchen. Im Kern bleibt ein
+  // Branchen-Tag dagegen ein Grund unter mehreren: § 203 gilt für eine Kanzlei über die
+  // Datenart, auch wenn die Branche "andere" ist.
+  const frage = state.data.islands[state.data.areas[entry.area].island].voraussetzung;
+  if (frage) {
+    const bedingt = tr.filter(t => voraussetzungsTags(frage).has(t));
+    if (bedingt.length) {
+      if (bedingt.some(t => ja.has(t))) return 'gesichert';
+      return bedingt.every(t => nein.has(t)) ? 'ausgeschlossen' : 'offen';
+    }
+  }
   if (tr.indexOf('immer') >= 0 || tr.some(t => ja.has(t))) return 'gesichert';
   if (tr.every(t => nein.has(t))) return 'ausgeschlossen';
   return 'offen';
 }
 
-let VORAUSSETZUNG = null;
-function voraussetzungsTags() {
-  if (!VORAUSSETZUNG) {
-    VORAUSSETZUNG = new Set();
-    for (const q of state.data.filters) {
-      if (q.voraussetzung) q.options.forEach(o => (o.tags || []).forEach(t => VORAUSSETZUNG.add(t)));
-    }
+const VORAUSSETZUNG = {};
+function voraussetzungsTags(frage) {
+  if (!VORAUSSETZUNG[frage]) {
+    const tags = VORAUSSETZUNG[frage] = new Set();
+    const q = state.data.filters.find(f => f.id === frage);
+    if (q) q.options.forEach(o => (o.tags || []).forEach(t => tags.add(t)));
   }
-  return VORAUSSETZUNG;
+  return VORAUSSETZUNG[frage];
 }
 
 function zaehleKlassen() {
@@ -1198,12 +1205,13 @@ function openHelp() {
   abschnitt('Was die Karte nach dem Filtern zeigt',
     el('p', 'Kräftig gilt für dein Vorhaben sicher. Halb zurückgenommen hängt noch an einer '
       + 'Frage, die offen ist. Blass gilt nicht. „nein“ ist damit etwas anderes als eine '
-      + 'offene Frage: es schließt aus. Die Branche ist eine Voraussetzung: eine Kachel aus '
-      + 'einer anderen Branche bleibt blass, auch wenn eine andere Antwort auf sie passt.'));
+      + 'offene Frage: es schließt aus. Auf den Brancheninseln entscheidet allein die Branche: '
+      + 'eine Kachel dort bleibt blass, wenn deine Branche eine andere ist, auch wenn eine '
+      + 'andere Antwort auf sie passt.'));
 
   abschnitt('Bedienung',
-    el('p', 'Ziehen verschiebt die Karte, Mausrad oder die Tasten + und − zoomen, „Alles“ '
-      + 'zeigt die Gesamtansicht. Die Suche findet Titel, Synonyme und Kacheltexte. Ganz '
+    el('p', 'Ziehen verschiebt die Karte, Mausrad oder die Tasten + und − zoomen, der Knopf '
+      + 'mit dem Rahmen zeigt die Gesamtansicht. Die Suche findet Titel, Synonyme und Kacheltexte. Ganz '
       + 'herausgezoomt tragen nur die Inselnamen, näher heran die Bereichsnamen, noch näher '
       + 'die Kacheltitel.'));
 
@@ -1482,7 +1490,7 @@ function wireInteraction() {
    Checkliste, Funken für KI, Pfeil zurück für Zurücksetzen. Die Pfade folgen Lucide
    (lucide.dev, ISC-Lizenz), die Funken sind eigene. Inline statt als Bibliothek, weil die
    Seite ohne Build-Schritt aus drei Dateien besteht. Beschriftungen bleiben stehen; nur die
-   Zoomknöpfe und die beiden kleinen Knöpfe im Panel sind reine Icons, mit title. */
+   Zoomknöpfe, Schließen und der Link-Knopf im Panel sind reine Icons, mit title. */
 const ICONS = {
   x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
   link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>'

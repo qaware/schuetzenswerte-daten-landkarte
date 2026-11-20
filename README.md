@@ -95,9 +95,9 @@ Checkliste, damit man sieht, was jetzt dran ist. Eine Kachel hat genau eine Phas
 nur dort, wo die Antwort tatsächlich beim Kunden liegt, und erscheint in der Detailansicht und
 in beiden Exporten.
 
-`triggers` steuert den Projektfilter, mehrere Tags wirken als Oder-Verknüpfung. Ausnahme ist eine
-Frage mit `voraussetzung: true`, derzeit die Branche: ihre Tags sind eine Bedingung, kein weiterer
-Grund, siehe die Filterregel unten. `immer` heißt, dass
+`triggers` steuert den Projektfilter, mehrere Tags wirken als Oder-Verknüpfung. Ausnahme sind
+die Brancheninseln, die in `islands` `voraussetzung: "branche"` tragen: dort entscheidet allein
+das Branchen-Tag, siehe die Filterregel unten. `immer` heißt, dass
 die Kachel in jedem Projekt mit schützenswerten Daten zu klären ist. `aliases` ist für die Suche da
 und der Grund, warum jemand die Kachel auch findet, wenn er ein anderes Wort benutzt.
 
@@ -162,8 +162,8 @@ Die Daten liegen ohne Anmeldung unter einer stabilen Adresse:
 https://qaware.github.io/schuetzenswerte-daten-landkarte/landkarte.json
 ```
 
-Rund 110 KB, geschätzt 27.000 Token. Das ist für ein Modell verdaulich, für ein einzelnes
-Vorhaben aber mehr als nötig; gefiltert bleiben typisch 10.000 bis 15.000 Token übrig.
+Rund 155 KB, geschätzt 40.000 Token. Das ist für ein Modell verdaulich, für ein einzelnes
+Vorhaben aber mehr als nötig; gefiltert bleiben typisch 15.000 bis 20.000 Token übrig.
 
 **Das Datenmodell in drei Sätzen.** `tiles` enthält die Kacheln, jede mit `title`, `what`, `why`
 und `when`. `when` ist der Auslöser und damit der Satz, der als Begründung taugt, warum eine
@@ -171,8 +171,8 @@ Kachel für ein Vorhaben gilt. `dimension` und `area` ordnen sie ein, `area` ver
 auf Kern oder Archipel.
 
 **Die Filterregel in einer Zeile.** Eine Kachel ist relevant, wenn ihr `triggers` den Wert
-`immer` enthält oder eine Eigenschaft des Vorhabens, es sei denn, sie trägt ein Branchen-Tag und
-keines davon passt zum Vorhaben. Welche Eigenschaften es gibt, steht in `filters` in derselben
+`immer` enthält oder eine Eigenschaft des Vorhabens. Auf einer Insel mit `voraussetzung` zählt
+nur das Branchen-Tag: die Kachel gilt, wenn die Branche passt, und sonst nicht. Welche Eigenschaften es gibt, steht in `filters` in derselben
 Datei, der Agent braucht also keine weitere Quelle.
 
 Wer eine Eigenschaft ausdrücklich verneint, schließt die Kacheln aus, deren Trigger *alle* an
@@ -185,8 +185,8 @@ entscheidet; der Viewer nimmt diese Kacheln halb zurück und nennt sie im Export
 Bei Fragen zu Datenschutz, Datensicherheit und Regulatorik in diesem Projekt:
 lies https://qaware.github.io/schuetzenswerte-daten-landkarte/landkarte.json und
 berücksichtige die Kacheln, deren "triggers" den Wert "immer" enthalten oder eines
-von: branche:automotive, pb:ja, cloud:hyperscaler. Kacheln mit einem anderen
-branche:-Tag gelten nicht.
+von: branche:automotive, pb:ja, cloud:hyperscaler. Kacheln, deren Insel eine
+"voraussetzung" trägt, gelten nur mit passendem branche:-Tag.
 Das Feld "when" sagt, warum eine Kachel hier gilt, "why" warum sie wichtig ist.
 Die Karte ist eine Orientierung, kein Rechtsrat und keine Vollständigkeitszusage;
 bei Fristen und Anwendbarkeit auf die Quelle verweisen statt etwas zu behaupten.
@@ -197,7 +197,7 @@ bei Fristen und Anwendbarkeit auf die Quelle verweisen statt etwas zu behaupten.
 Wer nicht möchte, dass der Agent selbst filtert: unter „Mein Projekt“ das Vorhaben beantworten
 und **Als Agenten-Kontext kopieren** drücken. In der Zwischenablage liegt dann Markdown mit den
 ausgewählten Kacheln samt `what`, `why`, `when`, Phase und Kundenfrage, gruppiert nach Dimension, mit Quellenangabe
-und Disclaimer im Kopf. Für ein typisches Vorhaben sind das etwa 12.000 Token.
+und Disclaimer im Kopf. Für ein typisches Vorhaben sind das etwa 17.000 Token.
 
 Der Unterschied zur Schaltfläche daneben: **Als Checkliste kopieren** gibt Titel, Begründung
 und Kundenfrage als Aufgabenliste für Menschen, nach Projektphase geordnet, der Agenten-Kontext gibt die Texte mit.
@@ -214,13 +214,13 @@ Aussage über die Wichtigkeit der Branche, sondern über den Stand der Arbeit:
 | --- | --- | --- |
 | Automotive | 22 | ausgearbeitet, fünf Bereiche nach Thema statt nach Dimension |
 | KI | 15 | ausgearbeitet, vier Bereiche |
-| Finanzdienstleistungen | 14 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
-| MedTech | 18 | ausgearbeitet, drei volle Bereiche |
+| Finanzdienstleistungen | 13 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
+| MedTech | 17 | ausgearbeitet, drei Bereiche |
 | Public Sector | 12 | ausgearbeitet, beide Bereiche voll |
 
 Bei den Finanzdienstleistungen sind Bank und Versicherung **eine Insel mit zwei
-Branchenoptionen**. Fünf der vierzehn Kacheln gelten für beide, drei nur für Banken und sechs
-nur für Versicherer. Zwei getrennte Inseln hätten die gemeinsamen Kacheln gedoppelt, eine
+Branchenoptionen**. Fünf der dreizehn Kacheln gelten für beide, drei nur für Banken und fünf
+nur für Versicherer; das Versicherungsgeheimnis liegt seit der Zusammenführung von § 203 im Kern. Zwei getrennte Inseln hätten die gemeinsamen Kacheln gedoppelt, eine
 gemeinsame Option hätte einem Versicherer Bankgeheimnis und PSD2 vorgesetzt.
 
 ## Offene Punkte

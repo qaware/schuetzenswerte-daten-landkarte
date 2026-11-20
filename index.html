@@ -57,11 +57,13 @@
         <li><span class="st st-mid" aria-hidden="true"></span>hängt an offener Frage</li>
         <li><span class="st st-off" aria-hidden="true"></span>gilt nicht</li>
       </ul>
-      <div class="tabs" role="tablist" aria-label="Mein Projekt">
+      <div class="tabs">
+        <div class="tablist" role="tablist" aria-label="Mein Projekt">
         <button id="tab-fragen" type="button" role="tab" aria-selected="true"
                 aria-controls="pane-fragen">Fragen <span class="badge" id="answered"></span></button>
         <button id="tab-ergebnis" type="button" role="tab" aria-selected="false"
                 aria-controls="pane-ergebnis" tabindex="-1">Ergebnis <span class="badge" id="result-count"></span></button>
+        </div>
         <button id="btn-reset" type="button" class="reset" data-icon="reset"
                 title="Alle Antworten auf „offen“ zurücksetzen">Zurücksetzen</button>
       </div>

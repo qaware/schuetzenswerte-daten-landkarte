@@ -67,6 +67,11 @@ def main(path=None):
         if not tile.get("when"):
             warnings.append(f"{tid}: when fehlt, im Checklisten-Export erscheint dann why als Begründung")
 
+    filter_ids = {f["id"] for f in data["filters"]}
+    for iid, island in sorted(data["islands"].items()):
+        if island.get("voraussetzung") and island["voraussetzung"] not in filter_ids:
+            problems.append(f"Insel {iid}: voraussetzung '{island['voraussetzung']}' ist keine Frage in filters")
+
     phases = data.get("phases", {})
     for tid, tile in sorted(data["tiles"].items()):
         if tile.get("phase") not in phases:
