@@ -7,6 +7,7 @@ Kein CI, von Hand ausführen, bevor ein neuer Bereich oder eine neue Kachel eing
 Die Geometrie muss zu assets/app.js passen: LATTICE und ring() sind dort identisch.
 """
 
+import datetime
 import json
 import pathlib
 import re
@@ -25,6 +26,7 @@ SAFE_CAPACITY = 3 * SAFE_RING * (SAFE_RING + 1)
 DIRS = [(1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1), (0, 1)]
 
 QAWARE_CONFLUENCE = "https://qaware-confluence.atlassian.net/wiki/"
+STAND_MAX_MONATE = 12
 
 REQUIRED = ("title", "area", "dimension", "what", "why", "triggers")
 
@@ -75,6 +77,24 @@ def main(path=None):
                 problems.append(f"{tid}: quellen-Eintrag braucht label und eine https-url")
         if "stand" in tile and not re.fullmatch(r"20\d\d-(0[1-9]|1[0-2])", str(tile["stand"])):
             problems.append(f"{tid}: stand '{tile['stand']}' ist kein Jahr-Monat wie 2026-11")
+
+    # Regulatorik veraltet am schnellsten. Ein Hinweis, kein Fehler, und nur eine Zeile für
+    # alle, damit die übrigen Hinweise sichtbar bleiben.
+    heute = datetime.date.today()
+    alt = []
+    for tid, tile in sorted(data["tiles"].items()):
+        if tile.get("dimension") != "regulatorik":
+            continue
+        stand = str(tile.get("stand", ""))
+        if not re.fullmatch(r"20\d\d-(0[1-9]|1[0-2])", stand):
+            alt.append(tid)
+            continue
+        jahr, monat = map(int, stand.split("-"))
+        if (heute.year - jahr) * 12 + heute.month - monat > STAND_MAX_MONATE:
+            alt.append(tid)
+    if alt:
+        warnings.append(f"{len(alt)} Regulatorik-Kacheln ohne Stand oder älter als "
+                        f"{STAND_MAX_MONATE} Monate: {', '.join(alt)}")
 
     filter_ids = {f["id"] for f in data["filters"]}
     for iid, island in sorted(data["islands"].items()):

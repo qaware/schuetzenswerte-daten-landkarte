@@ -52,6 +52,7 @@ Dann `http://localhost:8000` öffnen. Ein Webserver ist nötig, weil der Viewer
 | `assets/app.js`, `assets/style.css` | der Viewer |
 | | darin `layer-sea`: Wellen und Schiffe, gesät gestreut, unter der Küste und ohne Ereignisse |
 | `tools/check-landkarte.py` | prüft die Daten, von Hand laufen lassen |
+| `tools/check-quellen.py` | ruft alle Quellen ab und meldet tote Adressen, von Hand laufen lassen |
 
 `index.html` und `landkarte.json` liegen absichtlich im Wurzelverzeichnis: GitHub Pages liefert
 von dort aus, und der Pfad zu den Daten ist Teil der Schnittstelle, siehe „Für Agenten". Der

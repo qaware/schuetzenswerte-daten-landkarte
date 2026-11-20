@@ -661,7 +661,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "art9": {
       "title": "Besondere Kategorien (Art. 9 DSGVO)",
@@ -680,7 +681,7 @@
         "Fingerabdruck",
         "Gesichtserkennung"
       ],
-      "what": "Gesundheitsdaten, genetische und biometrische Daten, rassische oder ethnische Herkunft, politische Meinungen, religiöse oder philosophische Überzeugungen, Gewerkschaftszugehörigkeit sowie Daten zum Sexualleben.",
+      "what": "Gesundheitsdaten, genetische und biometrische Daten, rassische oder ethnische Herkunft, politische Meinungen, religiöse oder weltanschauliche Überzeugungen, Gewerkschaftszugehörigkeit sowie Daten zum Sexualleben oder zur sexuellen Orientierung.",
       "why": "Für diese Kategorien gilt ein grundsätzliches Verarbeitungsverbot mit engen Ausnahmen. Wer sie verarbeitet, braucht eine tragfähige Ausnahme und deutlich strengere Schutzmaßnahmen. Biometrie wiegt dabei besonders schwer, weil sie nicht widerrufbar ist: ein geleaktes Passwort tauscht man aus, ein Gesichtsmerkmal nicht.",
       "when": "Achtung bei Ableitbarkeit: eine Medikamentenliste, ein Fitness-Datensatz oder eine Vereinsmitgliedschaft können Art. 9 auslösen, ohne dass irgendwo Diagnose steht. Biometrische Daten fallen nur darunter, wenn sie zur eindeutigen Identifizierung verarbeitet werden; ein Foto allein ist das noch nicht.",
       "kundenfrage": "Kommen Gesundheitsdaten oder andere besondere Kategorien vor, auch abgeleitet?",
@@ -689,7 +690,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "personenbezug-pseudonym": {
       "title": "Personenbezug nach Pseudonymisierung",
@@ -708,6 +710,12 @@
       "what": "Die Frage, ob ein Datensatz nach der Bearbeitung noch personenbezogen ist. Anonymisierte Daten sind es nicht mehr. Pseudonymisierte bleiben es für jeden, der die Zuordnung herstellen kann, also in aller Regel für den, der pseudonymisiert hat; für einen Empfänger ohne realistischen Weg zur Zuordnung können sie es nach der Rechtsprechung des EuGH nicht sein.",
       "why": "Hier passiert der häufigste Denkfehler in Projekten. Nach dem Entfernen von Namen gilt der Datensatz oft als unkritisch, obwohl er über Quasi-Identifikatoren wie Postleitzahl, Geburtsdatum und Zeitstempel wieder zuordenbar ist.",
       "when": "Immer prüfen, bevor Daten in Analytics, Testumgebungen oder zu Dritten wandern.",
+      "quellen": [
+        {
+          "label": "Leitlinien 01/2025 zur Pseudonymisierung, Konsultationsfassung (EDSA)",
+          "url": "https://www.edpb.europa.eu/public-consultations/guidelines-012025-on-pseudonymisation_en"
+        }
+      ],
       "stand": "2026-11"
     },
     "beschaeftigtendaten": {
@@ -839,7 +847,13 @@
       ],
       "what": "Die drei Grundfragen jeder Schutzbedarfsbetrachtung: Wer darf es sehen, wer darf es verändern, und wann muss es verfügbar sein.",
       "why": "Diskussionen über sensible Daten drehen sich fast nur um Vertraulichkeit. Bei Behandlungsdaten kann eine unbemerkte Verfälschung oder ein Ausfall im Notfall den größeren Schaden anrichten.",
-      "when": "Am Anfang jeder Klassifizierung, für jede Datenart getrennt bewerten."
+      "when": "Am Anfang jeder Klassifizierung, für jede Datenart getrennt bewerten.",
+      "quellen": [
+        {
+          "label": "BSI-Standard 200-2, IT-Grundschutz-Methodik (BSI)",
+          "url": "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/IT-Grundschutz/BSI-Standards/BSI-Standard-200-2-IT-Grundschutz-Methodik/bsi-standard-200-2-it-grundschutz-methodik_node.html"
+        }
+      ]
     },
     "schutzbedarfsstufen": {
       "title": "Schutzbedarfs­stufen",
@@ -863,6 +877,12 @@
         {
           "label": "Richtlinie Informationsklassifizierung",
           "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/6063980/Richtlinie+Informationsklassifizierung"
+        }
+      ],
+      "quellen": [
+        {
+          "label": "BSI-Standard 200-2, IT-Grundschutz-Methodik (BSI)",
+          "url": "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/IT-Grundschutz/BSI-Standards/BSI-Standard-200-2-IT-Grundschutz-Methodik/bsi-standard-200-2-it-grundschutz-methodik_node.html"
         }
       ]
     },
@@ -923,7 +943,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "bdsg": {
       "title": "BDSG",
@@ -946,7 +967,8 @@
           "label": "BDSG (gesetze-im-internet.de)",
           "url": "https://www.gesetze-im-internet.de/bdsg_2018/"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "betroffenenrechte": {
       "title": "Betroffenenrechte (Art. 15–22)",
@@ -971,7 +993,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "avv": {
       "title": "Auftrags­verarbeitung (AVV, Art. 28)",
@@ -1002,7 +1025,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "tom": {
       "title": "Technische & organisatorische Maßnahmen (Art. 32)",
@@ -1025,7 +1049,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "vvt": {
       "title": "Verarbeitungs­verzeichnis (Art. 30)",
@@ -1049,7 +1074,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "meldepflichten": {
       "title": "Meldepflichten bei Datenschutz­verletzung (Art. 33/34)",
@@ -1078,7 +1104,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "drittlandtransfer": {
       "title": "Drittlandtransfer (Schrems II, SCC)",
@@ -1158,8 +1185,13 @@
         {
           "label": "SGB X (gesetze-im-internet.de)",
           "url": "https://www.gesetze-im-internet.de/sgb_10/"
+        },
+        {
+          "label": "§ 35 SGB I, Sozialgeheimnis (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/sgb_1/__35.html"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "nis2": {
       "title": "NIS-2",
@@ -1195,6 +1227,10 @@
         {
           "label": "BSIG (gesetze-im-internet.de)",
           "url": "https://www.gesetze-im-internet.de/bsig_2025/"
+        },
+        {
+          "label": "NIS-2-regulierte Unternehmen (BSI)",
+          "url": "https://www.bsi.bund.de/DE/Themen/Regulierte-Wirtschaft/NIS-2-regulierte-Unternehmen/nis-2-regulierte-unternehmen_node.html"
         }
       ],
       "stand": "2026-11"
@@ -1220,7 +1256,8 @@
           "label": "Verordnung (EU) 2024/2847 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2024/2847/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "geschgehg": {
       "title": "Geschäfts­geheimnis­gesetz",
@@ -1242,7 +1279,8 @@
           "label": "GeschGehG (gesetze-im-internet.de)",
           "url": "https://www.gesetze-im-internet.de/geschgehg/"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "geheimschutz": {
       "title": "Staatlicher Geheimschutz (SÜG)",
@@ -1270,6 +1308,10 @@
         {
           "label": "SÜG (gesetze-im-internet.de)",
           "url": "https://www.gesetze-im-internet.de/s_g/"
+        },
+        {
+          "label": "Verschlusssachenanweisung (verwaltungsvorschriften-im-internet.de)",
+          "url": "https://www.verwaltungsvorschriften-im-internet.de/bsvwvbund_13032023_SII554001405.htm"
         }
       ]
     },
@@ -1293,7 +1335,7 @@
         "Privatgeheimnis",
         "mitwirkende Personen"
       ],
-      "what": "Die strafrechtlich abgesicherte Verschwiegenheit von Berufsgeheimnisträgern, unter anderem Ärztinnen und Ärzten, Psychotherapie, Rechtsanwaltschaft, Steuerberatung und Wirtschaftsprüfung sowie Angehörigen privater Kranken-, Unfall- und Lebensversicherungen. Über die Regelung zu mitwirkenden Personen erfasst sie auch externe Dienstleister.",
+      "what": "Die strafrechtlich abgesicherte Verschwiegenheit von Berufsgeheimnisträgern, unter anderem Ärztinnen und Ärzten und anderen Heilberufen, Berufspsychologen, Rechtsanwaltschaft, Steuerberatung und Wirtschaftsprüfung sowie Angehörigen privater Kranken-, Unfall- und Lebensversicherungen. Über die Regelung zu mitwirkenden Personen erfasst sie auch externe Dienstleister.",
       "why": "Hier wird Datenschutz zu Strafrecht, und die Pflicht trifft die einzelne Person, nicht nur das Unternehmen. Ein Auftragsverarbeitungsvertrag reicht nicht: Dienstleister müssen zur Verschwiegenheit verpflichtet werden und diese Pflicht an jede weitere beteiligte Person weitergeben, und der Zugriff bleibt auf das Erforderliche begrenzt.",
       "when": "Sobald ein Projekt für einen Berufsgeheimnisträger Daten berührt, die unter das Geheimnis fallen, auch nur bei Support und Fehlersuche. Die Verpflichtung gehört vor den ersten Zugriff.",
       "kundenfrage": "Fallen die Daten unter ein Berufsgeheimnis, und wie werden wir zur Verschwiegenheit verpflichtet?",
@@ -1302,7 +1344,8 @@
           "label": "§ 203 StGB (gesetze-im-internet.de)",
           "url": "https://www.gesetze-im-internet.de/stgb/__203.html"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "data-act": {
       "title": "Data Act",
@@ -1357,7 +1400,8 @@
           "label": "TDDDG (gesetze-im-internet.de)",
           "url": "https://www.gesetze-im-internet.de/ttdsg/"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "rechtsgrundlage": {
       "title": "Rechtsgrundlage & Zweckbindung (Art. 6)",
@@ -1385,7 +1429,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "iso27001": {
       "title": "ISO/IEC 27001 & ISMS",
@@ -1588,7 +1633,13 @@
       ],
       "what": "Das Ersetzen identifizierender Merkmale durch ein Pseudonym, wobei die Zuordnungsregel getrennt und geschützt aufbewahrt wird.",
       "why": "Sie ist in Art. 32 ausdrücklich als Maßnahme genannt und in der Praxis der beste Kompromiss zwischen Nutzbarkeit und Schutz. Die Daten bleiben personenbezogen, das Risiko sinkt aber deutlich.",
-      "when": "Der Schutz steht und fällt mit der Trennung der Zuordnungstabelle. Liegt sie in derselben Datenbank, ist wenig gewonnen."
+      "when": "Der Schutz steht und fällt mit der Trennung der Zuordnungstabelle. Liegt sie in derselben Datenbank, ist wenig gewonnen.",
+      "quellen": [
+        {
+          "label": "Leitlinien 01/2025 zur Pseudonymisierung, Konsultationsfassung (EDSA)",
+          "url": "https://www.edpb.europa.eu/public-consultations/guidelines-012025-on-pseudonymisation_en"
+        }
+      ]
     },
     "tokenisierung": {
       "title": "Tokenisierung",
@@ -1683,7 +1734,13 @@
       "what": "Die Verschlüsselung gespeicherter Daten auf Datenträger-, Datenbank- oder Feldebene.",
       "why": "Sie schützt gegen den Verlust des Mediums und ist regulatorisch fast überall erwartet. Gegen einen kompromittierten Anwendungszugang hilft sie nicht, was oft überschätzt wird.",
       "when": "Standard. Interessant wird erst die Frage, auf welcher Ebene verschlüsselt wird und wer den Schlüssel hält.",
-      "tlandkarte": "Verschlüsselung"
+      "tlandkarte": "Verschlüsselung",
+      "quellen": [
+        {
+          "label": "BSI TR-02102, Kryptographische Verfahren (BSI)",
+          "url": "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html"
+        }
+      ]
     },
     "verschl-in-transit": {
       "title": "Verschlüsselung in Transit",
@@ -1702,7 +1759,13 @@
       "what": "Die Absicherung der Übertragung zwischen Komponenten, außen wie innen, in der Regel über TLS, bei Dienst-zu-Dienst-Verkehr auch gegenseitig authentifiziert.",
       "why": "Außen ist das selbstverständlich, innen häufig nicht. Unverschlüsselter Verkehr im Cluster ist der Punkt, an dem Zero-Trust-Ansprüche meist scheitern.",
       "when": "Nach außen ohnehin gesetzt. Zu entscheiden ist, ob der Verkehr zwischen den eigenen Diensten mitverschlüsselt wird und ob dafür gegenseitige Authentifizierung nötig ist.",
-      "tlandkarte": "TLS/PKI & HTTPS"
+      "tlandkarte": "TLS/PKI & HTTPS",
+      "quellen": [
+        {
+          "label": "BSI TR-02102, Kryptographische Verfahren (BSI)",
+          "url": "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html"
+        }
+      ]
     },
     "confidential-computing": {
       "title": "Confidential Computing (in Use)",
@@ -1744,7 +1807,13 @@
       "what": "Erzeugung, Aufbewahrung, Verteilung und Entzug kryptografischer Schlüssel, einschließlich der Frage, ob der Kunde eigene Schlüssel einbringt oder außerhalb der Cloud behält.",
       "why": "Verschlüsselung verlagert das Problem auf den Schlüssel. Wer ihn hält, entscheidet über Zugriff, und genau das ist die eigentliche Frage bei Cloud und Souveränität.",
       "when": "Vor der Entscheidung über Verschlüsselung klären, nicht danach. Bei Daten, die lange vertraulich bleiben müssen, gleich mitklären, ob sich die Verfahren später gegen quantensichere tauschen lassen.",
-      "tlandkarte": "Secret Management"
+      "tlandkarte": "Secret Management",
+      "quellen": [
+        {
+          "label": "BSI TR-02102, Kryptographische Verfahren (BSI)",
+          "url": "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html"
+        }
+      ]
     },
     "access-control": {
       "title": "Access Control (RBAC, ABAC, Need-to-Know)",
@@ -1788,7 +1857,13 @@
       "what": "Der Verzicht auf implizites Vertrauen innerhalb des Netzes, verbunden mit kleinteiliger Segmentierung und der Minimierung von außen erreichbarer Endpunkte.",
       "why": "Das klassische Modell mit hartem Rand und weichem Inneren bedeutet, dass ein einziger kompromittierter Dienst alles erreicht. Segmentierung begrenzt den Radius und hält besonders sensible Teile klein.",
       "when": "Besonders wertvoll, wenn ein stark regulierter Teil vom Rest getrennt werden soll.",
-      "tlandkarte": "Identity- & Access-Management"
+      "tlandkarte": "Identity- & Access-Management",
+      "quellen": [
+        {
+          "label": "NIST SP 800-207, Zero Trust Architecture",
+          "url": "https://csrc.nist.gov/pubs/sp/800/207/final"
+        }
+      ]
     },
     "dlp": {
       "title": "Data Loss Prevention",
@@ -2138,6 +2213,12 @@
           "label": "Projektsteckbrief für Kunden- und interne Projekte",
           "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/691372063/Projektsteckbrief+f+r+Kunden-+und+interne+Projekte"
         }
+      ],
+      "quellen": [
+        {
+          "label": "BSI-Standard 200-2, IT-Grundschutz-Methodik (BSI)",
+          "url": "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/IT-Grundschutz/BSI-Standards/BSI-Standard-200-2-IT-Grundschutz-Methodik/bsi-standard-200-2-it-grundschutz-methodik_node.html"
+        }
       ]
     },
     "dsfa": {
@@ -2165,7 +2246,8 @@
           "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "threat-modeling": {
       "title": "Threat Modeling (STRIDE)",
@@ -2207,7 +2289,8 @@
           "label": "LINDDUN",
           "url": "https://linddun.org/"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "dfd": {
       "title": "Data Flow Diagrams",
@@ -2288,6 +2371,12 @@
           "label": "Richtlinie Sichere Softwareentwicklung",
           "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/671088641/Richtlinie+Sichere+Softwareentwicklung"
         }
+      ],
+      "quellen": [
+        {
+          "label": "NIST SP 800-218, Secure Software Development Framework",
+          "url": "https://csrc.nist.gov/pubs/sp/800/218/final"
+        }
       ]
     },
     "pipeline-werkzeuge": {
@@ -2322,7 +2411,7 @@
         "OWASP API",
         "API Security Top 10"
       ],
-      "what": "Die Liste der häufigsten Schwachstellenklassen in Programmierschnittstellen, angeführt von fehlerhafter Autorisierung auf Objekt- und Funktionsebene.",
+      "what": "Die Liste der häufigsten Schwachstellenklassen in Programmierschnittstellen, angeführt von fehlerhafter Autorisierung auf Objektebene; fehlerhafte Autorisierung auf Funktionsebene steht ebenfalls darin.",
       "why": "Bei sensiblen Daten ist der Klassiker nicht der ausgefeilte Angriff, sondern eine ID in der URL, die niemand gegen den Anfragenden prüft.",
       "when": "Als Review-Checkliste für jede nach außen erreichbare Schnittstelle.",
       "quellen": [
@@ -2330,7 +2419,8 @@
           "label": "OWASP API Security Top 10",
           "url": "https://api-security.owasp.org/"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "owasp-privacy": {
       "title": "OWASP Privacy Risks",
@@ -2458,7 +2548,13 @@
       ],
       "what": "Das Patientendaten-Schutz-Gesetz, das Regeln für digitale Anwendungen im Gesundheitswesen und den Umgang mit der elektronischen Patientenakte setzt.",
       "why": "Es verankert Patientensouveränität technisch, also die Frage, wer welche Inhalte freischalten und einsehen darf, und wirkt damit direkt auf Berechtigungsmodelle.",
-      "when": "Relevant bei Anbindung an die elektronische Patientenakte und digitale Versorgungsanwendungen."
+      "when": "Relevant bei Anbindung an die elektronische Patientenakte und digitale Versorgungsanwendungen.",
+      "quellen": [
+        {
+          "label": "SGB V (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/sgb_5/"
+        }
+      ]
     },
     "diga": {
       "title": "DiGA-Anforderungen",
@@ -2507,7 +2603,8 @@
           "label": "Verordnung (EU) 2017/745 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2017/745/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "gematik-ti": {
       "title": "Telematik­infrastruktur & gematik",
@@ -2570,7 +2667,13 @@
       ],
       "what": "Amtlich als geheimhaltungsbedürftig eingestufte Informationen, unterste Stufe ist nur für den Dienstgebrauch, mit eigenen Vorgaben für Verarbeitung, Ablage und Zulassung von Personen und Systemen.",
       "why": "Hier gilt kein Datenschutzregime, sondern Geheimschutz mit vorgegebenen Maßnahmen. Was zugelassen ist, entscheidet nicht die Risikoabwägung, sondern eine Freigabeliste.",
-      "when": "Sobald eine Einstufung vorliegt, sind Werkzeugwahl, Cloud-Nutzung und Arbeitsplatzausstattung stark eingeschränkt."
+      "when": "Sobald eine Einstufung vorliegt, sind Werkzeugwahl, Cloud-Nutzung und Arbeitsplatzausstattung stark eingeschränkt.",
+      "quellen": [
+        {
+          "label": "Verschlusssachenanweisung (verwaltungsvorschriften-im-internet.de)",
+          "url": "https://www.verwaltungsvorschriften-im-internet.de/bsvwvbund_13032023_SII554001405.htm"
+        }
+      ]
     },
     "kritis-daten": {
       "title": "KRITIS-relevante Systemdaten",
@@ -2589,7 +2692,13 @@
       ],
       "what": "Daten und Steuerinformationen von Anlagen, deren Ausfall die Versorgung beeinträchtigt, etwa in Energie, Wasser, Verkehr oder Gesundheitsversorgung.",
       "why": "Hier steht nicht Vertraulichkeit im Vordergrund, sondern Integrität und Verfügbarkeit. Ein manipulierter Messwert ist gefährlicher als ein gelesener.",
-      "when": "Gutes Beispiel dafür, warum die Schutzziele getrennt betrachtet werden müssen."
+      "when": "Gutes Beispiel dafür, warum die Schutzziele getrennt betrachtet werden müssen.",
+      "quellen": [
+        {
+          "label": "BSI-Kritisverordnung (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/bsi-kritisv/"
+        }
+      ]
     },
     "it-grundschutz": {
       "title": "BSI IT-Grundschutz",
@@ -3323,7 +3432,13 @@
       ],
       "what": "Ein Speicher, der kurz vor und während eines Unfalls festgelegte Fahrzeugparameter aufzeichnet. Er ist für neue Fahrzeuge vorgeschrieben, der Umfang der Parameter ist geregelt.",
       "why": "Hier ist die Verarbeitung gesetzlich verlangt und im Umfang begrenzt, gleichzeitig sind die Daten für die Rekonstruktion von Unfällen hoch aussagekräftig. Zugriff und Auslesen sind deshalb eng zu führen, und die Abgrenzung zu freiwillig erhobener Telemetrie muss klar sein.",
-      "when": "Wenn Fahrzeugdaten rund um Unfallereignisse verarbeitet werden. Die Trennung zwischen gesetzlich gefordertem Speicher und eigener Datensammlung gehört in die Architektur."
+      "when": "Wenn Fahrzeugdaten rund um Unfallereignisse verarbeitet werden. Die Trennung zwischen gesetzlich gefordertem Speicher und eigener Datensammlung gehört in die Architektur.",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2019/2144 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2019/2144/oj"
+        }
+      ]
     },
     "secoc": {
       "title": "Secure Onboard Communication",
@@ -3600,7 +3715,8 @@
           "label": "Bundesarchivgesetz (gesetze-im-internet.de)",
           "url": "https://www.gesetze-im-internet.de/barchg_2017/"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "eidas": {
       "title": "eIDAS & Vertrauensdienste",
@@ -3628,7 +3744,8 @@
           "label": "Verordnung (EU) Nr. 910/2014 (EUR-Lex)",
           "url": "https://eur-lex.europa.eu/eli/reg/2014/910/oj"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "evb-it": {
       "title": "EVB-IT & Vergaberecht",
@@ -3732,11 +3849,19 @@
         "Outsourcing",
         "Auslagerungsregister",
         "kritische Funktion",
-        "Ausstiegsstrategie"
+        "Ausstiegsstrategie",
+        "Drittparteirisiko",
+        "Third Party Risk"
       ],
       "what": "Die aufsichtsrechtlichen Anforderungen an das Auslagern von Tätigkeiten an Dritte, mit Risikobewertung, Vertragsinhalten, Ausstiegsstrategie und einem Register der Auslagerungen.",
       "why": "Ein Dienstleister wird damit Teil des beaufsichtigten Systems und nicht nur ein Lieferant. Anforderungen an Weisungs- und Prüfrechte, Kündbarkeit und Notfallvorsorge kommen aus der Aufsicht und reichen weiter als ein üblicher Vertrag. Die Einordnung als Auslagerung entscheidet über den Aufwand.",
-      "when": "Vor der Beauftragung. Ob eine Tätigkeit eine Auslagerung ist und ob sie als kritisch gilt, ist keine Frage für später."
+      "when": "Vor der Beauftragung. Ob eine Tätigkeit eine Auslagerung ist und ob sie als kritisch gilt, ist keine Frage für später.",
+      "quellen": [
+        {
+          "label": "Leitlinien zum Management von Drittparteirisiken (EBA)",
+          "url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/internal-governance/guidelines-third-party-risk-management"
+        }
+      ]
     },
     "vvg": {
       "title": "VVG",
@@ -3761,7 +3886,8 @@
           "label": "VVG (gesetze-im-internet.de)",
           "url": "https://www.gesetze-im-internet.de/vvg_2008/"
         }
-      ]
+      ],
+      "stand": "2026-11"
     },
     "gdv-verhaltensregeln": {
       "title": "GDV-Verhaltensregeln",
@@ -3839,7 +3965,13 @@
       ],
       "what": "Daten aus öffentlichen Registern, etwa dem Melderegister sowie aus Fach- und Fahrzeugregistern. Für Übermittlung und Auskunft gelten eigene Regeln, im Meldewesen das Bundesmeldegesetz.",
       "why": "Hier gibt die Fachnorm vor, wer welche Daten bekommt, und sie geht der allgemeinen Abwägung vor. Dazu kommen Auskunftssperren für einzelne Personen, die technisch durchgehalten werden müssen und sich nicht als Randfall behandeln lassen.",
-      "when": "Sobald Registerdaten gelesen oder weitergegeben werden. Zu klären ist, welche Fachnorm die Übermittlung regelt und wie eine Auskunftssperre im Datenmodell abgebildet ist."
+      "when": "Sobald Registerdaten gelesen oder weitergegeben werden. Zu klären ist, welche Fachnorm die Übermittlung regelt und wie eine Auskunftssperre im Datenmodell abgebildet ist.",
+      "quellen": [
+        {
+          "label": "Bundesmeldegesetz (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/bmg/"
+        }
+      ]
     },
     "steuerdaten": {
       "title": "Steuerdaten",
@@ -3858,7 +3990,13 @@
       ],
       "what": "Daten aus dem Besteuerungsverfahren. Sie unterliegen dem Steuergeheimnis nach § 30 der Abgabenordnung, dessen Verletzung strafbar ist.",
       "why": "Das Steuergeheimnis ist enger als der Datenschutz und erlaubt eine Offenbarung nur in gesetzlich benannten Fällen. Für Dienstleister heißt das, dass ein Zugriff schon vor jeder datenschutzrechtlichen Bewertung unzulässig sein kann.",
-      "when": "Bei jedem Zugriff auf Daten einer Finanzbehörde, auch bei Support und Fehleranalyse. Die Zulässigkeit ist getrennt von der datenschutzrechtlichen zu beurteilen."
+      "when": "Bei jedem Zugriff auf Daten einer Finanzbehörde, auch bei Support und Fehleranalyse. Die Zulässigkeit ist getrennt von der datenschutzrechtlichen zu beurteilen.",
+      "quellen": [
+        {
+          "label": "§ 30 AO, Steuergeheimnis (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/ao_1977/__30.html"
+        }
+      ]
     },
     "aktendaten": {
       "title": "Vorgangs- & Aktendaten",
@@ -3897,7 +4035,13 @@
       ],
       "what": "Daten, die zur Verhütung, Ermittlung oder Verfolgung von Straftaten sowie zur Gefahrenabwehr verarbeitet werden.",
       "why": "Für sie gilt nicht die DSGVO, sondern die Richtlinie 2016/680 und deren Umsetzung, im Bund in Teil 3 des BDSG. Rechtsgrundlagen, Betroffenenrechte und Protokollpflichten weichen ab, und wer nach der DSGVO plant, plant hier am falschen Regime.",
-      "when": "Zu Beginn klären, ob die Verarbeitung in diesen Bereich fällt. Die Antwort verändert Rechtsgrundlage, Betroffenenrechte und Protokollierung, und sie ist nachträglich teuer."
+      "when": "Zu Beginn klären, ob die Verarbeitung in diesen Bereich fällt. Die Antwort verändert Rechtsgrundlage, Betroffenenrechte und Protokollierung, und sie ist nachträglich teuer.",
+      "quellen": [
+        {
+          "label": "Richtlinie (EU) 2016/680 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/dir/2016/680/oj"
+        }
+      ]
     },
     "genetische-daten": {
       "title": "Genetische Daten",

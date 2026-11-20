@@ -471,8 +471,19 @@ nicht geprüft; das ist die ehrliche Auskunft und kein Mangel. Wer einen Text nu
 setzt den Stand nicht hoch.
 
 Beides steht an Regulatorik und an den Quellen-Kacheln der Methodik. Architektur und
-Datenarten ändern sich langsam und haben keine einzelne maßgebliche Quelle; ein Datum dort
-wäre nur Pflegeaufwand.
+Datenarten ändern sich langsam; dort steht eine Quelle nur, wo es eine einzelne maßgebliche
+gibt, etwa der BSI-Standard 200-2 zum Schutzbedarf, die TR-02102 zur Kryptografie oder NIST
+SP 800-207 zu Zero Trust, und kein Stand.
+
+Zwei Sicherungen gegen das Veralten: `tools/check-quellen.py` ruft alle Adressen ab und meldet
+tote, und `tools/check-landkarte.py` nennt in einer Zeile die Regulatorik-Kacheln, deren Stand
+fehlt oder älter als zwölf Monate ist. Das ist ein Hinweis und kein Fehler; er verschwindet
+nicht, indem man das Datum hochsetzt, sondern indem jemand den Text gegen die Quelle liest.
+
+Der Abgleich im November 2026 fand in 22 Kacheln drei Ungenauigkeiten: bei Art. 9 fehlte die
+sexuelle Orientierung, die OWASP-API-Liste wird nur von der Objektebene angeführt, und § 203
+nennt Berufspsychologen und Heilberufe, nicht „Psychotherapie". Kleine Fehler, aber genau die
+Art, die nur beim Lesen der Quelle auffällt.
 
 Geprüft wurden die Verweise so: EU-Rechtsakte über die Datenbank des Amts für
 Veröffentlichungen, Abfrage der CELEX-Nummer gegen den Titel, weil EUR-Lex selbst
