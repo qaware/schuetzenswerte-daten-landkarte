@@ -21,6 +21,9 @@ from concurrent.futures import ThreadPoolExecutor
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 AGENT = "Mozilla/5.0 (link-check)"
 NICHT_PRUEFBAR = {202, 401, 403, 429}
+# Diese Stellen antworten einem einfachen Abruf mit 400 oder 404, obwohl die Seite im Browser
+# da ist. Geprüft wurden sie im Browser; hier zählen sie als nicht prüfbar statt als Fehler.
+NUR_IM_BROWSER = ("www.cio.bund.de", "www.fda.gov")
 
 
 def fetch(url):
@@ -48,7 +51,8 @@ def main():
     for url, status in sorted(results.items()):
         if status == 200:
             continue
-        (offen if status in NICHT_PRUEFBAR else tot).append((url, status))
+        host = url.split("/")[2]
+        (offen if status in NICHT_PRUEFBAR or host in NUR_IM_BROWSER else tot).append((url, status))
 
     for url, status in offen:
         print(f"nicht prüfbar ({status}): {url}")
