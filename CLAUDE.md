@@ -488,8 +488,13 @@ Art, die nur beim Lesen der Quelle auffällt.
 Geprüft wurden die Verweise so: EU-Rechtsakte über die Datenbank des Amts für
 Veröffentlichungen, Abfrage der CELEX-Nummer gegen den Titel, weil EUR-Lex selbst
 automatische Abrufe mit einer Prüfseite beantwortet. Deutsche Gesetze und Behördenseiten per
-Abruf mit Blick auf den Seitentitel. **ISO, UNECE und das US-Gesundheitsministerium sperren
-automatische Abrufe**; diese Kacheln haben deshalb keine Quelle, statt einer ungeprüften.
+Abruf mit Blick auf den Seitentitel. **ISO, EUR-Lex, das US-Gesundheitsministerium und
+cio.bund.de sperren einfache Abrufe**, lassen aber ein lokales Chrome im Headless-Betrieb
+mit gewöhnlicher Browserkennung durch; so sind diese Verweise geprüft. `check-quellen.py`
+meldet sie weiter als „nicht prüfbar". UNECE sperrt auch das; die beiden UN-Regelungen
+verweisen deshalb auf ihre Veröffentlichung im Amtsblatt der EU. Ohne Quelle bleiben vier
+Kacheln, für die sich keine erreichbare Primärquelle fand: Landesdatenschutzgesetze,
+Bankgeheimnis, GDV-Verhaltensregeln, und für MaRisk fehlt die Seite der BaFin.
 
 ## Phase und Kundenfrage
 
