@@ -1091,6 +1091,9 @@ function exportAgentContext() {
       if (t.tlandkarte) md += `Allgemeines Handwerkszeug dazu: T-Landkarte, ${t.tlandkarte}\n`;
       if (t.qaware?.length) md += `Bei QAware geregelt (internes Confluence): `
         + t.qaware.map(r => `${r.label} ${r.url}`).join('; ') + `\n`;
+      if (t.quellen?.length) md += `Quelle: `
+        + t.quellen.map(r => `${r.label} ${r.url}`).join('; ') + `\n`;
+      if (t.stand) md += `Stand der Kachel: ${standText(t.stand)}\n`;
     }
   }
   liefern(md, 'agenten-kontext-schuetzenswerte-daten.md', hits.length + ' Kacheln');
@@ -1137,6 +1140,14 @@ function tagLabel(tag) {
     }
   }
   return TAG_LABELS[tag] || tag;
+}
+
+const MONATE = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August',
+  'September', 'Oktober', 'November', 'Dezember'];
+// "2026-11" wird zu "November 2026"
+function standText(stand) {
+  const [jahr, monat] = stand.split('-');
+  return `${MONATE[Number(monat) - 1]} ${jahr}`;
 }
 
 function openDetail(entry) {
@@ -1195,8 +1206,23 @@ function openDetail(entry) {
     body.append(h, p);
   }
 
+  /* Quellen sind Primärquellen, also Gesetzestext, Behörde oder Herausgeber. Der Stand sagt,
+     wann der Kacheltext zuletzt gegen die Quelle geprüft wurde; ein altes Datum ist damit
+     eine ehrliche Auskunft und kein Mangel. */
+  if (t.quellen?.length) {
+    const h = document.createElement('h3');
+    h.textContent = 'Quelle';
+    const p = document.createElement('p');
+    t.quellen.forEach((ref, i) => {
+      if (i) p.append(', ');
+      p.appendChild(externalLink(ref.url, ref.label));
+    });
+    body.append(h, p);
+  }
+
   document.getElementById('detail-triggers').textContent =
-    'Wird relevant bei: ' + t.triggers.map(tagLabel).join(', ');
+    'Wird relevant bei: ' + t.triggers.map(tagLabel).join(', ')
+    + (t.stand ? ' · Stand: ' + standText(t.stand) : '');
   document.getElementById('detail-actions').hidden = false;
   state.openTile = entry.id;
   writeHash();

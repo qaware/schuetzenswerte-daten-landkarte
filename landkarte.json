@@ -655,7 +655,13 @@
       "what": "Alle Angaben, die sich direkt oder indirekt auf eine identifizierbare natürliche Person beziehen. Dazu gehören auch technische Kennungen wie IP-Adressen, Geräte-IDs oder Kundennummern.",
       "why": "Sobald personenbezogene Daten im Spiel sind, greift die DSGVO mit Rechtsgrundlage, Zweckbindung, Betroffenenrechten und Löschpflichten. Fast alles andere auf dieser Karte hängt an dieser Feststellung.",
       "when": "Der Begriff ist weiter, als die meisten denken. Auch ein Datensatz ohne Namen ist personenbezogen, wenn er über eine Kennung wieder einer Person zuzuordnen ist.",
-      "kundenfrage": "Welche personenbezogenen Daten verarbeitet das System, auch indirekt über Kennungen?"
+      "kundenfrage": "Welche personenbezogenen Daten verarbeitet das System, auch indirekt über Kennungen?",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        }
+      ]
     },
     "art9": {
       "title": "Besondere Kategorien (Art. 9 DSGVO)",
@@ -677,7 +683,13 @@
       "what": "Gesundheitsdaten, genetische und biometrische Daten, rassische oder ethnische Herkunft, politische Meinungen, religiöse oder philosophische Überzeugungen, Gewerkschaftszugehörigkeit sowie Daten zum Sexualleben.",
       "why": "Für diese Kategorien gilt ein grundsätzliches Verarbeitungsverbot mit engen Ausnahmen. Wer sie verarbeitet, braucht eine tragfähige Ausnahme und deutlich strengere Schutzmaßnahmen. Biometrie wiegt dabei besonders schwer, weil sie nicht widerrufbar ist: ein geleaktes Passwort tauscht man aus, ein Gesichtsmerkmal nicht.",
       "when": "Achtung bei Ableitbarkeit: eine Medikamentenliste, ein Fitness-Datensatz oder eine Vereinsmitgliedschaft können Art. 9 auslösen, ohne dass irgendwo Diagnose steht. Biometrische Daten fallen nur darunter, wenn sie zur eindeutigen Identifizierung verarbeitet werden; ein Foto allein ist das noch nicht.",
-      "kundenfrage": "Kommen Gesundheitsdaten oder andere besondere Kategorien vor, auch abgeleitet?"
+      "kundenfrage": "Kommen Gesundheitsdaten oder andere besondere Kategorien vor, auch abgeleitet?",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        }
+      ]
     },
     "personenbezug-pseudonym": {
       "title": "Personenbezug nach Pseudonymisierung",
@@ -695,7 +707,8 @@
       ],
       "what": "Die Frage, ob ein Datensatz nach der Bearbeitung noch personenbezogen ist. Anonymisierte Daten sind es nicht mehr. Pseudonymisierte bleiben es für jeden, der die Zuordnung herstellen kann, also in aller Regel für den, der pseudonymisiert hat; für einen Empfänger ohne realistischen Weg zur Zuordnung können sie es nach der Rechtsprechung des EuGH nicht sein.",
       "why": "Hier passiert der häufigste Denkfehler in Projekten. Nach dem Entfernen von Namen gilt der Datensatz oft als unkritisch, obwohl er über Quasi-Identifikatoren wie Postleitzahl, Geburtsdatum und Zeitstempel wieder zuordenbar ist.",
-      "when": "Immer prüfen, bevor Daten in Analytics, Testumgebungen oder zu Dritten wandern."
+      "when": "Immer prüfen, bevor Daten in Analytics, Testumgebungen oder zu Dritten wandern.",
+      "stand": "2026-11"
     },
     "beschaeftigtendaten": {
       "title": "Beschäftigten­daten",
@@ -904,6 +917,12 @@
           "label": "Richtlinie Datenschutz",
           "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/705626120/Richtlinie+Datenschutz"
         }
+      ],
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        }
       ]
     },
     "bdsg": {
@@ -921,7 +940,13 @@
       ],
       "what": "Das deutsche Gesetz, das die DSGVO ergänzt und konkretisiert, wo sie den Mitgliedstaaten Spielraum lässt, etwa bei Beschäftigtendaten, Videoüberwachung, Datenschutzbeauftragten und einzelnen Verarbeitungsbefugnissen. Es wiederholt die DSGVO nicht und kann ihr nicht widersprechen.",
       "why": "Die Reihenfolge beim Nachschlagen ist damit fest: zuerst die DSGVO, dann im BDSG prüfen, ob eine Öffnungsklausel genutzt wurde. Bei Beschäftigtendaten oder Aufsichtsfragen steht die entscheidende Regel oft erst dort. Für öffentliche Stellen der Länder treten die Landesdatenschutzgesetze an seine Stelle.",
-      "when": "Relevant bei deutschem Verantwortlichen, besonders bei Mitarbeiterdaten."
+      "when": "Relevant bei deutschem Verantwortlichen, besonders bei Mitarbeiterdaten.",
+      "quellen": [
+        {
+          "label": "BDSG (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/bdsg_2018/"
+        }
+      ]
     },
     "betroffenenrechte": {
       "title": "Betroffenenrechte (Art. 15–22)",
@@ -940,7 +965,13 @@
       ],
       "what": "Die Ansprüche auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit, Widerspruch und auf Nichtunterwerfung unter rein automatisierte Entscheidungen.",
       "why": "Das ist die Stelle, an der Recht am direktesten zu Architektur wird. Eine Auskunft über alle Daten einer Person quer über Microservices, Backups und Logs ist eine Systemanforderung, kein Formularthema.",
-      "when": "Früh klären, wie eine Person und all ihre Daten systemweit gefunden werden. Nachträglich ist das teuer."
+      "when": "Früh klären, wie eine Person und all ihre Daten systemweit gefunden werden. Nachträglich ist das teuer.",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        }
+      ]
     },
     "avv": {
       "title": "Auftrags­verarbeitung (AVV, Art. 28)",
@@ -965,6 +996,12 @@
           "label": "Ausfüllhilfe AVV-Vorlage",
           "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/2341666832/Ausf+llhilfe+AVV-Vorlage+Auftragsverarbeitungsvertrag"
         }
+      ],
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        }
       ]
     },
     "tom": {
@@ -982,7 +1019,13 @@
       ],
       "what": "Die Pflicht, dem Risiko angemessene Schutzmaßnahmen umzusetzen, ausdrücklich genannt sind Pseudonymisierung, Verschlüsselung, Verfügbarkeit und regelmäßige Überprüfung.",
       "why": "Das ist das Scharnier zwischen Dimension 2 und 3. Art. 32 verlangt keine konkrete Technik, sondern Angemessenheit, und genau diese Begründung liefert die Architektur.",
-      "when": "Immer. Die TOM-Liste ist häufig auch das Dokument, das der Kunde im Audit vorlegen muss."
+      "when": "Immer. Die TOM-Liste ist häufig auch das Dokument, das der Kunde im Audit vorlegen muss.",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        }
+      ]
     },
     "vvt": {
       "title": "Verarbeitungs­verzeichnis (Art. 30)",
@@ -1000,7 +1043,13 @@
       "what": "Ein Verzeichnis aller Verarbeitungstätigkeiten mit Zweck, Datenkategorien, Empfängern, Fristen und Drittlandtransfers.",
       "why": "Es ist oft die einzige vollständige Übersicht, welche Daten wohin fließen, und damit für Entwicklungsteams eine überraschend nützliche Informationsquelle.",
       "when": "Beim Projektstart nach dem bestehenden Verzeichnis fragen, statt die Datenflüsse neu zu erheben.",
-      "kundenfrage": "Gibt es einen Eintrag im Verarbeitungsverzeichnis, den wir als Übersicht der Datenflüsse nutzen können?"
+      "kundenfrage": "Gibt es einen Eintrag im Verarbeitungsverzeichnis, den wir als Übersicht der Datenflüsse nutzen können?",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        }
+      ]
     },
     "meldepflichten": {
       "title": "Meldepflichten bei Datenschutz­verletzung (Art. 33/34)",
@@ -1022,6 +1071,12 @@
         {
           "label": "Incidents erkennen und melden",
           "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/2288058426/Incidents+erkennen+und+melden"
+        }
+      ],
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
         }
       ]
     },
@@ -1045,7 +1100,18 @@
       "what": "Die Regeln für die Übermittlung personenbezogener Daten in Länder außerhalb der EU, über Angemessenheitsbeschluss, Standardvertragsklauseln oder andere Garantien samt Prüfung des Zielrechts.",
       "why": "Transfer beginnt nicht erst beim Datenexport. Auch ein Zugriff aus einem Drittland auf europäisch gespeicherte Daten ist eine Übermittlung, etwa im Support oder in der Rufbereitschaft.",
       "when": "Bei jedem Dienstleister, Modellanbieter oder Support-Team außerhalb der EU. Für die USA gibt es mit dem Data Privacy Framework wieder einen Angemessenheitsbeschluss, der aber gerichtlich angegriffen wird; wer sich allein darauf stützt, sollte eine Rückfallposition haben.",
-      "kundenfrage": "Welche Dienste, Betriebs- oder Supportzugriffe liegen außerhalb der EU?"
+      "kundenfrage": "Welche Dienste, Betriebs- oder Supportzugriffe liegen außerhalb der EU?",
+      "quellen": [
+        {
+          "label": "Standardvertragsklauseln, Beschluss (EU) 2021/914 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/dec_impl/2021/914/oj"
+        },
+        {
+          "label": "Angemessenheitsbeschluss EU-US, Beschluss (EU) 2023/1795 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/dec_impl/2023/1795/oj"
+        }
+      ],
+      "stand": "2026-11"
     },
     "cloud-act": {
       "title": "US CLOUD Act",
@@ -1063,7 +1129,13 @@
       ],
       "what": "US-Recht, das US-Anbieter zur Herausgabe von Daten verpflichten kann, auch wenn diese in europäischen Rechenzentren liegen.",
       "why": "Es ist der Grund, warum ein EU-Rechenzentrum allein die Diskussion um Souveränität nicht beendet. Die Frage ist nicht nur der Speicherort, sondern wer rechtlich Zugriff erzwingen kann.",
-      "when": "Bei US-Anbietern und ihren europäischen Töchtern, unabhängig von der Region."
+      "when": "Bei US-Anbietern und ihren europäischen Töchtern, unabhängig von der Region.",
+      "quellen": [
+        {
+          "label": "CLOUD Act Resources (US Department of Justice)",
+          "url": "https://www.justice.gov/criminal/cloud-act-resources"
+        }
+      ]
     },
     "sozialdaten": {
       "title": "Sozialdaten (SGB)",
@@ -1081,7 +1153,13 @@
       ],
       "what": "Der besondere Schutz von Daten bei Sozialleistungsträgern, geregelt im Sozialgesetzbuch, insbesondere das Sozialgeheimnis.",
       "why": "Bei Krankenkassen, Renten- und Sozialversicherungsträgern gilt zusätzlich zur DSGVO ein eigenes Regime, das Übermittlungen deutlich enger fasst als der allgemeine Datenschutz.",
-      "when": "Sobald ein Sozialleistungsträger Verantwortlicher ist oder dessen Daten verarbeitet werden."
+      "when": "Sobald ein Sozialleistungsträger Verantwortlicher ist oder dessen Daten verarbeitet werden.",
+      "quellen": [
+        {
+          "label": "SGB X (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/sgb_10/"
+        }
+      ]
     },
     "nis2": {
       "title": "NIS-2",
@@ -1108,7 +1186,18 @@
           "label": "Incidents erkennen und melden",
           "url": "https://qaware-confluence.atlassian.net/wiki/spaces/QACOMP/pages/2288058426/Incidents+erkennen+und+melden"
         }
-      ]
+      ],
+      "quellen": [
+        {
+          "label": "Richtlinie (EU) 2022/2555 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/dir/2022/2555/oj"
+        },
+        {
+          "label": "BSIG (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/bsig_2025/"
+        }
+      ],
+      "stand": "2026-11"
     },
     "cra": {
       "title": "Cyber Resilience Act",
@@ -1125,7 +1214,13 @@
       "what": "Die EU-Verordnung mit Sicherheitsanforderungen an Produkte mit digitalen Elementen, unter anderem zu sicheren Voreinstellungen, Schwachstellenbehandlung und Updateversorgung über den Lebenszyklus.",
       "why": "Sie trifft Software als Produkt und macht Themen wie SBOM und Schwachstellenmeldung zur Pflicht statt zur guten Praxis.",
       "when": "Relevant, wenn Software in Verkehr gebracht wird, nicht nur intern betrieben. Die Kachel erscheint in jedem Projekt, weil diese Frage zu beantworten ist, nicht weil der CRA überall gilt. Zeitplan bitte aktuell prüfen.",
-      "kundenfrage": "Wird die Software als Produkt in Verkehr gebracht oder nur selbst betrieben?"
+      "kundenfrage": "Wird die Software als Produkt in Verkehr gebracht oder nur selbst betrieben?",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2024/2847 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2024/2847/oj"
+        }
+      ]
     },
     "geschgehg": {
       "title": "Geschäfts­geheimnis­gesetz",
@@ -1141,7 +1236,13 @@
       ],
       "what": "Das Gesetz zum Schutz von Geschäftsgeheimnissen, das rechtlichen Schutz nur gewährt, wenn angemessene Geheimhaltungsmaßnahmen nachweisbar getroffen wurden.",
       "why": "Ohne dokumentierte Schutzmaßnahmen ist ein Geheimnis rechtlich kein Geheimnis. Das macht Zugriffsbeschränkung und Vertraulichkeitsvereinbarungen zur Voraussetzung des Schutzes, nicht zur Kür.",
-      "when": "Sobald Kunden-Know-how, Quellcode oder Kalkulationen im Projekt liegen."
+      "when": "Sobald Kunden-Know-how, Quellcode oder Kalkulationen im Projekt liegen.",
+      "quellen": [
+        {
+          "label": "GeschGehG (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/geschgehg/"
+        }
+      ]
     },
     "geheimschutz": {
       "title": "Staatlicher Geheimschutz (SÜG)",
@@ -1164,7 +1265,13 @@
       "what": "Die Regeln für den Umgang mit staatlichen Verschlusssachen: die Verschlusssachenanweisung für Behörden, das Sicherheitsüberprüfungsgesetz für Personen, die Zugang erhalten, und für Unternehmen die Geheimschutzbetreuung durch den Bund.",
       "why": "Ab bestimmten Einstufungen darf nur arbeiten, wer sicherheitsüberprüft ist, und ein Unternehmen braucht dafür eine eigene Geheimschutzorganisation. Das bestimmt Teamzusammensetzung und Vorlaufzeit, bevor überhaupt eine Zeile Code entsteht.",
       "when": "Sobald ein Auftrag Verschlusssachen berührt, auch außerhalb der Verwaltung, etwa in Verteidigung und Rüstung. Welche Stufe welche Überprüfung verlangt, bitte an der Quelle oder bei den Geheimschutzbeauftragten prüfen.",
-      "kundenfrage": "Sind Informationen als Verschlusssache eingestuft, und welche Überprüfung brauchen die Projektmitglieder?"
+      "kundenfrage": "Sind Informationen als Verschlusssache eingestuft, und welche Überprüfung brauchen die Projektmitglieder?",
+      "quellen": [
+        {
+          "label": "SÜG (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/s_g/"
+        }
+      ]
     },
     "berufsgeheimnis": {
       "title": "Berufs­geheimnisse (§ 203 StGB)",
@@ -1189,7 +1296,13 @@
       "what": "Die strafrechtlich abgesicherte Verschwiegenheit von Berufsgeheimnisträgern, unter anderem Ärztinnen und Ärzten, Psychotherapie, Rechtsanwaltschaft, Steuerberatung und Wirtschaftsprüfung sowie Angehörigen privater Kranken-, Unfall- und Lebensversicherungen. Über die Regelung zu mitwirkenden Personen erfasst sie auch externe Dienstleister.",
       "why": "Hier wird Datenschutz zu Strafrecht, und die Pflicht trifft die einzelne Person, nicht nur das Unternehmen. Ein Auftragsverarbeitungsvertrag reicht nicht: Dienstleister müssen zur Verschwiegenheit verpflichtet werden und diese Pflicht an jede weitere beteiligte Person weitergeben, und der Zugriff bleibt auf das Erforderliche begrenzt.",
       "when": "Sobald ein Projekt für einen Berufsgeheimnisträger Daten berührt, die unter das Geheimnis fallen, auch nur bei Support und Fehlersuche. Die Verpflichtung gehört vor den ersten Zugriff.",
-      "kundenfrage": "Fallen die Daten unter ein Berufsgeheimnis, und wie werden wir zur Verschwiegenheit verpflichtet?"
+      "kundenfrage": "Fallen die Daten unter ein Berufsgeheimnis, und wie werden wir zur Verschwiegenheit verpflichtet?",
+      "quellen": [
+        {
+          "label": "§ 203 StGB (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/stgb/__203.html"
+        }
+      ]
     },
     "data-act": {
       "title": "Data Act",
@@ -1213,7 +1326,14 @@
       "what": "Die EU-Verordnung über den fairen Zugang zu Daten und deren Nutzung. Sie gibt Nutzern vernetzter Produkte Zugang zu den dabei entstehenden Daten, regelt deren Weitergabe an Dritte und verpflichtet Cloud- und andere Datenverarbeitungsdienste, den Wechsel zu einem anderen Anbieter zu ermöglichen.",
       "why": "Sie gilt auch für nicht personenbezogene Daten und steht damit neben der DSGVO, nicht unter ihr. Wer ein vernetztes Produkt oder den Dienst dazu baut, muss den Datenzugang im Entwurf vorsehen und zugleich Geschäftsgeheimnisse schützen; wer Cloud-Dienste auswählt, bekommt Wechselrechte, die in den Vertrag gehören.",
       "when": "Wenn Geräte, Fahrzeuge oder Maschinen Daten erzeugen und ein Dienst sie nutzt, und bei jeder Auswahl eines Cloud-Dienstes. Einzelne Pflichten greifen gestaffelt; Anwendbarkeit und Termine bitte an der Quelle prüfen.",
-      "kundenfrage": "Stellt ihr ein vernetztes Produkt oder einen Dienst dazu bereit, und wer soll auf die dabei entstehenden Daten zugreifen können?"
+      "kundenfrage": "Stellt ihr ein vernetztes Produkt oder einen Dienst dazu bereit, und wer soll auf die dabei entstehenden Daten zugreifen können?",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2023/2854 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2023/2854/oj"
+        }
+      ],
+      "stand": "2026-11"
     },
     "tdddg": {
       "title": "TDDDG (Telemetrie & Einwilligung)",
@@ -1231,7 +1351,13 @@
       ],
       "what": "Die deutschen Regeln zum Zugriff auf Informationen in Endgeräten, also Cookies, lokale Speicher und vergleichbare Techniken, mit grundsätzlicher Einwilligungspflicht.",
       "why": "Die Einwilligungspflicht knüpft am Zugriff auf das Endgerät an, nicht am Personenbezug. Auch technisch harmlose Telemetrie und Produktanalytik fallen darunter.",
-      "when": "Bei Web- und App-Frontends, Analytics und Crash-Reporting."
+      "when": "Bei Web- und App-Frontends, Analytics und Crash-Reporting.",
+      "quellen": [
+        {
+          "label": "TDDDG (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/ttdsg/"
+        }
+      ]
     },
     "rechtsgrundlage": {
       "title": "Rechtsgrundlage & Zweckbindung (Art. 6)",
@@ -1253,7 +1379,13 @@
       "what": "Jede Verarbeitung personenbezogener Daten braucht eine Rechtsgrundlage, etwa Vertrag, gesetzliche Pflicht, Einwilligung oder berechtigtes Interesse, und einen festgelegten Zweck. Für einen anderen Zweck dürfen die Daten nur unter engen Bedingungen verwendet werden.",
       "why": "Die Frage stellt sich bei jeder neuen Verwendung vorhandener Daten neu: Auswertung, Test, Training eines Modells. Dass die Daten schon im Haus sind, beantwortet sie nicht. Die gewählte Grundlage hat zudem technische Folgen, eine Einwilligung etwa muss widerrufbar sein.",
       "when": "Bei jeder Anforderung, die Daten für etwas anderes nutzt als das, wofür sie erhoben wurden. Die Antwort gibt der Verantwortliche, meist mit seinem Datenschutzbeauftragten.",
-      "kundenfrage": "Für welchen Zweck und auf welcher Rechtsgrundlage wurden die Daten erhoben, die wir verwenden sollen?"
+      "kundenfrage": "Für welchen Zweck und auf welcher Rechtsgrundlage wurden die Daten erhoben, die wir verwenden sollen?",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        }
+      ]
     },
     "iso27001": {
       "title": "ISO/IEC 27001 & ISMS",
@@ -1315,7 +1447,14 @@
       ],
       "what": "Der Kriterienkatalog des BSI für Cloud-Dienste, gegen den Anbieter sich prüfen lassen und darüber einen Testatbericht vorlegen.",
       "why": "Er gibt eine belastbare Antwort auf die Frage, was ein Cloud-Anbieter tatsächlich zusichert, und ersetzt Marketingaussagen durch prüfbare Kriterien.",
-      "when": "Bei der Auswahl von Cloud-Diensten für sensible Daten den C5-Bericht anfordern und die Zuständigkeitsgrenzen darin lesen. Dabei auf die Fassung achten: auf C5:2020 folgt C5:2026 mit mehr Kriterien, und während der Übergangszeit sind Berichte nach beiden im Umlauf."
+      "when": "Bei der Auswahl von Cloud-Diensten für sensible Daten den C5-Bericht anfordern und die Zuständigkeitsgrenzen darin lesen. Dabei auf die Fassung achten: auf C5:2020 folgt C5:2026 mit mehr Kriterien, und während der Übergangszeit sind Berichte nach beiden im Umlauf.",
+      "quellen": [
+        {
+          "label": "Kriterienkatalog C5 (BSI)",
+          "url": "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Empfehlungen-nach-Angriffszielen/Cloud-Computing/Kriterienkatalog-C5/kriterienkatalog-c5_node.html"
+        }
+      ],
+      "stand": "2026-11"
     },
     "iso22301": {
       "title": "ISO 22301 & BCMS",
@@ -2020,7 +2159,13 @@
       "what": "Eine vorherige Bewertung der Risiken für Betroffene bei voraussichtlich hohem Risiko, mit Beschreibung der Verarbeitung, Prüfung der Erforderlichkeit, Risikobewertung und geplanten Maßnahmen.",
       "why": "Sie liegt hier in der Methodik, weil es mehrere anerkannte Verfahren gibt, etwa nach ISO 29134, das CNIL-Vorgehen oder ein LINDDUN-gestütztes Modell. Die Pflicht selbst kommt aus Art. 35.",
       "when": "Pflicht insbesondere bei umfangreicher Verarbeitung besonderer Kategorien, systematischer Überwachung oder automatisierten Entscheidungen mit erheblicher Wirkung.",
-      "kundenfrage": "Gibt es für die Verarbeitung schon eine Datenschutz-Folgenabschätzung?"
+      "kundenfrage": "Gibt es für die Verarbeitung schon eine Datenschutz-Folgenabschätzung?",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2016/679 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        }
+      ]
     },
     "threat-modeling": {
       "title": "Threat Modeling (STRIDE)",
@@ -2056,7 +2201,13 @@
       "what": "Das Gegenstück zu STRIDE für Datenschutzbedrohungen, mit Kategorien wie Verknüpfbarkeit, Identifizierbarkeit, Nichtabstreitbarkeit, Erkennbarkeit, Offenlegung und Unkenntnis der Betroffenen.",
       "why": "STRIDE findet Sicherheitsprobleme, aber nicht die typischen Datenschutzprobleme. Verknüpfbarkeit über Datensätze hinweg ist ein Risiko, das kein Sicherheitsmodell aufdeckt.",
       "when": "Ergänzend zu STRIDE, wenn personenbezogene Daten im Zentrum stehen. Liefert oft direkt die Substanz für eine DSFA.",
-      "tlandkarte": "Threat Modeling"
+      "tlandkarte": "Threat Modeling",
+      "quellen": [
+        {
+          "label": "LINDDUN",
+          "url": "https://linddun.org/"
+        }
+      ]
     },
     "dfd": {
       "title": "Data Flow Diagrams",
@@ -2173,7 +2324,13 @@
       ],
       "what": "Die Liste der häufigsten Schwachstellenklassen in Programmierschnittstellen, angeführt von fehlerhafter Autorisierung auf Objekt- und Funktionsebene.",
       "why": "Bei sensiblen Daten ist der Klassiker nicht der ausgefeilte Angriff, sondern eine ID in der URL, die niemand gegen den Anfragenden prüft.",
-      "when": "Als Review-Checkliste für jede nach außen erreichbare Schnittstelle."
+      "when": "Als Review-Checkliste für jede nach außen erreichbare Schnittstelle.",
+      "quellen": [
+        {
+          "label": "OWASP API Security Top 10",
+          "url": "https://api-security.owasp.org/"
+        }
+      ]
     },
     "owasp-privacy": {
       "title": "OWASP Privacy Risks",
@@ -2189,7 +2346,13 @@
       ],
       "what": "Eine Sammlung typischer Datenschutzrisiken in Webanwendungen, von Datenabfluss über zu lange Speicherung bis zu fehlender Transparenz.",
       "why": "Sie übersetzt Datenschutz in Fehlerbilder, die Entwicklungsteams unmittelbar verstehen, und ergänzt damit die sicherheitszentrierten Listen.",
-      "when": "Nützlich als Gegenstück zur API-Liste, wenn Personendaten im Spiel sind."
+      "when": "Nützlich als Gegenstück zur API-Liste, wenn Personendaten im Spiel sind.",
+      "quellen": [
+        {
+          "label": "OWASP Top 10 Privacy Risks",
+          "url": "https://owasp.org/projects/top-10-privacy-risks"
+        }
+      ]
     },
     "nist-privacy": {
       "title": "NIST Privacy Framework",
@@ -2205,7 +2368,13 @@
       ],
       "what": "Ein Rahmenwerk zur Steuerung von Datenschutzrisiken, aufgebaut in Funktionen von Identifizieren über Steuern und Kommunizieren bis Schützen.",
       "why": "Es ist rechtsordnungsneutral formuliert und hilft, Datenschutzrisiken losgelöst von Paragrafen zu strukturieren. Für internationale Projekte oft die gemeinsame Sprache.",
-      "when": "Hilfreich, wenn mehrere Rechtsordnungen gleichzeitig gelten."
+      "when": "Hilfreich, wenn mehrere Rechtsordnungen gleichzeitig gelten.",
+      "quellen": [
+        {
+          "label": "NIST Privacy Framework",
+          "url": "https://www.nist.gov/privacy-framework"
+        }
+      ]
     },
     "aufsichtsbehoerden": {
       "title": "Aufsichtsbehörden & Orientierungshilfen",
@@ -2224,7 +2393,13 @@
       ],
       "what": "Die Veröffentlichungen der Datenschutzaufsicht, also Orientierungshilfen, Positionspapiere und Beschlüsse von BfDI, Landesbehörden, Datenschutzkonferenz und Europäischem Datenschutzausschuss.",
       "why": "Diese Papiere sagen, wie die Stellen, die im Zweifel entscheiden, eine Frage sehen. Das ist praktisch belastbarer als jede allgemeine Auslegung.",
-      "when": "Für konkrete Zweifelsfragen zuerst hier suchen, etwa zu Gesundheitsdaten, Cloud-Nutzung oder KI."
+      "when": "Für konkrete Zweifelsfragen zuerst hier suchen, etwa zu Gesundheitsdaten, Cloud-Nutzung oder KI.",
+      "quellen": [
+        {
+          "label": "Datenschutzkonferenz",
+          "url": "https://www.datenschutzkonferenz-online.de/"
+        }
+      ]
     },
     "gesundheitsdaten": {
       "title": "Gesundheits- & Behandlungsdaten",
@@ -2260,7 +2435,13 @@
       ],
       "what": "Das Recht der gesetzlichen Krankenversicherung, das Leistungen, Abrechnung und den Umgang mit Versichertendaten regelt.",
       "why": "Es bestimmt, welche Daten zwischen Leistungserbringern, Kassen und Dritten überhaupt fließen dürfen, und ist damit oft die engere Grenze als die DSGVO selbst.",
-      "when": "Relevant bei allem, was mit Abrechnung, Versichertenstammdaten oder Kassenkommunikation zu tun hat."
+      "when": "Relevant bei allem, was mit Abrechnung, Versichertenstammdaten oder Kassenkommunikation zu tun hat.",
+      "quellen": [
+        {
+          "label": "SGB V (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/sgb_5/"
+        }
+      ]
     },
     "pdsg": {
       "title": "PDSG",
@@ -2295,7 +2476,13 @@
       ],
       "what": "Der Anforderungskatalog für digitale Gesundheitsanwendungen auf Rezept, mit Nachweisen zu Datenschutz, Informationssicherheit, Interoperabilität und Nutzen.",
       "why": "Hier wird der Datenschutz zur Zulassungsvoraussetzung. Was sonst gute Praxis ist, wird zur Bedingung für die Aufnahme ins Verzeichnis und damit für das Geschäftsmodell.",
-      "when": "Sobald eine Anwendung erstattungsfähig werden soll. Anforderungsstand bitte beim BfArM aktuell prüfen."
+      "when": "Sobald eine Anwendung erstattungsfähig werden soll. Anforderungsstand bitte beim BfArM aktuell prüfen.",
+      "quellen": [
+        {
+          "label": "DiGA und DiPA (BfArM)",
+          "url": "https://www.bfarm.de/DE/Medizinprodukte/Aufgaben/DiGA-und-DiPA/_node.html"
+        }
+      ]
     },
     "mdr": {
       "title": "MDR (Medizinprodukt)",
@@ -2314,7 +2501,13 @@
       ],
       "what": "Die europäische Medizinprodukteverordnung, unter die Software fällt, wenn sie einen medizinischen Zweck erfüllt, etwa Diagnose oder Therapie unterstützt.",
       "why": "Die Einordnung als Medizinprodukt verändert das ganze Projekt, von Konformitätsbewertung über technische Dokumentation bis zur Frage, welche Teile des Systems mitzertifiziert werden müssen.",
-      "when": "Früh klären. Der harte Schnitt zwischen medizinischer Funktion und Rest des Systems ist eine Architekturentscheidung mit großer Kostenwirkung."
+      "when": "Früh klären. Der harte Schnitt zwischen medizinischer Funktion und Rest des Systems ist eine Architekturentscheidung mit großer Kostenwirkung.",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2017/745 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2017/745/oj"
+        }
+      ]
     },
     "gematik-ti": {
       "title": "Telematik­infrastruktur & gematik",
@@ -2333,7 +2526,13 @@
       ],
       "what": "Das geschlossene Netz des deutschen Gesundheitswesens mit eigenen Zulassungs-, Identitäts- und Sicherheitsvorgaben der gematik.",
       "why": "Wer an die Telematikinfrastruktur anbindet, arbeitet nicht in einem offenen Internetkontext. Identitäten, Zertifikate und zugelassene Komponenten sind vorgegeben und nicht frei wählbar.",
-      "when": "Relevant bei Anbindung von Praxis- oder Kliniksystemen an die zentrale Infrastruktur."
+      "when": "Relevant bei Anbindung von Praxis- oder Kliniksystemen an die zentrale Infrastruktur.",
+      "quellen": [
+        {
+          "label": "gematik",
+          "url": "https://www.gematik.de/"
+        }
+      ]
     },
     "hipaa": {
       "title": "HIPAA",
@@ -2409,7 +2608,13 @@
       ],
       "what": "Das Vorgehensmodell des BSI mit Bausteinen, Standard-Anforderungen und Schutzbedarfsfeststellung, im öffentlichen Sektor oft verbindlich.",
       "why": "Es liefert für viele Fragen fertige, prüfbare Anforderungen und ersetzt damit lange Diskussionen. Gleichzeitig ist der Katalog umfangreich und will gezielt gelesen werden.",
-      "when": "Bei Bundes- und Landesbehörden meist die maßgebliche Referenz, oft anstelle von ISO 27001."
+      "when": "Bei Bundes- und Landesbehörden meist die maßgebliche Referenz, oft anstelle von ISO 27001.",
+      "quellen": [
+        {
+          "label": "IT-Grundschutz (BSI)",
+          "url": "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/IT-Grundschutz/it-grundschutz_node.html"
+        }
+      ]
     },
     "bsig-kritis": {
       "title": "BSIG & KRITIS-Pflichten",
@@ -2429,7 +2634,18 @@
       ],
       "what": "Die gesetzlichen Pflichten für Betreiber kritischer Infrastrukturen, unter anderem Nachweise über Sicherheitsmaßnahmen, Systeme zur Angriffserkennung und Meldung von Störungen an das BSI. Das KRITIS-Dachgesetz ergänzt die IT-Sicherheit um den physischen Schutz und die Resilienz der Anlagen.",
       "why": "Es ist der nationale Anschluss an NIS-2 und bringt Meldepflichten, die parallel zu den datenschutzrechtlichen laufen, mit anderen Fristen und Adressaten.",
-      "when": "Betroffenheit mit dem Kunden prüfen. Die Gesetze gelten, einzelne Verordnungen und Fristen dazu werden noch nachgezogen; für den Stand auf BSI und BBK sehen."
+      "when": "Betroffenheit mit dem Kunden prüfen. Die Gesetze gelten, einzelne Verordnungen und Fristen dazu werden noch nachgezogen; für den Stand auf BSI und BBK sehen.",
+      "quellen": [
+        {
+          "label": "BSIG (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/bsig_2025/"
+        },
+        {
+          "label": "KRITIS-Dachgesetz (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/kritisdachg/"
+        }
+      ],
+      "stand": "2026-11"
     },
     "zahlungsdaten": {
       "title": "Zahlungs- & Kontodaten",
@@ -2470,7 +2686,13 @@
       ],
       "what": "Der Sicherheitsstandard der Kartenindustrie mit konkreten Anforderungen an Netzsegmentierung, Verschlüsselung, Zugriffskontrolle, Protokollierung und regelmäßige Prüfung.",
       "why": "Er ist untypisch präzise für ein Regelwerk und deshalb gut für Entwicklungsteams nutzbar. Der Prüfumfang richtet sich nach dem Bereich, der Kartendaten berührt, was Segmentierung wirtschaftlich sehr wertvoll macht.",
-      "when": "Sobald Kartendaten verarbeitet, gespeichert oder übertragen werden, auch wenn nur durchgeleitet wird."
+      "when": "Sobald Kartendaten verarbeitet, gespeichert oder übertragen werden, auch wenn nur durchgeleitet wird.",
+      "quellen": [
+        {
+          "label": "PCI DSS (PCI Security Standards Council)",
+          "url": "https://www.pcisecuritystandards.org/standards/pci-dss/"
+        }
+      ]
     },
     "dora": {
       "title": "DORA",
@@ -2494,7 +2716,18 @@
       "what": "Die EU-Verordnung zur digitalen operationalen Resilienz im Finanzsektor, mit Anforderungen an IKT-Risikomanagement, Vorfallmeldung, Resilienztests und die Steuerung von Drittanbietern.",
       "why": "Sie richtet den Blick auf Verfügbarkeit und Beherrschbarkeit von Abhängigkeiten statt nur auf Vertraulichkeit, und sie reicht vertraglich bis zu den Dienstleistern der Dienstleister. Sie hat die IT-Rundschreiben der BaFin abgelöst: VAIT, ZAIT und KAIT sind aufgehoben, die BAIT laufen aus.",
       "when": "Relevant für Finanzunternehmen und deren IKT-Dienstleister, also häufig auch für das Beratungsprojekt selbst.",
-      "kundenfrage": "Gilt unsere Leistung für euch als IKT-Dienstleistung nach DORA, und welche Vertragsinhalte folgen daraus?"
+      "kundenfrage": "Gilt unsere Leistung für euch als IKT-Dienstleistung nach DORA, und welche Vertragsinhalte folgen daraus?",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2022/2554 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj"
+        },
+        {
+          "label": "BAIT / DORA (Deutsche Bundesbank)",
+          "url": "https://www.bundesbank.de/de/aufgaben/finanzaufsicht/einzelaspekte/risikomanagement/bait-dora-598580"
+        }
+      ],
+      "stand": "2026-11"
     },
     "bait-marisk": {
       "title": "MaRisk",
@@ -2513,7 +2746,14 @@
       ],
       "what": "Die Mindestanforderungen der BaFin an das Risikomanagement von Banken, unter anderem zu Berechtigungsmanagement, Auslagerung, Notfallmanagement und Dokumentation. Die früheren IT-Anforderungen BAIT daneben laufen aus, ihre Themen regelt jetzt DORA.",
       "why": "Sie sind keine Gesetze, in der Praxis aber verbindlich, weil die Aufsicht danach prüft. Für Projekte äußert sich das vor allem in strengen Anforderungen an Berechtigungen und Nachweise.",
-      "when": "Bei Banken und Finanzdienstleistern früh nach den internen Vorgaben fragen, die daraus abgeleitet sind. Viele interne Regelwerke zitieren noch die BAIT; ob und bis wann sie für ein Institut noch gelten, bitte bei BaFin oder Bundesbank prüfen."
+      "when": "Bei Banken und Finanzdienstleistern früh nach den internen Vorgaben fragen, die daraus abgeleitet sind. Viele interne Regelwerke zitieren noch die BAIT; ob und bis wann sie für ein Institut noch gelten, bitte bei BaFin oder Bundesbank prüfen.",
+      "quellen": [
+        {
+          "label": "BAIT / DORA (Deutsche Bundesbank)",
+          "url": "https://www.bundesbank.de/de/aufgaben/finanzaufsicht/einzelaspekte/risikomanagement/bait-dora-598580"
+        }
+      ],
+      "stand": "2026-11"
     },
     "prompt-daten": {
       "title": "Prompt- & Kontextdaten",
@@ -2597,7 +2837,18 @@
       ],
       "what": "Die europäische Verordnung über künstliche Intelligenz, die Pflichten nach Risikoklasse staffelt und Rollen wie Anbieter und Betreiber unterscheidet. Unabhängig von der Risikoklasse verlangt sie, dass alle, die KI-Systeme einsetzen, dafür ausreichend geschult sind.",
       "why": "Sie liegt hier auf dem Archipel, weil sie KI-spezifisch ist. Inhaltlich ist sie aber eine Regulierung unter vielen und wird am besten wie die übrigen behandelt, statt als eigenes Thema.",
-      "when": "Anwendbarkeit und Fristen bitte aktuell prüfen, die Anwendung erfolgt gestaffelt. Die Fristen für Hochrisiko-Systeme wurden 2026 nach hinten verschoben, andere Pflichten wie die zur Transparenz nicht; ältere Übersichten nennen deshalb oft überholte Termine."
+      "when": "Anwendbarkeit und Fristen bitte aktuell prüfen, die Anwendung erfolgt gestaffelt. Die Fristen für Hochrisiko-Systeme wurden 2026 nach hinten verschoben, andere Pflichten wie die zur Transparenz nicht; ältere Übersichten nennen deshalb oft überholte Termine.",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2024/1689 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+        },
+        {
+          "label": "Änderungsverordnung (EU) 2026/1744 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj"
+        }
+      ],
+      "stand": "2026-11"
     },
     "ki-risikoklassen": {
       "title": "KI-Risikoklassen nach AI Act",
@@ -2615,7 +2866,14 @@
       ],
       "what": "Die Einordnung eines Anwendungsfalls in verbotene Praktiken, Hochrisiko, Transparenzpflichten oder geringes Risiko, abhängig von Einsatzzweck und Kontext.",
       "why": "Die Einordnung entscheidet über den gesamten Pflichtenumfang, von Risikomanagement über Datenqualität und menschliche Aufsicht bis zur technischen Dokumentation. Sie ist eine Eigenschaft des Anwendungsfalls, nicht der Daten.",
-      "when": "Der erste Schritt bei jedem KI-Vorhaben. Medizin, Beschäftigung und Kreditwürdigkeit landen schnell im Hochrisikobereich. Ab wann die Hochrisiko-Pflichten gelten, steht beim AI Act und ist an der Quelle zu prüfen; die Einordnung selbst hängt nicht am Termin."
+      "when": "Der erste Schritt bei jedem KI-Vorhaben. Medizin, Beschäftigung und Kreditwürdigkeit landen schnell im Hochrisikobereich. Ab wann die Hochrisiko-Pflichten gelten, steht beim AI Act und ist an der Quelle zu prüfen; die Einordnung selbst hängt nicht am Termin.",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2024/1689 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+        }
+      ],
+      "stand": "2026-11"
     },
     "iso42001": {
       "title": "ISO/IEC 42001",
@@ -2762,7 +3020,13 @@
       ],
       "what": "Ein Rahmenwerk zum Umgang mit KI-Risiken, strukturiert in Steuern, Erfassen, Messen und Behandeln, mit Kriterien für vertrauenswürdige KI-Systeme.",
       "why": "Es ist praxisnäher formuliert als die Verordnungen und hilft, KI-Risiken zu strukturieren, bevor man sie regulatorisch einordnet.",
-      "when": "Gute Grundlage für einen ersten Risiko-Workshop zu einem KI-Vorhaben."
+      "when": "Gute Grundlage für einen ersten Risiko-Workshop zu einem KI-Vorhaben.",
+      "quellen": [
+        {
+          "label": "NIST AI Risk Management Framework",
+          "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+        }
+      ]
     },
     "saif": {
       "title": "SAIF",
@@ -2778,7 +3042,13 @@
       ],
       "what": "Ein Rahmenwerk für die Sicherheit von KI-Systemen, das klassische Sicherheitskontrollen auf die Besonderheiten von Modellen, Daten und Pipelines überträgt.",
       "why": "Es schließt die Lücke zwischen bekannter Anwendungssicherheit und den neuen Angriffsflächen von Modellen, Trainingsdaten und Werkzeugketten.",
-      "when": "Nützlich, wenn ein Sicherheitsteam bereits etabliert ist und KI ergänzend abdecken soll."
+      "when": "Nützlich, wenn ein Sicherheitsteam bereits etabliert ist und KI ergänzend abdecken soll.",
+      "quellen": [
+        {
+          "label": "SAIF (Google)",
+          "url": "https://saif.google/"
+        }
+      ]
     },
     "owasp-llm": {
       "title": "OWASP Top 10 für LLMs",
@@ -2797,7 +3067,18 @@
       ],
       "what": "Die Liste der häufigsten Schwachstellenklassen in Anwendungen mit großen Sprachmodellen, unter anderem Prompt Injection, Offenlegung sensibler Informationen und unsichere Werkzeugnutzung. Für Agenten, die selbstständig Werkzeuge aufrufen, gibt es daneben eine eigene Liste.",
       "why": "Sie ist die konkreteste verfügbare Prüfliste für KI-Anwendungen und deckt genau die Fehler ab, die in ersten Prototypen regelmäßig entstehen.",
-      "when": "Als Review-Checkliste, bevor ein KI-Prototyp produktiv geht."
+      "when": "Als Review-Checkliste, bevor ein KI-Prototyp produktiv geht.",
+      "quellen": [
+        {
+          "label": "OWASP Top 10 für LLM-Anwendungen",
+          "url": "https://genai.owasp.org/llm-top-10/"
+        },
+        {
+          "label": "OWASP Top 10 für agentische Anwendungen",
+          "url": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+        }
+      ],
+      "stand": "2026-11"
     },
     "fahrzeugdaten": {
       "title": "Fahrzeug- & Telemetriedaten",
@@ -2937,7 +3218,13 @@
       ],
       "what": "Ein Prüf- und Austauschverfahren der ENX Association für den VDA. Grundlage ist der Fragebogen VDA ISA; das Ergebnis eines Assessments wird als Label mit Geltungsbereich und Laufzeit in der ENX-Plattform hinterlegt und dort gezielt für Partner freigegeben.",
       "why": "Ohne Label kommt man bei vielen Herstellern und Zulieferern nicht in die Lieferkette. Es ist aber keine Zertifizierung im engen Sinn, und es deckt die Informationssicherheit der Organisation ab, nicht die Cybersicherheit des Fahrzeugs. Welches Prüfniveau und welche Schutzziele gelten, hängt davon ab, welche Daten man verarbeitet.",
-      "when": "Sobald ein Hersteller oder Zulieferer es verlangt, und das ist meist früher als der Projektstart. Vor der Beauftragung klären, welches Prüfniveau und welcher Geltungsbereich gebraucht werden: passt das vorhandene Label nicht zu Standort oder Prozess des Projekts, hilft es nicht. Den aktuellen Stand des Verfahrens bei der ENX nachsehen."
+      "when": "Sobald ein Hersteller oder Zulieferer es verlangt, und das ist meist früher als der Projektstart. Vor der Beauftragung klären, welches Prüfniveau und welcher Geltungsbereich gebraucht werden: passt das vorhandene Label nicht zu Standort oder Prozess des Projekts, hilft es nicht. Den aktuellen Stand des Verfahrens bei der ENX nachsehen.",
+      "quellen": [
+        {
+          "label": "TISAX (ENX Association)",
+          "url": "https://enx.com/tisax/"
+        }
+      ]
     },
     "iso-sae-21434": {
       "title": "ISO/SAE 21434",
@@ -3012,7 +3299,13 @@
       ],
       "what": "Die Leitlinien des Europäischen Datenschutzausschusses zu vernetzten Fahrzeugen und mobilitätsbezogenen Anwendungen. Sie legen aus, wie die DSGVO im Fahrzeugkontext anzuwenden ist.",
       "why": "Sie beantworten die Fragen, die im Fahrzeug immer aufkommen: Rollen und Verantwortlichkeiten zwischen Hersteller, Zulieferer und Diensten, Rechtsgrundlagen für Telemetrie und der Umgang mit Endgeräten im Auto. Verbindlich sind sie nicht, Aufsichtsbehörden orientieren sich aber daran.",
-      "when": "Bei der Festlegung von Rollen und Rechtsgrundlagen. Für den aktuellen Stand die Veröffentlichung des EDPB selbst ansehen."
+      "when": "Bei der Festlegung von Rollen und Rechtsgrundlagen. Für den aktuellen Stand die Veröffentlichung des EDPB selbst ansehen.",
+      "quellen": [
+        {
+          "label": "Leitlinien 01/2020 (EDSA)",
+          "url": "https://www.edpb.europa.eu/documents/guideline/guidelines-012020-on-processing-personal-data-in-the-context-of-connected_en"
+        }
+      ]
     },
     "edr": {
       "title": "Unfalldatenspeicher (EDR)",
@@ -3301,7 +3594,13 @@
       ],
       "what": "Die Pflicht öffentlicher Stellen, Unterlagen vor der Vernichtung dem zuständigen Archiv anzubieten, das über die Archivwürdigkeit entscheidet.",
       "why": "Das steht dem Löschen entgegen und ist in Architekturen fast nie vorgesehen. Ein Löschkonzept, das die Anbietungspflicht nicht kennt, ist im öffentlichen Bereich falsch, und das fällt erst auf, wenn die Daten schon weg sind.",
-      "when": "Zusammen mit dem Löschkonzept, nicht danach. Zu klären ist, welche Unterlagen anbietungspflichtig sind und wie der Export dafür aussieht."
+      "when": "Zusammen mit dem Löschkonzept, nicht danach. Zu klären ist, welche Unterlagen anbietungspflichtig sind und wie der Export dafür aussieht.",
+      "quellen": [
+        {
+          "label": "Bundesarchivgesetz (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/barchg_2017/"
+        }
+      ]
     },
     "eidas": {
       "title": "eIDAS & Vertrauensdienste",
@@ -3323,7 +3622,13 @@
       ],
       "what": "Der europäische Rahmen für elektronische Identifizierung und Vertrauensdienste, also Signaturen, Siegel, Zeitstempel und deren Rechtswirkung.",
       "why": "Im Verwaltungsverfahren hängt an der Signaturstufe die Rechtswirkung eines Vorgangs. Die Stufe bestimmt außerdem, welche Schlüssel und welche Hardware nötig sind, und ist damit eine Architekturentscheidung mit Beschaffungsfolgen.",
-      "when": "Sobald Vorgänge rechtsverbindlich elektronisch abgeschlossen werden. Die benötigte Stufe früh festlegen, sie lässt sich später nicht billig anheben."
+      "when": "Sobald Vorgänge rechtsverbindlich elektronisch abgeschlossen werden. Die benötigte Stufe früh festlegen, sie lässt sich später nicht billig anheben.",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) Nr. 910/2014 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2014/910/oj"
+        }
+      ]
     },
     "evb-it": {
       "title": "EVB-IT & Vergaberecht",
@@ -3386,7 +3691,14 @@
       ],
       "what": "Das Zahlungsdiensterecht, das unter anderem starke Kundenauthentifizierung verlangt und den Zugang Dritter zu Konten regelt. Auf die Richtlinie PSD2 folgen die Richtlinie PSD3 und eine unmittelbar geltende Verordnung, die PSR.",
       "why": "Es bestimmt Authentisierung, Haftungsverteilung und Schnittstellen zugleich. Wer Zahlungen berührt, holt sich damit Anforderungen an Sicherheit und Erlaubnispflicht ins Projekt, die nicht verhandelbar sind.",
-      "when": "Sobald Zahlungen ausgelöst oder Kontodaten Dritter genutzt werden. Früh klären, ob eine Erlaubnispflicht besteht oder ein regulierter Partner nötig ist. Bei länger laufenden Vorhaben den Stand von PSD3 und PSR und deren Übergangsfristen an der Quelle prüfen."
+      "when": "Sobald Zahlungen ausgelöst oder Kontodaten Dritter genutzt werden. Früh klären, ob eine Erlaubnispflicht besteht oder ein regulierter Partner nötig ist. Bei länger laufenden Vorhaben den Stand von PSD3 und PSR und deren Übergangsfristen an der Quelle prüfen.",
+      "quellen": [
+        {
+          "label": "Richtlinie (EU) 2015/2366 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/dir/2015/2366/oj"
+        }
+      ],
+      "stand": "2026-11"
     },
     "bankgeheimnis": {
       "title": "Bankgeheimnis",
@@ -3443,7 +3755,13 @@
       ],
       "what": "Das Recht des Versicherungsvertrags, unter anderem mit den Anzeige- und Informationspflichten und der Pflicht, die Beratung zu dokumentieren.",
       "why": "Es bestimmt, welche Angaben erhoben werden dürfen und müssen, in welcher Form Erklärungen wirksam sind und was aufzubewahren ist. Damit greift es direkt in Datenmodell und Aufbewahrung ein, unabhängig vom Datenschutz.",
-      "when": "Beim Entwurf von Antrags-, Beratungs- und Vertragsstrecken. Die Dokumentationspflicht ist der Teil, der in der Architektur regelmäßig fehlt."
+      "when": "Beim Entwurf von Antrags-, Beratungs- und Vertragsstrecken. Die Dokumentationspflicht ist der Teil, der in der Architektur regelmäßig fehlt.",
+      "quellen": [
+        {
+          "label": "VVG (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/vvg_2008/"
+        }
+      ]
     },
     "gdv-verhaltensregeln": {
       "title": "GDV-Verhaltensregeln",
@@ -3719,7 +4037,13 @@
       ],
       "what": "Der internationale Standard für die Durchführung klinischer Prüfungen, mit Anforderungen an Quelldaten, Nachvollziehbarkeit, Zugriff für Monitoring und Aufbewahrung der wesentlichen Dokumente.",
       "why": "Er bestimmt, was als Quelldatum gilt und dass jede Änderung daran zurückverfolgbar bleiben muss. Damit legt er die Datenhaltung einer Studie fest, unabhängig vom Datenschutz, und die geforderten Aufbewahrungszeiten reichen weit über die Projektlaufzeit hinaus.",
-      "when": "Vor dem Studienstart, zusammen mit Prüfplan und Ethikvotum. Für die geltende Fassung und die Aufbewahrungszeiten auf die Quelle sehen, beides wird fortgeschrieben."
+      "when": "Vor dem Studienstart, zusammen mit Prüfplan und Ethikvotum. Für die geltende Fassung und die Aufbewahrungszeiten auf die Quelle sehen, beides wird fortgeschrieben.",
+      "quellen": [
+        {
+          "label": "ICH Efficacy Guidelines",
+          "url": "https://www.ich.org/page/efficacy-guidelines"
+        }
+      ]
     },
     "iec-81001": {
       "title": "IEC 81001-5-1",
@@ -3780,7 +4104,18 @@
       "what": "Die EU-Verordnung zum europäischen Gesundheitsdatenraum. Sie regelt den Zugang von Patientinnen und Patienten zu ihren elektronischen Gesundheitsdaten, deren Austausch über Grenzen, Anforderungen an Systeme für elektronische Patientenakten und die Nutzung der Daten für Forschung und Politik.",
       "why": "Sie macht Interoperabilität und Protokollierung zu Produkteigenschaften: Hersteller von Systemen für elektronische Patientenakten müssen vorgegebene Komponenten erfüllen, bevor sie das System in Verkehr bringen. Und sie öffnet Gesundheitsdaten für die Zweitnutzung, was Fragen zu Pseudonymisierung und Zugriffswegen in den Entwurf zieht.",
       "when": "Sobald ein System Gesundheitsdaten führt oder austauscht, die in eine Patientenakte gehören, oder Daten für Forschung bereitstellen soll. Die Pflichten gelten gestaffelt über mehrere Jahre; welche wann greift, bitte an der Quelle prüfen.",
-      "kundenfrage": "Fällt das System unter die Anforderungen an Systeme für elektronische Patientenakten, und plant ihr die Bereitstellung von Daten zur Zweitnutzung?"
+      "kundenfrage": "Fällt das System unter die Anforderungen an Systeme für elektronische Patientenakten, und plant ihr die Bereitstellung von Daten zur Zweitnutzung?",
+      "quellen": [
+        {
+          "label": "Verordnung (EU) 2025/327 (EUR-Lex)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2025/327/oj"
+        },
+        {
+          "label": "EHDS (Europäische Kommission)",
+          "url": "https://health.ec.europa.eu/ehealth-digital-health-and-care/european-health-data-space-regulation-ehds_en"
+        }
+      ],
+      "stand": "2026-11"
     }
   }
 }

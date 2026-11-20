@@ -112,6 +112,16 @@ Adresse darin, kein Inhalt; ohne QAware-Zugang führen die Links ins Leere.
 ]
 ```
 
+`quellen` und `stand` sind optional. `quellen` verweist auf die Primärquelle, also Gesetzestext,
+Behörde oder Herausgeber, nicht auf Kommentare. `stand` ist der Monat, in dem der Kacheltext
+zuletzt gegen die Quelle geprüft wurde, als `2026-11`. Beides erscheint in der Detailansicht
+und im Agenten-Kontext.
+
+```json
+"quellen": [{ "label": "Verordnung (EU) 2016/679 (EUR-Lex)", "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj" }],
+"stand": "2026-11"
+```
+
 In `meta` steht neben Titel und Disclaimer die Adresse `quelle`, unter der die Datei öffentlich
 liegt. Sie ist Teil der Schnittstelle: der Agenten-Kontext gibt sie mit, damit ein Modell bei
 Bedarf die vollständigen Daten nachladen kann.

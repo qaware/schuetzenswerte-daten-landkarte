@@ -461,6 +461,25 @@ Biometrische Daten in Besondere Kategorien, Alerting in Monitoring, das TISAX-La
 Die alten Titel stehen dort als `aliases`. Wer ergänzt, sucht zuerst nach einer Kachel, die
 dafür weichen kann.
 
+## Quellen und Stand
+
+`quellen` trägt nur Primärquellen: EUR-Lex über die ELI-Adresse, gesetze-im-internet.de,
+die Behörde oder den Herausgeber einer Liste. Keine Kanzlei- oder Presseartikel, die
+verschwinden oder veralten. `stand` ist der Monat, in dem der Kacheltext zuletzt **gegen die
+Quelle** geprüft wurde, nicht der Monat der letzten Textänderung. Fehlt er, ist die Kachel
+nicht geprüft; das ist die ehrliche Auskunft und kein Mangel. Wer einen Text nur umformuliert,
+setzt den Stand nicht hoch.
+
+Beides steht an Regulatorik und an den Quellen-Kacheln der Methodik. Architektur und
+Datenarten ändern sich langsam und haben keine einzelne maßgebliche Quelle; ein Datum dort
+wäre nur Pflegeaufwand.
+
+Geprüft wurden die Verweise so: EU-Rechtsakte über die Datenbank des Amts für
+Veröffentlichungen, Abfrage der CELEX-Nummer gegen den Titel, weil EUR-Lex selbst
+automatische Abrufe mit einer Prüfseite beantwortet. Deutsche Gesetze und Behördenseiten per
+Abruf mit Blick auf den Seitentitel. **ISO, UNECE und das US-Gesundheitsministerium sperren
+automatische Abrufe**; diese Kacheln haben deshalb keine Quelle, statt einer ungeprüften.
+
 ## Phase und Kundenfrage
 
 Für die Projektleitung fehlte die Frage „was ist jetzt dran", für die Analyse die Frage „was

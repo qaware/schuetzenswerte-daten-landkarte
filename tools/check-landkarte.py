@@ -9,6 +9,7 @@ Die Geometrie muss zu assets/app.js passen: LATTICE und ring() sind dort identis
 
 import json
 import pathlib
+import re
 import sys
 from collections import defaultdict
 
@@ -66,6 +67,14 @@ def main(path=None):
             warnings.append(f"{tid}: aliases ist leer, die Kachel ist nur über ihren Titel zu finden")
         if not tile.get("when"):
             warnings.append(f"{tid}: when fehlt, im Checklisten-Export erscheint dann why als Begründung")
+
+    # Quellen und Stand: nur vollständige https-Verweise, Stand als Jahr-Monat.
+    for tid, tile in sorted(data["tiles"].items()):
+        for ref in tile.get("quellen", []):
+            if not ref.get("label") or not ref.get("url", "").startswith("https://"):
+                problems.append(f"{tid}: quellen-Eintrag braucht label und eine https-url")
+        if "stand" in tile and not re.fullmatch(r"20\d\d-(0[1-9]|1[0-2])", str(tile["stand"])):
+            problems.append(f"{tid}: stand '{tile['stand']}' ist kein Jahr-Monat wie 2026-11")
 
     filter_ids = {f["id"] for f in data["filters"]}
     for iid, island in sorted(data["islands"].items()):
