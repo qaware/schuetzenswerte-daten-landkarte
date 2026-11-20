@@ -697,9 +697,10 @@
       "aliases": [
         "noch personenbezogen",
         "Re-Identifikation",
-        "Rückschlüsse"
+        "Rückschlüsse",
+        "relativer Personenbezug"
       ],
-      "what": "Die Frage, ob ein Datensatz nach der Bearbeitung noch personenbezogen ist. Pseudonymisierte Daten sind es weiterhin, anonymisierte nicht mehr.",
+      "what": "Die Frage, ob ein Datensatz nach der Bearbeitung noch personenbezogen ist. Anonymisierte Daten sind es nicht mehr. Pseudonymisierte bleiben es für jeden, der die Zuordnung herstellen kann, also in aller Regel für den, der pseudonymisiert hat; für einen Empfänger ohne realistischen Weg zur Zuordnung können sie es nach der Rechtsprechung des EuGH nicht sein.",
       "why": "Hier passiert der häufigste Denkfehler in Projekten. Nach dem Entfernen von Namen gilt der Datensatz oft als unkritisch, obwohl er über Quasi-Identifikatoren wie Postleitzahl, Geburtsdatum und Zeitstempel wieder zuordenbar ist.",
       "when": "Immer prüfen, bevor Daten in Analytics, Testumgebungen oder zu Dritten wandern."
     },
@@ -1023,11 +1024,13 @@
         "SCC",
         "Standardvertragsklauseln",
         "TIA",
-        "Angemessenheitsbeschluss"
+        "Angemessenheitsbeschluss",
+        "Data Privacy Framework",
+        "DPF"
       ],
       "what": "Die Regeln für die Übermittlung personenbezogener Daten in Länder außerhalb der EU, über Angemessenheitsbeschluss, Standardvertragsklauseln oder andere Garantien samt Prüfung des Zielrechts.",
       "why": "Transfer beginnt nicht erst beim Datenexport. Auch ein Zugriff aus einem Drittland auf europäisch gespeicherte Daten ist eine Übermittlung, etwa im Support oder in der Rufbereitschaft.",
-      "when": "Bei jedem Dienstleister, Modellanbieter oder Support-Team außerhalb der EU.",
+      "when": "Bei jedem Dienstleister, Modellanbieter oder Support-Team außerhalb der EU. Für die USA gibt es mit dem Data Privacy Framework wieder einen Angemessenheitsbeschluss, der aber gerichtlich angegriffen wird; wer sich allein darauf stützt, sollte eine Rückfallposition haben.",
       "kundenfrage": "Welche Dienste, Betriebs- oder Supportzugriffe liegen außerhalb der EU?"
     },
     "cloud-act": {
@@ -1077,11 +1080,14 @@
       "aliases": [
         "NIS2",
         "Netzwerk- und Informationssicherheit",
-        "NIS2UmsuCG"
+        "NIS2UmsuCG",
+        "BSIG",
+        "wichtige Einrichtung",
+        "besonders wichtige Einrichtung"
       ],
-      "what": "Die europäische Richtlinie zur Cybersicherheit, die für betroffene Einrichtungen Risikomanagement, Meldepflichten bei Sicherheitsvorfällen und Verantwortung der Leitungsebene vorschreibt.",
+      "what": "Die europäische Richtlinie zur Cybersicherheit, die für betroffene Einrichtungen Risikomanagement, Meldepflichten bei Sicherheitsvorfällen und Verantwortung der Leitungsebene vorschreibt. In Deutschland ist sie über das BSI-Gesetz umgesetzt und gilt.",
       "why": "Sie erweitert den Kreis der betroffenen Unternehmen deutlich über die klassischen kritischen Infrastrukturen hinaus, und viele Kunden wissen selbst nicht, ob sie darunter fallen. Betroffen sein kann auch der Dienstleister selbst: IT-Dienstleister fallen je nach Leistung und Größe eigenständig darunter, und dann gelten Risikomanagement und Meldepflichten auch für die eigene Arbeit im Projekt.",
-      "when": "Betroffenheit früh mit dem Kunden klären. Diese Kachel erscheint in jedem Projekt, weil die Betroffenheit zu prüfen ist, nicht weil NIS-2 überall gilt. Die nationale Umsetzung und deren Zeitplan bitte aktuell prüfen.",
+      "when": "Betroffenheit früh mit dem Kunden klären. Diese Kachel erscheint in jedem Projekt, weil die Betroffenheit zu prüfen ist, nicht weil NIS-2 überall gilt. Wer betroffen ist, muss sich beim BSI registrieren; Schwellenwerte und Fristen bitte beim BSI prüfen.",
       "kundenfrage": "Fallt ihr unter NIS-2, und welche Melde- und Nachweispflichten gebt ihr an Dienstleister weiter?",
       "qaware": [
         {
@@ -1171,6 +1177,30 @@
       "when": "Sobald ein Projekt für einen Berufsgeheimnisträger Daten berührt, die unter das Geheimnis fallen, auch nur bei Support und Fehlersuche. Die Verpflichtung gehört vor den ersten Zugriff.",
       "kundenfrage": "Fallen die Daten unter ein Berufsgeheimnis, und wie werden wir zur Verschwiegenheit verpflichtet?"
     },
+    "data-act": {
+      "title": "Data Act",
+      "area": "sicherheitsrecht",
+      "dimension": "regulatorik",
+      "phase": "start",
+      "triggers": [
+        "cloud:hyperscaler",
+        "branche:automotive",
+        "branche:medtech"
+      ],
+      "aliases": [
+        "Data Act",
+        "Datengesetz",
+        "Datenverordnung",
+        "vernetzte Produkte",
+        "Cloud-Wechsel",
+        "Switching",
+        "Datenzugang"
+      ],
+      "what": "Die EU-Verordnung über den fairen Zugang zu Daten und deren Nutzung. Sie gibt Nutzern vernetzter Produkte Zugang zu den dabei entstehenden Daten, regelt deren Weitergabe an Dritte und verpflichtet Cloud- und andere Datenverarbeitungsdienste, den Wechsel zu einem anderen Anbieter zu ermöglichen.",
+      "why": "Sie gilt auch für nicht personenbezogene Daten und steht damit neben der DSGVO, nicht unter ihr. Wer ein vernetztes Produkt oder den Dienst dazu baut, muss den Datenzugang im Entwurf vorsehen und zugleich Geschäftsgeheimnisse schützen; wer Cloud-Dienste auswählt, bekommt Wechselrechte, die in den Vertrag gehören.",
+      "when": "Wenn Geräte, Fahrzeuge oder Maschinen Daten erzeugen und ein Dienst sie nutzt, und bei jeder Auswahl eines Cloud-Dienstes. Einzelne Pflichten greifen gestaffelt; Anwendbarkeit und Termine bitte an der Quelle prüfen.",
+      "kundenfrage": "Stellt ihr ein vernetztes Produkt oder einen Dienst dazu bereit, und wer soll auf die dabei entstehenden Daten zugreifen können?"
+    },
     "tdddg": {
       "title": "TDDDG (Telemetrie & Einwilligung)",
       "area": "datenschutzrecht",
@@ -1242,11 +1272,14 @@
       ],
       "aliases": [
         "C5",
-        "Cloud Computing Compliance Criteria Catalogue"
+        "C5:2020",
+        "C5:2026",
+        "Cloud Computing Compliance Criteria Catalogue",
+        "Testat"
       ],
       "what": "Der Kriterienkatalog des BSI für Cloud-Dienste, gegen den Anbieter sich prüfen lassen und darüber einen Testatbericht vorlegen.",
       "why": "Er gibt eine belastbare Antwort auf die Frage, was ein Cloud-Anbieter tatsächlich zusichert, und ersetzt Marketingaussagen durch prüfbare Kriterien.",
-      "when": "Bei der Auswahl von Cloud-Diensten für sensible Daten den C5-Bericht anfordern und die Zuständigkeitsgrenzen darin lesen."
+      "when": "Bei der Auswahl von Cloud-Diensten für sensible Daten den C5-Bericht anfordern und die Zuständigkeitsgrenzen darin lesen. Dabei auf die Fassung achten: auf C5:2020 folgt C5:2026 mit mehr Kriterien, und während der Übergangszeit sind Berichte nach beiden im Umlauf."
     },
     "iso22301": {
       "title": "ISO 22301 & BCMS",
@@ -1528,11 +1561,14 @@
         "BYOK",
         "HYOK",
         "Key Management",
-        "HSM"
+        "HSM",
+        "Kryptoagilität",
+        "Post-Quanten-Kryptografie",
+        "PQC"
       ],
       "what": "Erzeugung, Aufbewahrung, Verteilung und Entzug kryptografischer Schlüssel, einschließlich der Frage, ob der Kunde eigene Schlüssel einbringt oder außerhalb der Cloud behält.",
       "why": "Verschlüsselung verlagert das Problem auf den Schlüssel. Wer ihn hält, entscheidet über Zugriff, und genau das ist die eigentliche Frage bei Cloud und Souveränität.",
-      "when": "Vor der Entscheidung über Verschlüsselung klären, nicht danach.",
+      "when": "Vor der Entscheidung über Verschlüsselung klären, nicht danach. Bei Daten, die lange vertraulich bleiben müssen, gleich mitklären, ob sich die Verfahren später gegen quantensichere tauschen lassen.",
       "tlandkarte": "Secret Management"
     },
     "access-control": {
@@ -2310,12 +2346,14 @@
       "aliases": [
         "BSIG",
         "KRITIS-Pflichten",
+        "KRITIS-Dachgesetz",
+        "KRITIS-DachG",
         "Meldepflicht BSI",
         "Angriffserkennung"
       ],
-      "what": "Die gesetzlichen Pflichten für Betreiber kritischer Infrastrukturen, unter anderem Nachweise über Sicherheitsmaßnahmen, Systeme zur Angriffserkennung und Meldung von Störungen an das BSI.",
+      "what": "Die gesetzlichen Pflichten für Betreiber kritischer Infrastrukturen, unter anderem Nachweise über Sicherheitsmaßnahmen, Systeme zur Angriffserkennung und Meldung von Störungen an das BSI. Das KRITIS-Dachgesetz ergänzt die IT-Sicherheit um den physischen Schutz und die Resilienz der Anlagen.",
       "why": "Es ist der nationale Anschluss an NIS-2 und bringt Meldepflichten, die parallel zu den datenschutzrechtlichen laufen, mit anderen Fristen und Adressaten.",
-      "when": "Betroffenheit und aktuellen Regelungsstand mit dem Kunden prüfen, die Umsetzung ist in Bewegung."
+      "when": "Betroffenheit mit dem Kunden prüfen. Die Gesetze gelten, einzelne Verordnungen und Fristen dazu werden noch nachgezogen; für den Stand auf BSI und BBK sehen."
     },
     "zahlungsdaten": {
       "title": "Zahlungs- & Kontodaten",
@@ -2370,15 +2408,20 @@
       "aliases": [
         "DORA",
         "Digital Operational Resilience Act",
-        "IKT-Drittparteien"
+        "IKT-Drittparteien",
+        "BAIT",
+        "VAIT",
+        "ZAIT",
+        "KAIT",
+        "xAIT"
       ],
       "what": "Die EU-Verordnung zur digitalen operationalen Resilienz im Finanzsektor, mit Anforderungen an IKT-Risikomanagement, Vorfallmeldung, Resilienztests und die Steuerung von Drittanbietern.",
-      "why": "Sie richtet den Blick auf Verfügbarkeit und Beherrschbarkeit von Abhängigkeiten statt nur auf Vertraulichkeit, und sie reicht vertraglich bis zu den Dienstleistern der Dienstleister.",
+      "why": "Sie richtet den Blick auf Verfügbarkeit und Beherrschbarkeit von Abhängigkeiten statt nur auf Vertraulichkeit, und sie reicht vertraglich bis zu den Dienstleistern der Dienstleister. Sie hat die IT-Rundschreiben der BaFin abgelöst: VAIT, ZAIT und KAIT sind aufgehoben, die BAIT laufen aus.",
       "when": "Relevant für Finanzunternehmen und deren IKT-Dienstleister, also häufig auch für das Beratungsprojekt selbst.",
       "kundenfrage": "Gilt unsere Leistung für euch als IKT-Dienstleistung nach DORA, und welche Vertragsinhalte folgen daraus?"
     },
     "bait-marisk": {
-      "title": "BAIT & MaRisk",
+      "title": "MaRisk",
       "area": "finance-aufsicht",
       "dimension": "regulatorik",
       "phase": "start",
@@ -2386,14 +2429,15 @@
         "branche:bank"
       ],
       "aliases": [
-        "BAIT",
         "MaRisk",
+        "BAIT",
         "BaFin",
+        "Mindestanforderungen an das Risikomanagement",
         "Auslagerung"
       ],
-      "what": "Aufsichtliche Erwartungen der BaFin an IT und Risikomanagement in Banken, unter anderem zu Berechtigungsmanagement, Auslagerung, Notfallmanagement und Dokumentation.",
+      "what": "Die Mindestanforderungen der BaFin an das Risikomanagement von Banken, unter anderem zu Berechtigungsmanagement, Auslagerung, Notfallmanagement und Dokumentation. Die früheren IT-Anforderungen BAIT daneben laufen aus, ihre Themen regelt jetzt DORA.",
       "why": "Sie sind keine Gesetze, in der Praxis aber verbindlich, weil die Aufsicht danach prüft. Für Projekte äußert sich das vor allem in strengen Anforderungen an Berechtigungen und Nachweise.",
-      "when": "Bei Banken und Finanzdienstleistern früh nach den internen Vorgaben fragen, die daraus abgeleitet sind."
+      "when": "Bei Banken und Finanzdienstleistern früh nach den internen Vorgaben fragen, die daraus abgeleitet sind. Viele interne Regelwerke zitieren noch die BAIT; ob und bis wann sie für ein Institut noch gelten, bitte bei BaFin oder Bundesbank prüfen."
     },
     "prompt-daten": {
       "title": "Prompt- & Kontextdaten",
@@ -2473,7 +2517,7 @@
       ],
       "what": "Die europäische Verordnung über künstliche Intelligenz, die Pflichten nach Risikoklasse staffelt und Rollen wie Anbieter und Betreiber unterscheidet.",
       "why": "Sie liegt hier auf dem Archipel, weil sie KI-spezifisch ist. Inhaltlich ist sie aber eine Regulierung unter vielen und wird am besten wie die übrigen behandelt, statt als eigenes Thema.",
-      "when": "Anwendbarkeit und Fristen bitte aktuell prüfen, die Anwendung erfolgt gestaffelt."
+      "when": "Anwendbarkeit und Fristen bitte aktuell prüfen, die Anwendung erfolgt gestaffelt. Die Fristen für Hochrisiko-Systeme wurden 2026 nach hinten verschoben, andere Pflichten wie die zur Transparenz nicht; ältere Übersichten nennen deshalb oft überholte Termine."
     },
     "ki-risikoklassen": {
       "title": "KI-Risikoklassen nach AI Act",
@@ -2491,7 +2535,7 @@
       ],
       "what": "Die Einordnung eines Anwendungsfalls in verbotene Praktiken, Hochrisiko, Transparenzpflichten oder geringes Risiko, abhängig von Einsatzzweck und Kontext.",
       "why": "Die Einordnung entscheidet über den gesamten Pflichtenumfang, von Risikomanagement über Datenqualität und menschliche Aufsicht bis zur technischen Dokumentation. Sie ist eine Eigenschaft des Anwendungsfalls, nicht der Daten.",
-      "when": "Der erste Schritt bei jedem KI-Vorhaben. Medizin, Beschäftigung und Kreditwürdigkeit landen schnell im Hochrisikobereich."
+      "when": "Der erste Schritt bei jedem KI-Vorhaben. Medizin, Beschäftigung und Kreditwürdigkeit landen schnell im Hochrisikobereich. Ab wann die Hochrisiko-Pflichten gelten, steht beim AI Act und ist an der Quelle zu prüfen; die Einordnung selbst hängt nicht am Termin."
     },
     "iso42001": {
       "title": "ISO/IEC 42001",
@@ -2667,9 +2711,11 @@
       "aliases": [
         "OWASP LLM",
         "LLM Top 10",
-        "Prompt Injection"
+        "Prompt Injection",
+        "OWASP Agentic",
+        "Top 10 für agentische Anwendungen"
       ],
-      "what": "Die Liste der häufigsten Schwachstellenklassen in Anwendungen mit großen Sprachmodellen, unter anderem Prompt Injection, Offenlegung sensibler Informationen und unsichere Werkzeugnutzung.",
+      "what": "Die Liste der häufigsten Schwachstellenklassen in Anwendungen mit großen Sprachmodellen, unter anderem Prompt Injection, Offenlegung sensibler Informationen und unsichere Werkzeugnutzung. Für Agenten, die selbstständig Werkzeuge aufrufen, gibt es daneben eine eigene Liste.",
       "why": "Sie ist die konkreteste verfügbare Prüfliste für KI-Anwendungen und deckt genau die Fehler ab, die in ersten Prototypen regelmäßig entstehen.",
       "when": "Als Review-Checkliste, bevor ein KI-Prototyp produktiv geht."
     },
@@ -3254,7 +3300,7 @@
       "when": "Sobald ein Wert eine Entscheidung über eine Person beeinflusst. Zu klären ist, ob die Entscheidung automatisiert im Sinne von Art. 22 ist und wie die Logik erklärbar bleibt."
     },
     "psd2": {
-      "title": "PSD2 & Zahlungsdienste­recht",
+      "title": "PSD2, PSD3 & PSR",
       "area": "finance-zahlung",
       "dimension": "regulatorik",
       "phase": "start",
@@ -3264,14 +3310,17 @@
       ],
       "aliases": [
         "PSD2",
+        "PSD3",
+        "PSR",
+        "Payment Services Regulation",
         "ZAG",
         "starke Kundenauthentifizierung",
         "SCA",
         "Kontoinformationsdienst"
       ],
-      "what": "Das Zahlungsdiensterecht, das unter anderem starke Kundenauthentifizierung verlangt und den Zugang Dritter zu Konten regelt.",
+      "what": "Das Zahlungsdiensterecht, das unter anderem starke Kundenauthentifizierung verlangt und den Zugang Dritter zu Konten regelt. Auf die Richtlinie PSD2 folgen die Richtlinie PSD3 und eine unmittelbar geltende Verordnung, die PSR.",
       "why": "Es bestimmt Authentisierung, Haftungsverteilung und Schnittstellen zugleich. Wer Zahlungen berührt, holt sich damit Anforderungen an Sicherheit und Erlaubnispflicht ins Projekt, die nicht verhandelbar sind.",
-      "when": "Sobald Zahlungen ausgelöst oder Kontodaten Dritter genutzt werden. Früh klären, ob eine Erlaubnispflicht besteht oder ein regulierter Partner nötig ist."
+      "when": "Sobald Zahlungen ausgelöst oder Kontodaten Dritter genutzt werden. Früh klären, ob eine Erlaubnispflicht besteht oder ein regulierter Partner nötig ist. Bei länger laufenden Vorhaben den Stand von PSD3 und PSR und deren Übergangsfristen an der Quelle prüfen."
     },
     "bankgeheimnis": {
       "title": "Bankgeheimnis",
@@ -3310,24 +3359,6 @@
       "what": "Die aufsichtsrechtlichen Anforderungen an das Auslagern von Tätigkeiten an Dritte, mit Risikobewertung, Vertragsinhalten, Ausstiegsstrategie und einem Register der Auslagerungen.",
       "why": "Ein Dienstleister wird damit Teil des beaufsichtigten Systems und nicht nur ein Lieferant. Anforderungen an Weisungs- und Prüfrechte, Kündbarkeit und Notfallvorsorge kommen aus der Aufsicht und reichen weiter als ein üblicher Vertrag. Die Einordnung als Auslagerung entscheidet über den Aufwand.",
       "when": "Vor der Beauftragung. Ob eine Tätigkeit eine Auslagerung ist und ob sie als kritisch gilt, ist keine Frage für später."
-    },
-    "vait": {
-      "title": "VAIT",
-      "area": "finance-aufsicht",
-      "dimension": "regulatorik",
-      "phase": "start",
-      "triggers": [
-        "branche:versicherung"
-      ],
-      "aliases": [
-        "VAIT",
-        "Versicherungsaufsichtliche Anforderungen an die IT",
-        "BaFin",
-        "IT-Anforderungen Versicherung"
-      ],
-      "what": "Die versicherungsaufsichtlichen Anforderungen an die IT, das Gegenstück zu BAIT für Versicherungsunternehmen. Sie konkretisieren, was die Aufsicht zu IT-Strategie, Informationssicherheit, Berechtigungen und Auslagerung erwartet.",
-      "why": "Sie sind der Maßstab, an dem eine Prüfung die IT eines Versicherers messen wird, und sie reichen über die Anforderungen an den Dienstleister bis ins Projekt. Wer für einen Versicherer baut, findet hier die Vorgaben, die später als Zusage im Vertrag auftauchen.",
-      "when": "Bei Projektstart für einen Versicherer. Für den aktuellen Stand die Veröffentlichung der BaFin ansehen, die Fassungen werden fortgeschrieben."
     },
     "vvg": {
       "title": "VVG",
@@ -3664,24 +3695,26 @@
       "why": "Er ist die Zertifizierung, nach der ein Auftraggeber im Medizinbereich zuerst fragt, und er zieht Nachweispflichten in die Entwicklung: was nicht als Aufzeichnung entsteht, gilt als nicht getan. Für Dienstleister heißt das, dass Arbeitsweise und Werkzeuge mitgeprüft werden.",
       "when": "Sobald ein Auftraggeber im Medizinbereich Nachweise verlangt. Ob das eigene Unternehmen zertifiziert sein muss oder als Zulieferer im Rahmen des Auftraggebers mitläuft, gehört früh geklärt."
     },
-    "iso27799": {
-      "title": "ISO 27799",
+    "ehds": {
+      "title": "European Health Data Space (EHDS)",
       "area": "medtech-reg-int",
       "dimension": "regulatorik",
       "phase": "start",
       "triggers": [
-        "branche:medtech",
-        "nachweis:ja"
+        "branche:medtech"
       ],
       "aliases": [
-        "27799",
-        "Informationssicherheit im Gesundheitswesen",
-        "Health Informatics",
-        "ISO 27002 im Gesundheitswesen"
+        "EHDS",
+        "Europäischer Gesundheitsdatenraum",
+        "EHR-System",
+        "Primärnutzung",
+        "Sekundärnutzung",
+        "EEHRxF"
       ],
-      "what": "Die Anwendung von ISO/IEC 27002 auf das Gesundheitswesen: dieselben Maßnahmenbereiche, ausgelegt auf Gesundheitsinformationen und die Besonderheiten von Behandlungsprozessen.",
-      "why": "Sie schließt die Lücke zwischen einer allgemeinen Informationssicherheitsnorm und der Praxis im Gesundheitswesen, etwa beim Notfallzugriff auf Patientendaten, der sich mit einer strengen Berechtigungslogik allein nicht vereinbaren lässt.",
-      "when": "Wenn ein Informationssicherheitsmanagement für ein Gesundheitsvorhaben aufgesetzt wird. Nützlich als Prüfliste dafür, was die allgemeine Norm im Gesundheitskontext offenlässt."
+      "what": "Die EU-Verordnung zum europäischen Gesundheitsdatenraum. Sie regelt den Zugang von Patientinnen und Patienten zu ihren elektronischen Gesundheitsdaten, deren Austausch über Grenzen, Anforderungen an Systeme für elektronische Patientenakten und die Nutzung der Daten für Forschung und Politik.",
+      "why": "Sie macht Interoperabilität und Protokollierung zu Produkteigenschaften: Hersteller von Systemen für elektronische Patientenakten müssen vorgegebene Komponenten erfüllen, bevor sie das System in Verkehr bringen. Und sie öffnet Gesundheitsdaten für die Zweitnutzung, was Fragen zu Pseudonymisierung und Zugriffswegen in den Entwurf zieht.",
+      "when": "Sobald ein System Gesundheitsdaten führt oder austauscht, die in eine Patientenakte gehören, oder Daten für Forschung bereitstellen soll. Die Pflichten gelten gestaffelt über mehrere Jahre; welche wann greift, bitte an der Quelle prüfen.",
+      "kundenfrage": "Fällt das System unter die Anforderungen an Systeme für elektronische Patientenakten, und plant ihr die Bereitstellung von Daten zur Zweitnutzung?"
     }
   }
 }

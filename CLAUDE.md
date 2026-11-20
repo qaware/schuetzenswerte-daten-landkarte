@@ -318,7 +318,7 @@ Notfallkontakte oder Risikoregister.
 Bank und Versicherung sind **eine Insel mit zwei Branchenoptionen**, nicht zwei Inseln und nicht
 eine Option. Die Entscheidung war nicht Geschmack, sie folgt aus den Zahlen: von damals vierzehn
 Kacheln galten fünf für beide, drei nur für Banken, sechs nur für Versicherer. Seit § 203 im
-Kern liegt, sind es dreizehn, fünf davon nur für Versicherer.
+Kern liegt und die VAIT in DORA aufgegangen sind, sind es zwölf, vier davon nur für Versicherer.
 
 Zwei Inseln hätten die fünf gemeinsamen Kacheln gedoppelt, also DORA, Auslagerung, Zahlungs- und
 Kontodaten, Bonitätsdaten und PCI-DSS. Dopplung zwischen Inseln ist genau das, was die Regel
@@ -635,10 +635,16 @@ wird aber erst modelliert, wenn klar ist, wofür.
 Das echte Auflösen eines Bereichs-Sechsecks in seine Kacheln beim Hineinzoomen. Aktuell blenden
 nur die Beschriftungen um. Mit berechneten Koordinaten ist der Schritt nachträglich möglich.
 
-Der Data Act und der Zugang zu Reparatur- und Wartungsinformationen fehlen noch. Beides ist
-horizontales Recht und gehört deshalb in den Kern, nicht in den Automotive-Archipel, auch wenn
-Automotive dort der Paradefall ist. `Sicherheits- & Geheimnisschutzrecht` hat seit SÜG und
-§ 203 nur noch einen freien Platz, für beide zusammen muss der Bereich geteilt werden.
+Der Zugang zu Reparatur- und Wartungsinformationen fehlt noch. Er ist horizontales Recht und
+gehört deshalb in den Kern, nicht in den Automotive-Archipel, auch wenn Automotive dort der
+Paradefall ist. `Sicherheits- & Geheimnisschutzrecht` ist seit dem Data Act mit sechs Kacheln
+voll; wer dort ergänzt, teilt den Bereich.
+
+Regulatorik veraltet schneller als der Rest. Bei einer Durchsicht im November 2026 waren acht
+von 55 Regulatorik-Kacheln überholt, darunter eine ganze Kachel, die VAIT. Kacheltexte nennen
+deshalb möglichst keine Termine, sondern sagen, dass gestaffelt wird und wo der Stand steht.
+Eine Kachel, die ein abgelöstes Regelwerk benennt, behält dessen Namen in `aliases`, damit die
+Suche weiter dorthin führt: wer „VAIT" sucht, landet bei DORA.
 
 Reifegrad und Verantwortliche pro Kachel, sobald mehrere Personen pflegen.
 

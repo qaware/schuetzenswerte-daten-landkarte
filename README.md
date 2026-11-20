@@ -215,18 +215,18 @@ Aussage über die Wichtigkeit der Branche, sondern über den Stand der Arbeit:
 | --- | --- | --- |
 | Automotive | 22 | ausgearbeitet, fünf Bereiche nach Thema statt nach Dimension |
 | KI | 15 | ausgearbeitet, vier Bereiche |
-| Finanzen | 13 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
+| Finanzen | 12 | ausgearbeitet, vier Bereiche, Bank und Versicherung getrennt filterbar |
 | MedTech | 17 | ausgearbeitet, drei Bereiche |
 | Public Sector | 12 | ausgearbeitet, beide Bereiche voll |
 
 Bei Finanzen sind Bank und Versicherung **eine Insel mit zwei
-Branchenoptionen**. Fünf der dreizehn Kacheln gelten für beide, drei nur für Banken und fünf
+Branchenoptionen**. Fünf der zwölf Kacheln gelten für beide, drei nur für Banken und vier
 nur für Versicherer; das Versicherungsgeheimnis liegt seit der Zusammenführung von § 203 im Kern. Zwei getrennte Inseln hätten die gemeinsamen Kacheln gedoppelt, eine
 gemeinsame Option hätte einem Versicherer Bankgeheimnis und PSD2 vorgesetzt.
 
 ## Offene Punkte
 
-- Der Data Act und der Zugang zu Reparatur- und Wartungsinformationen fehlen noch. Beides ist horizontales Recht und gehört in den Kern, nicht in den Automotive-Archipel, auch wenn Automotive dort der Paradefall ist.
+- Der Zugang zu Reparatur- und Wartungsinformationen fehlt noch. Er ist horizontales Recht und gehört wie der Data Act in den Kern, nicht in den Automotive-Archipel, auch wenn Automotive dort der Paradefall ist.
 - Beziehungen zwischen Kacheln sind noch nicht modelliert. Nachbarschaft trägt Bedeutung, ist aber bewusst nicht maschinenlesbar, solange nicht klar ist, wofür sie gebraucht wird.
 - Der Reifegrad der Kacheln ist unterschiedlich. Ein Feld für Stand und Verantwortliche kommt dazu, sobald mehrere Personen pflegen.
 
